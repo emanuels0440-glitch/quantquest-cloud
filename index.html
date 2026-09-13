@@ -323,6 +323,16 @@
 
     .chart-box { position: relative; height: 180px; width: 100%; }
 
+    .quote-card {
+      background: #080A10;
+      border-left: 3px solid var(--neon-green);
+      border-radius: 4px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -576,14 +586,41 @@
 
   <!-- TAB 2: MODELO DE INVERSIÓN -->
   <div id="tab-investment" class="tab-content">
+    
+    <!-- CONTROLES PARAMETRIZABLES DEL SIMULADOR -->
+    <div class="checklist-container">
+      <div class="card-title">
+        <span>⚙️ PARÁMETROS DEL SIMULADOR DE CRECIMIENTO</span>
+        <span style="color:var(--neon-blue); font-weight:bold;">CONFIGURACIÓN PERSONALIZABLE</span>
+      </div>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Capital Base Inicial ($)</label>
+          <input type="number" id="cfgBaseCap" value="400" step="any" oninput="renderInvestmentModel()">
+        </div>
+        <div class="form-field">
+          <label>Aporte Mensual ($)</label>
+          <input type="number" id="cfgMonthlyContrib" value="200" step="any" oninput="renderInvestmentModel()">
+        </div>
+        <div class="form-field">
+          <label>Objetivo Mensual (%)</label>
+          <input type="number" id="cfgTargetPct" value="5" step="0.1" oninput="renderInvestmentModel()">
+        </div>
+        <div class="form-field">
+          <label>Duración (Meses)</label>
+          <input type="number" id="cfgDurationMonths" value="18" min="1" max="60" oninput="renderInvestmentModel()">
+        </div>
+      </div>
+    </div>
+
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
       <div class="card">
         <div class="card-title">Base Inicial Cuenta</div>
         <p id="lblModelBaseCap" style="font-size: 22px; font-weight: bold; color: var(--neon-orange); font-family: 'Orbitron';">$0.00</p>
       </div>
       <div class="card">
-        <div class="card-title">Aporte Mensual (Día 10)</div>
-        <p style="font-size: 22px; font-weight: bold; color: var(--neon-green); font-family: 'Orbitron';">$200.00</p>
+        <div class="card-title">Aporte Mensual Config.</div>
+        <p id="lblModelMonthlyContrib" style="font-size: 22px; font-weight: bold; color: var(--neon-green); font-family: 'Orbitron';">$0.00</p>
       </div>
       <div class="card">
         <div class="card-title">PnL Real Acumulado</div>
@@ -596,7 +633,7 @@
     </div>
 
     <div class="table-container">
-      <div class="card-title" style="margin-bottom: 15px;">PROYECCIÓN DE CRECIMIENTO DE CAPITAL (2026 - 2027)</div>
+      <div class="card-title" style="margin-bottom: 15px;">PROYECCIÓN DE CRECIMIENTO DE CAPITAL PERSONALIZADA</div>
       <table>
         <thead>
           <tr>
@@ -605,7 +642,7 @@
             <th>CAPITAL INICIAL</th>
             <th>APORTE MES ($)</th>
             <th>CAPITAL BASE</th>
-            <th>PNL PROY. (5%)</th>
+            <th id="thPnlProy">PNL PROY. (%)</th>
             <th>CAPITAL PROY. FINAL</th>
             <th>PNL NETO REAL ($)</th>
             <th>DIFERENCIA</th>
@@ -616,6 +653,33 @@
         <tbody id="investmentTableBody"></tbody>
       </table>
     </div>
+
+    <!-- SECCIÓN: FRASES Y PILARES DE MENTALIDAD -->
+    <div class="checklist-container">
+      <div class="card-title" style="margin-bottom:15px;">
+        <span>🧠 MENTALIDAD A LARGO PLAZO Y FILOSOFÍA DE SOSTENIBILIDAD</span>
+        <span style="color:var(--neon-green); font-weight:bold;">PILARES DE QUANTQUEST</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+        
+        <div class="quote-card">
+          <p style="color: var(--neon-green); font-size: 12px; font-weight: bold;">"El interés compuesto es la octava maravilla del mundo. Quien lo entiende, lo gana; quien no, lo paga."</p>
+          <span style="color: var(--text-muted); font-size: 10px;">— Albert Einstein</span>
+        </div>
+
+        <div class="quote-card">
+          <p style="color: var(--neon-blue); font-size: 12px; font-weight: bold;">"El mercado de renta variable es un mecanismo para transferir dinero de los impacientes a los pacientes."</p>
+          <span style="color: var(--text-muted); font-size: 10px;">— Warren Buffett</span>
+        </div>
+
+        <div class="quote-card">
+          <p style="color: var(--neon-orange); font-size: 12px; font-weight: bold;">"No busques operaciones gigantescas. Enfócate en ejecutar de forma impecable el sistema día a día; los resultados financieros son una consecuencia del proceso."</p>
+          <span style="color: var(--text-muted); font-size: 10px;">— Principio de Consistencia</span>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 
   <!-- TAB 3: CHARACTER XP -->
@@ -757,6 +821,13 @@
             document.getElementById('accountSetupModal').style.display = 'flex';
           } else {
             document.getElementById('accountSetupModal').style.display = 'none';
+            
+            // Sincronizar input de configuración si no se ha modificado manualmente
+            const cfgBase = document.getElementById('cfgBaseCap');
+            if (cfgBase && (!cfgBase.value || cfgBase.dataset.userEdited !== "true")) {
+              cfgBase.value = currentAccount.baseCapital;
+            }
+
             renderAccountInfo();
             renderDashboard();
             renderInvestmentModel();
@@ -782,6 +853,10 @@
       updateQualityScore();
       autoCalculatePnL();
       setCurrentDateTimeInput();
+
+      document.getElementById('cfgBaseCap').addEventListener('input', (e) => {
+        e.target.dataset.userEdited = "true";
+      });
     };
 
     function setCurrentDateTimeInput() {
@@ -1030,7 +1105,6 @@
       document.getElementById('charBarFill').style.width = Math.min(100, Math.max(0, pct)) + '%';
     }
 
-    // Helper para parsear la fecha de cada trade a formato MM/YYYY
     function parseTradeMonthKey(openTimeStr) {
       if (!openTimeStr) return null;
       if (openTimeStr.includes('/')) {
@@ -1049,15 +1123,25 @@
       return null;
     }
 
-    function renderInvestmentModel() {
-      if (!currentAccount) return;
+    const MONTH_NAMES = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+
+    window.renderInvestmentModel = function() {
       const tbody = document.getElementById('investmentTableBody');
+      if (!tbody) return;
       tbody.innerHTML = '';
 
-      const baseCap = currentAccount.baseCapital;
+      const baseCap = parseFloat(document.getElementById('cfgBaseCap').value) || 0;
+      const monthlyContrib = parseFloat(document.getElementById('cfgMonthlyContrib').value) || 0;
+      const targetPct = parseFloat(document.getElementById('cfgTargetPct').value) || 0;
+      const durationMonths = parseInt(document.getElementById('cfgDurationMonths').value) || 12;
+
+      document.getElementById('thPnlProy').textContent = `PNL PROY. (${targetPct}%)`;
+
       const totalRealPnLAllTime = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
 
-      // Agrupar PnL real por mes (MM/YYYY)
       const pnlMap = {};
       trades.forEach(t => {
         const key = parseTradeMonthKey(t.openTime);
@@ -1066,41 +1150,32 @@
         }
       });
 
-      const months = [
-        { name: 'Julio 2026', aporteFecha: '10/07/2026', key: '07/2026', aporte: 0 },
-        { name: 'Agosto 2026', aporteFecha: '10/08/2026', key: '08/2026', aporte: 200 },
-        { name: 'Septiembre 2026', aporteFecha: '10/09/2026', key: '09/2026', aporte: 200 },
-        { name: 'Octubre 2026', aporteFecha: '10/10/2026', key: '10/2026', aporte: 200 },
-        { name: 'Noviembre 2026', aporteFecha: '10/11/2026', key: '11/2026', aporte: 200 },
-        { name: 'Diciembre 2026', aporteFecha: '10/12/2026', key: '12/2026', aporte: 200 },
-        { name: 'Enero 2027', aporteFecha: '10/01/2027', key: '01/2027', aporte: 200 },
-        { name: 'Febrero 2027', aporteFecha: '10/02/2027', key: '02/2027', aporte: 200 },
-        { name: 'Marzo 2027', aporteFecha: '10/03/2027', key: '03/2027', aporte: 200 },
-        { name: 'Abril 2027', aporteFecha: '10/04/2027', key: '04/2027', aporte: 200 },
-        { name: 'Mayo 2027', aporteFecha: '10/05/2027', key: '05/2027', aporte: 200 },
-        { name: 'Junio 2027', aporteFecha: '10/06/2027', key: '06/2027', aporte: 200 },
-        { name: 'Julio 2027', aporteFecha: '10/07/2027', key: '07/2027', aporte: 200 },
-        { name: 'Agosto 2027', aporteFecha: '10/08/2027', key: '08/2027', aporte: 200 },
-        { name: 'Septiembre 2027', aporteFecha: '10/09/2027', key: '09/2027', aporte: 200 },
-        { name: 'Octubre 2027', aporteFecha: '10/10/2027', key: '10/2027', aporte: 200 },
-        { name: 'Noviembre 2027', aporteFecha: '10/11/2027', key: '11/2027', aporte: 200 },
-        { name: 'Diciembre 2027', aporteFecha: '10/12/2027', key: '12/2027', aporte: 200 }
-      ];
-
       let currentCapProy = baseCap;
       let currentCapReal = baseCap;
       let totalAportesRealizados = 0;
 
-      months.forEach((m) => {
+      let startMonth = 6; // Julio (0-indexed)
+      let startYear = 2026;
+
+      for (let i = 0; i < durationMonths; i++) {
+        let monthIdx = (startMonth + i) % 12;
+        let yearOffset = Math.floor((startMonth + i) / 12);
+        let year = startYear + yearOffset;
+
+        let monthName = `${MONTH_NAMES[monthIdx]} ${year}`;
+        let mm = String(monthIdx + 1).padStart(2, '0');
+        let key = `${mm}/${year}`;
+        let aporteFecha = `10/${mm}/${year}`;
+
         let capInicialMesProy = currentCapProy;
-        let aporte = m.aporte;
+        let aporte = (i === 0) ? 0 : monthlyContrib;
         let totalBaseProy = capInicialMesProy + aporte;
-        let pnlProyectado = totalBaseProy * 0.05;
+        let pnlProyectado = totalBaseProy * (targetPct / 100);
         currentCapProy = totalBaseProy + pnlProyectado;
 
         let capInicialMesReal = currentCapReal;
-        let hasTradesInMonth = Object.prototype.hasOwnProperty.call(pnlMap, m.key);
-        let realPnLMonth = hasTradesInMonth ? pnlMap[m.key] : 0;
+        let hasTradesInMonth = Object.prototype.hasOwnProperty.call(pnlMap, key);
+        let realPnLMonth = hasTradesInMonth ? pnlMap[key] : 0;
         let difPnL = realPnLMonth - pnlProyectado;
 
         if (hasTradesInMonth) {
@@ -1121,8 +1196,8 @@
 
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td><b>${m.name}</b></td>
-          <td style="color:var(--neon-orange);">${m.aporteFecha}</td>
+          <td><b>${monthName}</b></td>
+          <td style="color:var(--neon-orange);">${aporteFecha}</td>
           <td>$${capInicialMesProy.toFixed(2)}</td>
           <td style="color:var(--neon-green);">+$${aporte.toFixed(2)}</td>
           <td>$${totalBaseProy.toFixed(2)}</td>
@@ -1134,10 +1209,12 @@
           <td>${statusBadge}</td>
         `;
         tbody.appendChild(row);
-      });
+      }
 
       const totalBalance = baseCap + totalAportesRealizados + totalRealPnLAllTime;
+
       document.getElementById('lblModelBaseCap').textContent = '$' + baseCap.toFixed(2);
+      document.getElementById('lblModelMonthlyContrib').textContent = '$' + monthlyContrib.toFixed(2);
 
       const realPnlLabel = document.getElementById('lblModelRealPnL');
       realPnlLabel.textContent = (totalRealPnLAllTime >= 0 ? '+$' : '-$') + Math.abs(totalRealPnLAllTime).toFixed(2);
@@ -1146,7 +1223,7 @@
       const totalCapLabel = document.getElementById('lblModelCapTotal');
       totalCapLabel.textContent = '$' + totalBalance.toFixed(2);
       totalCapLabel.style.color = totalBalance >= baseCap ? 'var(--neon-green)' : 'var(--neon-red)';
-    }
+    };
 
     function initCharts() {
       const ctxPnL = document.getElementById('pnlChart').getContext('2d');
