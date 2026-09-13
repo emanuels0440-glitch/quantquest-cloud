@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TRADING JOURNAL & CAPITAL MODEL 2026 — QuantQuest Cloud</title>
- <link rel="icon" type="image/x-icon" href="favicon2.ico?v=2">
-</head>
+  <link rel="icon" type="image/x-icon" href="favicon2.ico?v=2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,7 +12,7 @@
   <style>
     :root {
       --bg: #07090E;
-      --panel-bg: #0D111A;
+      --panel-bg: rgba(13, 17, 26, 0.85);
       --panel-border: #1E2638;
       --neon-green: #00E676;
       --neon-red: #FF1744;
@@ -105,18 +104,18 @@
       font-weight: 700;
       border-radius: 4px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .tab-btn:hover { color: var(--text-main); border-color: var(--neon-green); }
+    .tab-btn:hover { color: var(--text-main); border-color: var(--neon-green); transform: translateY(-2px); }
     .tab-btn.active {
       background: var(--neon-green);
       color: #000;
       border-color: var(--neon-green);
-      box-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
+      box-shadow: 0 0 15px rgba(0, 230, 118, 0.5);
     }
 
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    .tab-content { display: none; opacity: 0; transition: opacity 0.4s ease-in-out; }
+    .tab-content.active { display: block; opacity: 1; }
 
     .top-grid {
       display: grid;
@@ -129,11 +128,14 @@
 
     .card {
       background: var(--panel-bg);
+      backdrop-filter: blur(10px);
       border: 1px solid var(--panel-border);
       border-radius: 6px;
       padding: 18px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      transition: border-color 0.3s ease;
     }
+    .card:hover { border-color: rgba(0, 230, 118, 0.3); }
 
     .card-title {
       font-size: 11px;
@@ -160,7 +162,7 @@
       height: 100%;
       background: var(--neon-green);
       box-shadow: 0 0 8px var(--neon-green);
-      transition: width 0.4s ease;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .character-box {
@@ -218,6 +220,12 @@
       font-family: 'Roboto Mono', monospace;
       font-size: 12px;
       border-radius: 3px;
+      transition: all 0.2s ease;
+    }
+    .form-field input:focus, .form-field select:focus {
+      outline: none;
+      border-color: var(--neon-green);
+      box-shadow: 0 0 8px rgba(0, 230, 118, 0.3);
     }
 
     .btn {
@@ -232,11 +240,15 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       font-size: 11px;
-      transition: all 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .btn:hover:not(:disabled) { background: #00C865; box-shadow: 0 0 12px rgba(0,230,118,0.4); }
+    .btn:hover:not(:disabled) {
+      background: #00C865;
+      box-shadow: 0 0 15px rgba(0, 230, 118, 0.5);
+      transform: translateY(-1px);
+    }
     .btn-red { background: var(--neon-red); color: #FFF; }
-    .btn-red:hover { background: #D50000; box-shadow: 0 0 12px rgba(255,23,68,0.4); }
+    .btn-red:hover { background: #D50000; box-shadow: 0 0 15px rgba(255, 23, 68, 0.5); }
 
     .form-disabled-panel {
       opacity: 0.35;
@@ -331,32 +343,48 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .quote-card:hover { transform: translateX(4px); border-color: var(--neon-blue); }
+
+    /* ANIMACIONES Y MODALES MEJORADOS CON GLASSMORPHISM */
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.92) translateY(-20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 15px rgba(0,230,118,0.2); }
+      50% { box-shadow: 0 0 30px rgba(0,230,118,0.5); }
+      100% { box-shadow: 0 0 15px rgba(0,230,118,0.2); }
     }
 
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(4, 6, 10, 0.95);
-      backdrop-filter: blur(8px);
+      background: rgba(4, 6, 10, 0.88);
+      backdrop-filter: blur(12px);
       z-index: 9999;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
+      transition: all 0.3s ease;
     }
     .modal-card {
-      background: var(--panel-bg);
-      border: 2px solid var(--panel-border);
-      border-radius: 8px;
+      background: rgba(13, 17, 26, 0.95);
+      border: 2px solid var(--neon-green);
+      border-radius: 12px;
       padding: 30px;
-      max-width: 480px;
+      max-width: 520px;
       width: 100%;
-      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
       text-align: center;
       position: relative;
       overflow: hidden;
+      animation: modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1), pulseGlow 4s infinite ease-in-out;
     }
-    .modal-card h2 { color: var(--neon-green); font-size: 18px; margin-bottom: 10px; }
+    .modal-card h2 { color: var(--neon-green); font-size: 18px; margin-bottom: 10px; letter-spacing: 1px; }
     .modal-card p { color: var(--text-muted); font-size: 11px; margin-bottom: 20px; }
 
     .auth-toggle {
@@ -365,7 +393,23 @@
       color: var(--neon-blue);
       cursor: pointer;
       text-decoration: underline;
+      transition: color 0.2s ease;
     }
+    .auth-toggle:hover { color: var(--neon-green); }
+
+    .tip-banner {
+      background: linear-gradient(135deg, rgba(0,229,255,0.08) 0%, rgba(0,230,118,0.08) 100%);
+      border: 1px solid var(--neon-blue);
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .tip-icon { font-size: 24px; }
+    .tip-body { font-size: 11px; }
+    .tip-body b { color: var(--neon-blue); font-family: 'Orbitron', sans-serif; display: block; margin-bottom: 3px; }
   </style>
 </head>
 <body>
@@ -393,33 +437,49 @@
     </div>
   </div>
 
-  <!-- MODAL SETUP DE CUENTA -->
+  <!-- MODAL SETUP DE CUENTA INTEGRADO -->
   <div id="accountSetupModal" class="modal-overlay" style="display: none;">
     <div class="modal-card">
       <h2>⚡ REGISTRO DE CUENTA EN QUANTQUEST</h2>
-      <p>Configura las reglas operativas de tu nueva cuenta de trading.</p>
+      <p>Configura las reglas de capital, modelo de inversión y la fecha de inicio de tu operativa.</p>
       
-      <form id="setupForm" onsubmit="handleCreateAccount(event)" style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
+      <form id="setupForm" onsubmit="handleCreateAccount(event)" style="display: flex; flex-direction: column; gap: 12px; text-align: left;">
         <div class="form-field">
           <label>Nombre del Operador</label>
           <input type="text" id="setupName" placeholder="Ej. Emanuel Salazar" required>
         </div>
-        <div class="form-field">
-          <label>Capital Base Inicial ($)</label>
-          <input type="number" id="setupCapital" step="any" value="400" required>
+        <div class="form-grid" style="margin-top:0; grid-template-columns: 1fr 1fr;">
+          <div class="form-field">
+            <label>Capital Base ($)</label>
+            <input type="number" id="setupCapital" step="any" value="400" required>
+          </div>
+          <div class="form-field">
+            <label>Aporte Mensual ($)</label>
+            <input type="number" id="setupMonthlyContrib" step="any" value="200" required>
+          </div>
+        </div>
+        <div class="form-grid" style="margin-top:0; grid-template-columns: 1fr 1fr;">
+          <div class="form-field">
+            <label>Objetivo Mensual (%)</label>
+            <input type="number" id="setupTargetPct" step="0.1" value="5" required>
+          </div>
+          <div class="form-field">
+            <label>Max Drawdown (%)</label>
+            <input type="number" id="setupDrawdown" step="any" value="20" required>
+          </div>
         </div>
         <div class="form-field">
-          <label>Drawdown Máximo Permitido (%)</label>
-          <input type="number" id="setupDrawdown" step="any" value="20" required>
+          <label>Fecha de Inicio de Cuenta</label>
+          <input type="date" id="setupStartDate" required>
         </div>
-        <button type="submit" class="btn" style="margin-top: 10px;">🚀 GUARDAR EN LA NUBE E INICIAR</button>
+        <button type="submit" class="btn" style="margin-top: 10px;">🚀 VINCULAR E INICIAR MODELO</button>
       </form>
     </div>
   </div>
 
   <!-- MODAL DE CUENTA QUEMADA -->
   <div id="accountFailedModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card" style="border-color: var(--neon-red);">
+    <div class="modal-card" style="border-color: var(--neon-red); animation: modalFadeIn 0.3s ease;">
       <h2 style="color: var(--neon-red);">🚨 CUENTA LIQUIDADA / BREACHED</h2>
       <p style="color: #FFF; font-weight: bold; margin-bottom: 10px;">Límite de Drawdown Superado.</p>
       <div id="failedDetails" style="background: #080A10; padding: 15px; border-radius: 4px; font-size: 11px; margin-bottom: 20px; text-align: left;"></div>
@@ -587,11 +647,20 @@
   <!-- TAB 2: MODELO DE INVERSIÓN -->
   <div id="tab-investment" class="tab-content">
     
+    <!-- BANNER DE TIP DINÁMICO DE INVERSIÓN -->
+    <div class="tip-banner">
+      <div class="tip-icon">💡</div>
+      <div class="tip-body">
+        <b>TIP DE GESTIÓN Y CRECIMIENTO EXPONENCIAL</b>
+        <span id="dynamicTipTxt">"Mantener un objetivo mensual conservador entre el 3% y el 5% reduce la presión psicológica y maximiza la supervivencia de tu cuenta a largo plazo."</span>
+      </div>
+    </div>
+
     <!-- CONTROLES PARAMETRIZABLES DEL SIMULADOR -->
     <div class="checklist-container">
       <div class="card-title">
         <span>⚙️ PARÁMETROS DEL SIMULADOR DE CRECIMIENTO</span>
-        <span style="color:var(--neon-blue); font-weight:bold;">CONFIGURACIÓN PERSONALIZABLE</span>
+        <span style="color:var(--neon-blue); font-weight:bold;">CONFIGURACIÓN DE CUENTA</span>
       </div>
       <div class="form-grid">
         <div class="form-field">
@@ -763,6 +832,14 @@
     let pnlChartInstance = null;
     let winrateChartInstance = null;
 
+    const INVESTMENT_TIPS = [
+      "Mantener un objetivo mensual conservador entre el 3% y el 5% reduce la presión psicológica y maximiza la supervivencia de tu cuenta a largo plazo.",
+      "El capital protegido en las operaciones negativas vale más que las ganancias rápidas e indisciplinadas.",
+      "Añadir aportes mensuales constantes acelera exponencialmente el interés compuesto sin obligarte a asumir sobreapalancamiento.",
+      "Nunca arriesgues más del 1-2% de tu capital base por operación. La preservación es la clave.",
+      "La constancia en la ejecución del checklist garantiza un Profit Factor superior a 1.5 a lo largo del tiempo."
+    ];
+
     onAuthStateChanged(auth, (user) => {
       if (user) {
         currentUser = user;
@@ -818,14 +895,24 @@
           trades = data.trades || [];
 
           if (!currentAccount) {
+            setTodayAsDefaultStartDate();
             document.getElementById('accountSetupModal').style.display = 'flex';
           } else {
             document.getElementById('accountSetupModal').style.display = 'none';
             
-            // Sincronizar input de configuración si no se ha modificado manualmente
+            // Sincronizar inputs de configuración en la pestaña de inversión
             const cfgBase = document.getElementById('cfgBaseCap');
+            const cfgContrib = document.getElementById('cfgMonthlyContrib');
+            const cfgTarget = document.getElementById('cfgTargetPct');
+
             if (cfgBase && (!cfgBase.value || cfgBase.dataset.userEdited !== "true")) {
               cfgBase.value = currentAccount.baseCapital;
+            }
+            if (cfgContrib && (!cfgContrib.value || cfgContrib.dataset.userEdited !== "true")) {
+              cfgContrib.value = currentAccount.monthlyContrib || 200;
+            }
+            if (cfgTarget && (!cfgTarget.value || cfgTarget.dataset.userEdited !== "true")) {
+              cfgTarget.value = currentAccount.targetPct || 5;
             }
 
             renderAccountInfo();
@@ -833,9 +920,16 @@
             renderInvestmentModel();
           }
         } else {
+          setTodayAsDefaultStartDate();
           document.getElementById('accountSetupModal').style.display = 'flex';
         }
       });
+    }
+
+    function setTodayAsDefaultStartDate() {
+      const today = new Date().toISOString().slice(0, 10);
+      const startInp = document.getElementById('setupStartDate');
+      if (startInp && !startInp.value) startInp.value = today;
     }
 
     async function syncToCloud() {
@@ -853,11 +947,30 @@
       updateQualityScore();
       autoCalculatePnL();
       setCurrentDateTimeInput();
+      rotateInvestmentTips();
 
-      document.getElementById('cfgBaseCap').addEventListener('input', (e) => {
-        e.target.dataset.userEdited = "true";
+      ['cfgBaseCap', 'cfgMonthlyContrib', 'cfgTargetPct'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', (e) => { e.target.dataset.userEdited = "true"; });
+        }
       });
     };
+
+    function rotateInvestmentTips() {
+      let idx = 0;
+      setInterval(() => {
+        idx = (idx + 1) % INVESTMENT_TIPS.length;
+        const tipTxt = document.getElementById('dynamicTipTxt');
+        if (tipTxt) {
+          tipTxt.style.opacity = 0;
+          setTimeout(() => {
+            tipTxt.textContent = `"${INVESTMENT_TIPS[idx]}"`;
+            tipTxt.style.opacity = 1;
+          }, 300);
+        }
+      }, 10000);
+    }
 
     function setCurrentDateTimeInput() {
       const now = new Date();
@@ -905,16 +1018,22 @@
       e.preventDefault();
       const name = document.getElementById('setupName').value;
       const capital = parseFloat(document.getElementById('setupCapital').value);
+      const contrib = parseFloat(document.getElementById('setupMonthlyContrib').value);
+      const targetPct = parseFloat(document.getElementById('setupTargetPct').value);
       const drawdownPct = parseFloat(document.getElementById('setupDrawdown').value);
+      const startDate = document.getElementById('setupStartDate').value || new Date().toISOString().slice(0, 10);
       const accNumber = Math.floor(100000 + Math.random() * 900000);
 
       currentAccount = {
         name: name,
         accNumber: accNumber,
         baseCapital: capital,
+        monthlyContrib: contrib,
+        targetPct: targetPct,
         maxDrawdownPct: drawdownPct,
         maxLossAmount: capital * (drawdownPct / 100),
         minBalanceLimit: capital - (capital * (drawdownPct / 100)),
+        startDate: startDate,
         isFailed: false
       };
 
@@ -934,13 +1053,13 @@
       bar.innerHTML = `
         <span>OPERADOR: <b>${currentAccount.name}</b></span> | 
         <span>CUENTA #: <b>#${currentAccount.accNumber}</b></span> | 
+        <span>INICIO: <b>${currentAccount.startDate || 'N/A'}</b></span> | 
         <span>CAPITAL BASE: <b>$${currentAccount.baseCapital.toFixed(2)}</b></span> | 
         <span class="highlight-balance">
           <span class="stat-label">SALDO ACTUAL:</span>
           <span class="stat-value" style="color:${balanceColor};">$${currentBalance.toFixed(2)}</span>
         </span> | 
-        <span>DRAWDOWN MÁX: <b style="color:var(--neon-red);">${currentAccount.maxDrawdownPct}% ($${currentAccount.maxLossAmount.toFixed(2)})</b></span> | 
-        <span>LÍMITE MÍNIMO: <b style="color:var(--neon-orange);">$${currentAccount.minBalanceLimit.toFixed(2)}</b></span>
+        <span>DRAWDOWN MÁX: <b style="color:var(--neon-red);">${currentAccount.maxDrawdownPct}% ($${currentAccount.maxLossAmount.toFixed(2)})</b></span>
       `;
     }
 
@@ -971,6 +1090,7 @@
       trades = [];
       await syncToCloud();
       document.getElementById('accountFailedModal').style.display = 'none';
+      setTodayAsDefaultStartDate();
       document.getElementById('accountSetupModal').style.display = 'flex';
     };
 
@@ -1154,8 +1274,17 @@
       let currentCapReal = baseCap;
       let totalAportesRealizados = 0;
 
-      let startMonth = 6; // Julio (0-indexed)
+      // Determinación dinámica del mes y año inicial basados en la fecha de creación de la cuenta
+      let startMonth = 8; // Septiembre por defecto (0-indexed)
       let startYear = 2026;
+
+      if (currentAccount && currentAccount.startDate) {
+        const startDateObj = new Date(currentAccount.startDate + "T00:00:00");
+        if (!isNaN(startDateObj)) {
+          startMonth = startDateObj.getMonth();
+          startYear = startDateObj.getFullYear();
+        }
+      }
 
       for (let i = 0; i < durationMonths; i++) {
         let monthIdx = (startMonth + i) % 12;
