@@ -719,7 +719,7 @@
         <span>⚙️ PARÁMETROS DEL SIMULADOR DE CRECIMIENTO</span>
         <span style="color:var(--neon-blue); font-weight:bold;">CONFIGURACIÓN DE CUENTA</span>
       </div>
-      <div class="form-grid">
+      <div class="form-grid" style="align-items: flex-end;">
         <div class="form-field">
           <label>Capital Base Inicial ($)</label>
           <input type="number" id="cfgBaseCap" value="400" step="any" oninput="renderInvestmentModel()">
@@ -735,6 +735,11 @@
         <div class="form-field">
           <label>Duración (Meses)</label>
           <input type="number" id="cfgDurationMonths" value="18" min="1" max="60" oninput="renderInvestmentModel()">
+        </div>
+        <div class="form-field">
+          <button type="button" class="btn" id="btnSaveSimParams" onclick="saveSimulatorParams()" style="height: 35px; width: 100%; white-space: nowrap;">
+            💾 GUARDAR PARÁMETROS
+          </button>
         </div>
       </div>
     </div>
@@ -1121,6 +1126,7 @@
             const cfgBase = document.getElementById('cfgBaseCap');
             const cfgContrib = document.getElementById('cfgMonthlyContrib');
             const cfgTarget = document.getElementById('cfgTargetPct');
+            const cfgDuration = document.getElementById('cfgDurationMonths');
 
             if (cfgBase && (!cfgBase.value || cfgBase.dataset.userEdited !== "true")) {
               cfgBase.value = currentAccount.baseCapital;
@@ -1130,6 +1136,9 @@
             }
             if (cfgTarget && (!cfgTarget.value || cfgTarget.dataset.userEdited !== "true")) {
               cfgTarget.value = currentAccount.targetPct || 5;
+            }
+            if (cfgDuration && (!cfgDuration.value || cfgDuration.dataset.userEdited !== "true")) {
+              cfgDuration.value = currentAccount.durationMonths || 18;
             }
 
             renderAccountInfo();
@@ -1160,6 +1169,43 @@
       }, { merge: true });
     }
 
+    window.saveSimulatorParams = async function() {
+      if (!currentAccount) return;
+
+      const baseCap = parseFloat(document.getElementById('cfgBaseCap').value) || 0;
+      const monthlyContrib = parseFloat(document.getElementById('cfgMonthlyContrib').value) || 0;
+      const targetPct = parseFloat(document.getElementById('cfgTargetPct').value) || 0;
+      const durationMonths = parseInt(document.getElementById('cfgDurationMonths').value) || 18;
+
+      currentAccount.baseCapital = baseCap;
+      currentAccount.monthlyContrib = monthlyContrib;
+      currentAccount.targetPct = targetPct;
+      currentAccount.durationMonths = durationMonths;
+
+      // Recalcular límites de riesgo derivados del capital
+      currentAccount.maxLossAmount = baseCap * (currentAccount.maxDrawdownPct / 100);
+      currentAccount.minBalanceLimit = baseCap - currentAccount.maxLossAmount;
+
+      const btn = document.getElementById('btnSaveSimParams');
+      const originalText = btn.textContent;
+      btn.textContent = "⏳ GUARDANDO...";
+      btn.disabled = true;
+
+      try {
+        await syncToCloud();
+        btn.textContent = "✅ ¡GUARDADO!";
+        btn.style.background = "var(--neon-green)";
+      } catch (err) {
+        alert("Error al guardar parámetros: " + err.message);
+        btn.textContent = originalText;
+      } finally {
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }, 1500);
+      }
+    };
+
     window.onload = function() {
       initCharts();
       updateQualityScore();
@@ -1168,7 +1214,7 @@
       rotateInvestmentTips();
       rotatePlanReminders();
 
-      ['cfgBaseCap', 'cfgMonthlyContrib', 'cfgTargetPct'].forEach(id => {
+      ['cfgBaseCap', 'cfgMonthlyContrib', 'cfgTargetPct', 'cfgDurationMonths'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
           el.addEventListener('input', (e) => { e.target.dataset.userEdited = "true"; });
@@ -1264,6 +1310,7 @@
         baseCapital: capital,
         monthlyContrib: contrib,
         targetPct: targetPct,
+        durationMonths: 18,
         maxDrawdownPct: drawdownPct,
         maxLossAmount: capital * (drawdownPct / 100),
         minBalanceLimit: capital - (capital * (drawdownPct / 100)),
