@@ -560,7 +560,7 @@
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('journal')">📊 BITÁCORA</button>
     <button class="tab-btn" onclick="switchTab('analytics')" style="border-color: var(--neon-blue); color: var(--neon-blue);">💡 ANALÍTICA Y REFLEXIONES</button>
-    <button class="tab-btn" onclick="switchTab('treasury')" style="border-color: var(--neon-green); color: var(--neon-green);">💰 SALDOS Y DEPÓSITOS</button>
+    <button class="tab-btn" onclick="switchTab('treasury')" style="border-color: var(--neon-green); color: var(--neon-blue);">💰 SALDOS Y DEPÓSITOS</button>
     <button class="tab-btn" onclick="switchTab('investment')">📈 MODELO CRECIMIENTO</button>
     <button class="tab-btn" onclick="switchTab('character')">⚔️ CHARACTER XP</button>
     <button class="tab-btn" onclick="switchTab('plan')" style="border-color: var(--neon-purple); color: var(--neon-purple);">📜 TRADING PLAN</button>
@@ -1775,8 +1775,26 @@
       document.getElementById('kpiAvgWinLoss').textContent = `$${avgWin.toFixed(1)} / $${avgLoss.toFixed(1)}`;
       document.getElementById('kpiMaxDrawdown').textContent = `-$${maxDrawdown.toFixed(2)}`;
 
+      // CÁLCULO DE XP Y NIVEL SINCRO EN EL DASHBOARD PRINCIPAL
       let currentXp = Math.max(0, Math.round(accumPnL * 5));
       document.getElementById('txtXp').textContent = `${currentXp} XP`;
+
+      let lvl = getLevelData(currentXp);
+      let pct = ((currentXp - lvl.minXp) / (lvl.maxXp - lvl.minXp + 1)) * 100;
+      let clampedPct = Math.min(100, Math.max(0, pct));
+
+      // ACTUALIZACIÓN DE BARRA DE XP Y DATOS DE NIVEL EN LA BITÁCORA
+      const barXp = document.getElementById('barXp');
+      if (barXp) barXp.style.width = clampedPct + '%';
+
+      const txtLvl = document.getElementById('txtLvl');
+      if (txtLvl) txtLvl.textContent = lvl.name;
+
+      const badgeTitle = document.getElementById('badgeTitle');
+      if (badgeTitle) badgeTitle.textContent = lvl.name;
+
+      const sideAvatar = document.getElementById('sideAvatar');
+      if (sideAvatar) sideAvatar.src = lvl.img;
 
       updateCharts(trades);
       updateCharacterTab();
