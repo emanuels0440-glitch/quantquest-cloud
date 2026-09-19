@@ -814,7 +814,7 @@
             <th>TIPO</th>
             <th>MONTO ($)</th>
             <th>NOTAS / ORIGEN</th>
-            <th>CAPITAL BASE</th>
+            <th>CAPITAL BASE AJUSTADO</th>
             <th>ACCIÓN</th>
           </tr>
         </thead>
@@ -996,7 +996,7 @@
     <div class="checklist-container">
       <div class="card-title">
         <span>1. PARÁMETROS FINANCIEROS DINÁMICOS EN TIEMPO REAL</span>
-        <span style="color:var(--neon-green); font-weight:bold;" id="planLiveCapLabel">CAPITAL OPERATIVO: $0.00</span>
+        <span style="color:var(--neon-green); font-weight:bold;" id="planLiveCapLabel">CAPITAL BASE AJUSTADO: $0.00</span>
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
@@ -1396,30 +1396,36 @@
       document.getElementById('accountSetupModal').style.display = 'none';
     };
 
-    // FUNCIÓN CORE: Renderiza la información sincronizada de la barra superior
+    // FUNCIÓN CORE REVISADA: Lógica de Capital Base Ajustado y Drawdown Fijo
     function renderAccountInfo() {
       if (!currentAccount) return;
       
-      const baseCap = currentAccount.initialBaseCapital || 400;
-      const totalPnL = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
+      const initialCapital = currentAccount.initialBaseCapital || 400;
       
+      // 1. Inyecciones/Retiros acumulados en Tesorería
       const totalTreasuryInjections = treasuryLog.reduce((acc, item) => {
         return acc + (item.type === 'DEPOSIT' ? item.amount : -item.amount);
       }, 0);
 
-      // SALDO ACTUAL = Capital Base + PnL Trades + Movimientos Tesorería
-      const currentBalance = baseCap + totalPnL + totalTreasuryInjections;
-      const balanceColor = currentBalance >= baseCap ? 'var(--neon-green)' : 'var(--neon-red)';
+      // 2. Capital Base Ajustado por Tesorería (no afectado por PnL de operaciones)
+      const adjustedBaseCapital = initialCapital + totalTreasuryInjections;
 
-      // CÁLCULO DINÁMICO DEL DRAWDOWN MÁXIMO SOBRE EL SALDO ACTUAL
-      const maxLossAmount = currentBalance * (currentAccount.maxDrawdownPct / 100);
+      // 3. PnL Total Acumulado de Trades
+      const totalPnL = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
+
+      // 4. Saldo Actual = Capital Base Ajustado + PnL Trades
+      const currentBalance = adjustedBaseCapital + totalPnL;
+      const balanceColor = currentBalance >= adjustedBaseCapital ? 'var(--neon-green)' : 'var(--neon-red)';
+
+      // 5. CÁLCULO DE DRAWDOWN FIJO: Basado en el Capital Base Ajustado
+      const maxLossAmount = adjustedBaseCapital * (currentAccount.maxDrawdownPct / 100);
 
       const bar = document.getElementById('accBadgeBar');
       bar.innerHTML = `
         <span>OPERADOR: <b>${currentAccount.name}</b></span> | 
         <span>CUENTA #: <b>#${currentAccount.accNumber}</b></span> | 
         <span>INICIO: <b>${currentAccount.startDate || 'N/A'}</b></span> | 
-        <span>CAPITAL BASE: <b>$${baseCap.toFixed(2)}</b></span> | 
+        <span>CAPITAL BASE: <b>$${adjustedBaseCapital.toFixed(2)}</b></span> | 
         <span class="highlight-balance">
           <span class="stat-label">SALDO ACTUAL:</span>
           <span class="stat-value" style="color:${balanceColor};">$${currentBalance.toFixed(2)}</span>
@@ -1430,34 +1436,39 @@
 
     function renderTradingPlanData() {
       if (!currentAccount) return;
-      const baseCap = currentAccount.initialBaseCapital || 400;
-      const totalPnL = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
+      const initialCapital = currentAccount.initialBaseCapital || 400;
       const totalTreasuryInjections = treasuryLog.reduce((acc, item) => {
         return acc + (item.type === 'DEPOSIT' ? item.amount : -item.amount);
       }, 0);
 
-      const activeCap = baseCap + totalPnL + totalTreasuryInjections;
+      const adjustedBaseCapital = initialCapital + totalTreasuryInjections;
+      const totalPnL = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
+      const activeCap = adjustedBaseCapital + totalPnL;
 
       const r1 = activeCap * 0.01;
       const r2 = activeCap * 0.02;
       const target2R = r1 * 2;
 
-      document.getElementById('planLiveCapLabel').textContent = `CAPITAL OPERATIVO: $${activeCap.toFixed(2)}`;
+      document.getElementById('planLiveCapLabel').textContent = `CAPITAL BASE AJUSTADO: $${adjustedBaseCapital.toFixed(2)}`;
       document.getElementById('planRisk1Pct').textContent = `$${r1.toFixed(2)}`;
       document.getElementById('planRisk2Pct').textContent = `$${r2.toFixed(2)}`;
       document.getElementById('planTarget2R').textContent = `+$${target2R.toFixed(2)}`;
     }
 
+    // VERIFICACIÓN DE LIQUIDACIÓN REVISADA
     function checkAccountBreach(totalPnL) {
       if (!currentAccount) return false;
-      const baseCap = currentAccount.initialBaseCapital || 400;
+      const initialCapital = currentAccount.initialBaseCapital || 400;
       const totalTreasuryInjections = treasuryLog.reduce((acc, item) => {
         return acc + (item.type === 'DEPOSIT' ? item.amount : -item.amount);
       }, 0);
 
-      const currentBalance = baseCap + totalPnL + totalTreasuryInjections;
-      const maxLossAmount = currentBalance * (currentAccount.maxDrawdownPct / 100);
-      const minBalanceLimit = currentBalance - maxLossAmount;
+      const adjustedBaseCapital = initialCapital + totalTreasuryInjections;
+      const currentBalance = adjustedBaseCapital + totalPnL;
+
+      // Drawdown MÁXIMO en USD fijado sobre el Capital Base
+      const maxLossAmount = adjustedBaseCapital * (currentAccount.maxDrawdownPct / 100);
+      const minBalanceLimit = adjustedBaseCapital - maxLossAmount;
 
       if (currentBalance <= minBalanceLimit || totalPnL <= -maxLossAmount) {
         currentAccount.isFailed = true;
@@ -1466,10 +1477,10 @@
         const details = document.getElementById('failedDetails');
         details.innerHTML = `
           <p><b>Operador:</b> ${currentAccount.name} (#${currentAccount.accNumber})</p>
-          <p><b>Capital Inicial:</b> $${baseCap.toFixed(2)}</p>
+          <p><b>Capital Base Ajustado:</b> $${adjustedBaseCapital.toFixed(2)}</p>
           <p><b>Saldo al Fallar:</b> $${currentBalance.toFixed(2)}</p>
-          <p><b>Límite Drawdown (${currentAccount.maxDrawdownPct}%):</b> -$${maxLossAmount.toFixed(2)}</p>
-          <p><b>Pérdida Acumulada:</b> <span style="color:var(--neon-red); font-weight:bold;">-$${Math.abs(totalPnL).toFixed(2)}</span></p>
+          <p><b>Límite Fijo de Drawdown (${currentAccount.maxDrawdownPct}%):</b> -$${maxLossAmount.toFixed(2)}</p>
+          <p><b>Pérdida Acumulada Operativa:</b> <span style="color:var(--neon-red); font-weight:bold;">-$${Math.abs(totalPnL).toFixed(2)}</span></p>
         `;
 
         document.getElementById('accountFailedModal').style.display = 'flex';
@@ -1633,16 +1644,20 @@
       if (!tbody) return;
       tbody.innerHTML = '';
 
-      const baseCap = (currentAccount && currentAccount.initialBaseCapital) ? currentAccount.initialBaseCapital : 400;
+      const initialCapital = (currentAccount && currentAccount.initialBaseCapital) ? currentAccount.initialBaseCapital : 400;
+      let accumInjections = 0;
 
       treasuryLog.forEach((item, idx) => {
+        accumInjections += (item.type === 'DEPOSIT' ? item.amount : -item.amount);
+        const adjustedBase = initialCapital + accumInjections;
+
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${item.date}</td>
           <td><b style="color:${item.type === 'DEPOSIT' ? 'var(--neon-green)' : 'var(--neon-red)'}">${item.type === 'DEPOSIT' ? 'DEPÓSITO' : 'RETIRO'}</b></td>
           <td class="${item.type === 'DEPOSIT' ? 'val-pos' : 'val-neg'}">${item.type === 'DEPOSIT' ? '+$' : '-$'}${item.amount.toFixed(2)}</td>
           <td>${item.note}</td>
-          <td>$${baseCap.toFixed(2)}</td>
+          <td style="color:var(--neon-blue); font-weight:bold;">$${adjustedBase.toFixed(2)}</td>
           <td><button class="btn btn-red" style="padding: 2px 6px; font-size: 9px;" onclick="deleteTreasuryItem(${idx})">X</button></td>
         `;
         tbody.appendChild(row);
@@ -1716,8 +1731,13 @@
       let grossProfit = 0;
       let grossLoss = 0;
 
-      const baseCap = (currentAccount && currentAccount.initialBaseCapital) ? currentAccount.initialBaseCapital : 400;
-      let peakBalance = baseCap;
+      const initialCapital = (currentAccount && currentAccount.initialBaseCapital) ? currentAccount.initialBaseCapital : 400;
+      const totalTreasuryInjections = treasuryLog.reduce((acc, item) => {
+        return acc + (item.type === 'DEPOSIT' ? item.amount : -item.amount);
+      }, 0);
+      const adjustedBaseCapital = initialCapital + totalTreasuryInjections;
+
+      let peakBalance = adjustedBaseCapital;
       let maxDrawdown = 0;
 
       trades.forEach((t, idx) => {
@@ -1730,7 +1750,7 @@
           grossLoss += Math.abs(t.pnl);
         }
 
-        let currentCap = baseCap + accumPnL;
+        let currentCap = adjustedBaseCapital + accumPnL;
         if (currentCap > peakBalance) peakBalance = currentCap;
         let dd = peakBalance - currentCap;
         if (dd > maxDrawdown) maxDrawdown = dd;
@@ -1747,7 +1767,7 @@
           <td>${t.closePrice}</td>
           <td><span class="badge-dir ${t.direction === 'BUY' ? 'badge-buy' : 'badge-sell'}">${t.direction}</span></td>
           <td>${t.leverage}</td>
-          <td>$${baseCap.toFixed(2)}</td>
+          <td>$${adjustedBaseCapital.toFixed(2)}</td>
           <td>${t.commission ? '$' + t.commission.toFixed(2) : '-'}</td>
           <td class="${t.pnl >= 0 ? 'val-pos' : 'val-neg'}">${t.pnl >= 0 ? '+$' + t.pnl.toFixed(2) : '-$' + Math.abs(t.pnl).toFixed(2)}</td>
           <td>$${t.risk.toFixed(2)}</td>
@@ -1775,7 +1795,6 @@
       document.getElementById('kpiAvgWinLoss').textContent = `$${avgWin.toFixed(1)} / $${avgLoss.toFixed(1)}`;
       document.getElementById('kpiMaxDrawdown').textContent = `-$${maxDrawdown.toFixed(2)}`;
 
-      // CÁLCULO DE XP Y NIVEL SINCRO EN EL DASHBOARD PRINCIPAL
       let currentXp = Math.max(0, Math.round(accumPnL * 5));
       document.getElementById('txtXp').textContent = `${currentXp} XP`;
 
@@ -1783,7 +1802,6 @@
       let pct = ((currentXp - lvl.minXp) / (lvl.maxXp - lvl.minXp + 1)) * 100;
       let clampedPct = Math.min(100, Math.max(0, pct));
 
-      // ACTUALIZACIÓN DE BARRA DE XP Y DATOS DE NIVEL EN LA BITÁCORA
       const barXp = document.getElementById('barXp');
       if (barXp) barXp.style.width = clampedPct + '%';
 
@@ -2018,7 +2036,12 @@
 
       const pnl = parseFloat(document.getElementById('inpPnl').value);
       const risk = parseFloat(document.getElementById('inpRisk').value);
-      const baseCap = (currentAccount && currentAccount.initialBaseCapital) ? currentAccount.initialBaseCapital : 400;
+      
+      const initialCapital = (currentAccount && currentAccount.initialBaseCapital) ? currentAccount.initialBaseCapital : 400;
+      const totalTreasuryInjections = treasuryLog.reduce((acc, item) => {
+        return acc + (item.type === 'DEPOSIT' ? item.amount : -item.amount);
+      }, 0);
+      const adjustedBaseCapital = initialCapital + totalTreasuryInjections;
 
       trades.push({
         id: trades.length + 1,
@@ -2030,12 +2053,12 @@
         closePrice: parseFloat(document.getElementById('inpClosePrice').value),
         direction: document.getElementById('inpDirection').value,
         leverage: parseInt(document.getElementById('inpLeverage').value),
-        capital: baseCap,
+        capital: adjustedBaseCapital,
         commission: parseFloat(document.getElementById('inpCommission').value) || 0,
         pnl: pnl,
         risk: risk,
         rMultiple: (pnl / risk).toFixed(2) + 'R',
-        pctCt: ((pnl / baseCap) * 100),
+        pctCt: ((pnl / adjustedBaseCapital) * 100),
         quality: calculatedQualityScore
       });
 
