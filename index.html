@@ -402,7 +402,6 @@
     .risk-table { width: 100%; margin-top: 10px; font-size: 11px; }
     .risk-table th { background: #0A0E17; color: var(--neon-orange); }
 
-    /* ESTILOS DE MÓDULO DE ANALÍTICA AVANZADA Y TESORERÍA */
     .reflection-box {
       background: #080A10;
       border: 1px solid var(--neon-blue);
@@ -753,7 +752,7 @@
             <p id="anHighQualityPnL" style="font-size:18px; font-weight:bold; color:var(--neon-green); font-family:'Orbitron';">$0.00</p>
           </div>
           <div style="background:#080A10; padding:12px; border-radius:4px; border-left:3px solid var(--neon-red);">
-            <span style="font-size:10px; color:var(--text-muted);">PNL TRADES REGLAS ROTAS (<80%)</span>
+            <span style="font-size:10px; color:var(--text-muted);">PNL TRADES REGLAS ROTAS (&lt;80%)</span>
             <p id="anLowQualityPnL" style="font-size:18px; font-weight:bold; color:var(--neon-red); font-family:'Orbitron';">$0.00</p>
           </div>
         </div>
@@ -1497,7 +1496,6 @@
       }
     };
 
-    /* NUEVO MÓDULO DE ANALÍTICA AVANZADA MEJORADO */
     function renderAnalytics() {
       if (trades.length === 0) return;
 
@@ -1529,11 +1527,9 @@
         if (t.direction === 'BUY') longsCount++;
         else shortsCount++;
 
-        // Frecuencia por par
         const sym = t.symbol.toUpperCase();
         symbolMap[sym] = (symbolMap[sym] || 0) + 1;
 
-        // Trade más rentable
         if (!bestTrade || t.pnl > bestTrade.pnl) {
           bestTrade = t;
         }
@@ -1542,7 +1538,6 @@
       const totalTradesCount = trades.length;
       const avgQuality = totalQuality / totalTradesCount;
 
-      // 1. MEJOR TRADE (OPERATIVA MÁS RENTABLE)
       if (bestTrade) {
         const bestPnL = bestTrade.pnl;
         document.getElementById('anBestTradePnL').textContent = (bestPnL >= 0 ? '+$' : '-$') + Math.abs(bestPnL).toFixed(2);
@@ -1550,20 +1545,17 @@
         document.getElementById('anBestTradeMeta').textContent = `${bestTrade.symbol} | ${bestTrade.direction} | ${bestTrade.openTime.split(' ')[0]} (${bestTrade.quality.toFixed(0)}% Calidad)`;
       }
 
-      // 2. SHORTS VS LONGS (CANTIDAD Y PORCENTAJES)
       const shortsPct = ((shortsCount / totalTradesCount) * 100).toFixed(0);
       const longsPct = ((longsCount / totalTradesCount) * 100).toFixed(0);
       document.getElementById('anShortsVsLongsCount').textContent = `${shortsCount} S / ${longsCount} L`;
       document.getElementById('anShortsVsLongsPct').textContent = `(${shortsPct}% Shorts / ${longsPct}% Longs)`;
 
-      // 3. ESTADÍSTICAS DE CALIDAD
       document.getElementById('anAvgQuality').textContent = `${avgQuality.toFixed(1)}%`;
       document.getElementById('anQualityBreakdown').textContent = `Alta (100%): ${highQualityCount} | Media (50-83%): ${midQualityCount} | Baja (<50%): ${lowQualityCount}`;
 
       document.getElementById('anHighQualityPnL').textContent = (highQualityPnL >= 0 ? '+$' : '-$') + Math.abs(highQualityPnL).toFixed(2);
       document.getElementById('anLowQualityPnL').textContent = (lowQualityPnL >= 0 ? '+$' : '-$') + Math.abs(lowQualityPnL).toFixed(2);
 
-      // 4. PAR MÁS TRADEADO Y GRÁFICO
       let mostTradedSym = "N/A";
       let maxCount = 0;
       Object.keys(symbolMap).forEach(s => {
@@ -1576,10 +1568,8 @@
       document.getElementById('anMostTradedSymbol').textContent = mostTradedSym;
       document.getElementById('anMostTradedCount').textContent = `${maxCount} Operaciones (${((maxCount / totalTradesCount) * 100).toFixed(0)}% del Total)`;
 
-      // Actualizar Chart de Pares
       updateSymbolChart(symbolMap);
 
-      // 5. REFLEXIONES INTERACTIVAS
       const reflectionsContainer = document.getElementById('analyticsReflectionList');
       reflectionsContainer.innerHTML = '';
 
@@ -1990,45 +1980,62 @@
         formattedOpenTime = new Date().toLocaleString();
       }
 
-      const pnl = parseFloat(document.getElementById('inpPnl').value);
+      const symbol = document.getElementById('inpSymbol').value.toUpperCase();
+      const direction = document.getElementById('inpDirection').value;
+      const amount = parseFloat(document.getElementById('inpAmount').value);
+      const leverage = parseFloat(document.getElementById('inpLeverage').value);
+      const entryPrice = parseFloat(document.getElementById('inpEntryPrice').value);
+      const closePrice = parseFloat(document.getElementById('inpClosePrice').value);
+      const commission = parseFloat(document.getElementById('inpCommission').value) || 0;
       const risk = parseFloat(document.getElementById('inpRisk').value);
-      const capital = currentAccount ? currentAccount.baseCapital : 400;
+      const pnl = parseFloat(document.getElementById('inpPnl').value);
 
-      trades.push({
+      const marginCapital = (entryPrice * amount) / leverage;
+      const rMultipleStr = risk > 0 ? (pnl / risk).toFixed(2) + 'R' : '0.00R';
+
+      const prevAccumPnL = trades.reduce((acc, t) => acc + t.pnl, 0);
+      const currentBalance = (currentAccount ? currentAccount.baseCapital : 400) + prevAccumPnL;
+      const pctCt = currentBalance > 0 ? (pnl / currentBalance) * 100 : 0;
+
+      const newTrade = {
         id: trades.length + 1,
-        symbol: document.getElementById('inpSymbol').value,
-        amount: parseFloat(document.getElementById('inpAmount').value),
         openTime: formattedOpenTime,
-        closeTime: formattedOpenTime,
-        entryPrice: parseFloat(document.getElementById('inpEntryPrice').value),
-        closePrice: parseFloat(document.getElementById('inpClosePrice').value),
-        direction: document.getElementById('inpDirection').value,
-        leverage: parseInt(document.getElementById('inpLeverage').value),
-        capital: capital,
-        commission: parseFloat(document.getElementById('inpCommission').value) || 0,
-        pnl: pnl,
+        symbol: symbol,
+        direction: direction,
+        amount: amount,
+        leverage: leverage,
+        entryPrice: entryPrice,
+        closePrice: closePrice,
+        commission: commission,
         risk: risk,
-        rMultiple: (pnl / risk).toFixed(2) + 'R',
-        pctCt: ((pnl / capital) * 100),
-        quality: calculatedQualityScore
-      });
+        pnl: pnl,
+        capital: marginCapital,
+        rMultiple: rMultipleStr,
+        quality: calculatedQualityScore,
+        pctCt: pctCt
+      };
 
+      trades.push(newTrade);
       await syncToCloud();
 
-      document.getElementById('frmTrade').reset();
+      const panel = document.getElementById('tradeFormPanel');
+      panel.classList.add('form-disabled-panel');
       document.querySelectorAll('.chk-box').forEach(cb => cb.checked = false);
-      document.getElementById('tradeFormPanel').classList.add('form-disabled-panel');
       updateQualityScore();
-      autoCalculatePnL();
+
+      document.getElementById('frmTrade').reset();
       setCurrentDateTimeInput();
     };
 
     window.exportJSON = function() {
-      const dataToExport = { account: currentAccount, trades: trades, treasuryLog: treasuryLog };
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport));
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+        account: currentAccount,
+        trades: trades,
+        treasuryLog: treasuryLog
+      }, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `QuantQuest_Cloud_Backup.json`);
+      downloadAnchor.setAttribute("download", `QuantQuest_Backup_${new Date().toISOString().slice(0, 10)}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
