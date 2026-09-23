@@ -229,12 +229,6 @@
       border-color: var(--neon-green);
       box-shadow: 0 0 8px rgba(0, 230, 118, 0.3);
     }
-    .form-field input:read-only {
-      background: #121824;
-      color: var(--text-muted);
-      cursor: not-allowed;
-      border-color: #1A2234;
-    }
 
     .btn {
       background: var(--neon-green);
@@ -408,6 +402,7 @@
     .risk-table { width: 100%; margin-top: 10px; font-size: 11px; }
     .risk-table th { background: #0A0E17; color: var(--neon-orange); }
 
+    /* ESTILOS DE MÓDULO DE ANALÍTICA AVANZADA Y TESORERÍA */
     .reflection-box {
       background: #080A10;
       border: 1px solid var(--neon-blue);
@@ -560,7 +555,7 @@
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('journal')">📊 BITÁCORA</button>
     <button class="tab-btn" onclick="switchTab('analytics')" style="border-color: var(--neon-blue); color: var(--neon-blue);">💡 ANALÍTICA Y REFLEXIONES</button>
-    <button class="tab-btn" onclick="switchTab('treasury')" style="border-color: var(--neon-green); color: var(--neon-blue);">💰 SALDOS Y DEPÓSITOS</button>
+    <button class="tab-btn" onclick="switchTab('treasury')" style="border-color: var(--neon-green); color: var(--neon-green);">💰 SALDOS Y DEPÓSITOS</button>
     <button class="tab-btn" onclick="switchTab('investment')">📈 MODELO CRECIMIENTO</button>
     <button class="tab-btn" onclick="switchTab('character')">⚔️ CHARACTER XP</button>
     <button class="tab-btn" onclick="switchTab('plan')" style="border-color: var(--neon-purple); color: var(--neon-purple);">📜 TRADING PLAN</button>
@@ -707,33 +702,42 @@
   <div id="tab-analytics" class="tab-content">
     <div class="card-title" style="margin-bottom: 15px;">💡 DIAGNÓSTICO CUANTITATIVO, PARES Y EJECUCIÓN</div>
 
+    <!-- FILA DE TARJETAS DE ESTADÍSTICAS SOLICITADAS -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px;">
+      
+      <!-- OPERATIVA MÁS RENTABLE (BEST TRADE) -->
       <div class="card" style="border-color: var(--neon-green);">
         <div class="card-title">🚀 OPERATIVA MÁS RENTABLE</div>
         <p id="anBestTradePnL" style="font-size: 22px; font-weight: bold; color: var(--neon-green); font-family: 'Orbitron';">+$0.00</p>
         <div id="anBestTradeMeta" style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">Sin trades registrados</div>
       </div>
 
+      <!-- SHORTS VS LONGS (CANTIDAD Y %) -->
       <div class="card">
         <div class="card-title">⚖️ SHORTS VS LONGS</div>
         <p id="anShortsVsLongsCount" style="font-size: 18px; font-weight: bold; color: var(--text-main); font-family: 'Orbitron';">0 S / 0 L</p>
         <div id="anShortsVsLongsPct" style="font-size: 10px; color: var(--neon-blue); margin-top: 6px;">(0% Shorts / 0% Longs)</div>
       </div>
 
+      <!-- ESTADÍSTICA DE CALIDAD DEL CHECKLIST -->
       <div class="card">
         <div class="card-title">🎯 CALIDAD PROMEDIO CHECKLIST</div>
         <p id="anAvgQuality" style="font-size: 22px; font-weight: bold; color: var(--neon-blue); font-family: 'Orbitron';">0.0%</p>
         <div id="anQualityBreakdown" style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">Alta: 0 | Media: 0 | Baja: 0</div>
       </div>
 
+      <!-- PAR MÁS TRADEADO -->
       <div class="card">
         <div class="card-title">🔥 PAR MÁS TRADEADO</div>
         <p id="anMostTradedSymbol" style="font-size: 20px; font-weight: bold; color: var(--neon-orange); font-family: 'Orbitron';">N/A</p>
         <div id="anMostTradedCount" style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">0 Operaciones</div>
       </div>
+
     </div>
 
+    <!-- GRÁFICO DE VOLUMEN POR PAR & REFLEXIONES -->
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+      
       <div class="card">
         <div class="card-title">VOLUMEN DE OPERACIONES POR PAR</div>
         <div class="chart-box" style="height: 220px;">
@@ -754,8 +758,10 @@
           </div>
         </div>
       </div>
+
     </div>
 
+    <!-- CARDS DE REFLEXIONES Y RECOMENDACIONES TÁCTICAS -->
     <div class="checklist-container">
       <div class="card-title">
         <span>🧠 REFLEXIONES AUTOMÁTICAS DEL ALGORITMO QUANTQUEST</span>
@@ -779,10 +785,6 @@
       
       <form id="frmTreasury" onsubmit="handleTreasurySubmit(event)" style="margin-top:15px;">
         <div class="form-grid">
-          <div class="form-field">
-            <label>Fecha / Hora del Movimiento</label>
-            <input type="datetime-local" id="inpTreasuryTime" required>
-          </div>
           <div class="form-field">
             <label>Tipo de Movimiento</label>
             <select id="inpTreasuryType">
@@ -814,7 +816,8 @@
             <th>TIPO</th>
             <th>MONTO ($)</th>
             <th>NOTAS / ORIGEN</th>
-            <th>CAPITAL BASE AJUSTADO</th>
+            <th>CAPITAL BASE ANTERIOR</th>
+            <th>NUEVO CAPITAL BASE</th>
             <th>ACCIÓN</th>
           </tr>
         </thead>
@@ -825,6 +828,7 @@
 
   <!-- TAB 4: MODELO DE INVERSIÓN -->
   <div id="tab-investment" class="tab-content">
+    
     <div class="tip-banner">
       <div class="tip-icon">💡</div>
       <div class="tip-body">
@@ -841,7 +845,7 @@
       <div class="form-grid" style="align-items: flex-end;">
         <div class="form-field">
           <label>Capital Base Inicial ($)</label>
-          <input type="number" id="cfgBaseCap" value="400" readonly title="Monto fijo registrado al crear la cuenta">
+          <input type="number" id="cfgBaseCap" value="400" step="any" oninput="renderInvestmentModel()">
         </div>
         <div class="form-field">
           <label>Aporte Mensual ($)</label>
@@ -924,6 +928,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
   <!-- TAB 5: CHARACTER XP -->
@@ -981,6 +986,7 @@
 
   <!-- TAB 6: TRADING PLAN & RULES -->
   <div id="tab-plan" class="tab-content">
+    
     <div class="animated-reminder">
       <div style="display: flex; align-items: center; gap: 15px;">
         <span style="font-size: 28px;">⚡</span>
@@ -996,7 +1002,7 @@
     <div class="checklist-container">
       <div class="card-title">
         <span>1. PARÁMETROS FINANCIEROS DINÁMICOS EN TIEMPO REAL</span>
-        <span style="color:var(--neon-green); font-weight:bold;" id="planLiveCapLabel">CAPITAL BASE AJUSTADO: $0.00</span>
+        <span style="color:var(--neon-green); font-weight:bold;" id="planLiveCapLabel">CAPITAL OPERATIVO: $0.00</span>
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
@@ -1200,8 +1206,8 @@
             const cfgTarget = document.getElementById('cfgTargetPct');
             const cfgDuration = document.getElementById('cfgDurationMonths');
 
-            if (cfgBase) {
-              cfgBase.value = currentAccount.initialBaseCapital || 400;
+            if (cfgBase && (!cfgBase.value || cfgBase.dataset.userEdited !== "true")) {
+              cfgBase.value = currentAccount.baseCapital;
             }
             if (cfgContrib && (!cfgContrib.value || cfgContrib.dataset.userEdited !== "true")) {
               cfgContrib.value = currentAccount.monthlyContrib || 200;
@@ -1247,13 +1253,18 @@
     window.saveSimulatorParams = async function() {
       if (!currentAccount) return;
 
+      const baseCap = parseFloat(document.getElementById('cfgBaseCap').value) || 0;
       const monthlyContrib = parseFloat(document.getElementById('cfgMonthlyContrib').value) || 0;
       const targetPct = parseFloat(document.getElementById('cfgTargetPct').value) || 0;
       const durationMonths = parseInt(document.getElementById('cfgDurationMonths').value) || 18;
 
+      currentAccount.baseCapital = baseCap;
       currentAccount.monthlyContrib = monthlyContrib;
       currentAccount.targetPct = targetPct;
       currentAccount.durationMonths = durationMonths;
+
+      currentAccount.maxLossAmount = baseCap * (currentAccount.maxDrawdownPct / 100);
+      currentAccount.minBalanceLimit = baseCap - currentAccount.maxLossAmount;
 
       const btn = document.getElementById('btnSaveSimParams');
       const originalText = btn.textContent;
@@ -1282,7 +1293,7 @@
       rotateInvestmentTips();
       rotatePlanReminders();
 
-      ['cfgMonthlyContrib', 'cfgTargetPct', 'cfgDurationMonths'].forEach(id => {
+      ['cfgBaseCap', 'cfgMonthlyContrib', 'cfgTargetPct', 'cfgDurationMonths'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
           el.addEventListener('input', (e) => { e.target.dataset.userEdited = "true"; });
@@ -1323,13 +1334,7 @@
     function setCurrentDateTimeInput() {
       const now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-      const formattedNow = now.toISOString().slice(0, 16);
-      
-      const inpTrade = document.getElementById('inpOpenTime');
-      if (inpTrade) inpTrade.value = formattedNow;
-
-      const inpTreasury = document.getElementById('inpTreasuryTime');
-      if (inpTreasury) inpTreasury.value = formattedNow;
+      document.getElementById('inpOpenTime').value = now.toISOString().slice(0, 16);
     }
 
     window.autoCalculatePnL = function() {
@@ -1381,11 +1386,13 @@
       currentAccount = {
         name: name,
         accNumber: accNumber,
-        initialBaseCapital: capital,
+        baseCapital: capital,
         monthlyContrib: contrib,
         targetPct: targetPct,
         durationMonths: 18,
         maxDrawdownPct: drawdownPct,
+        maxLossAmount: capital * (drawdownPct / 100),
+        minBalanceLimit: capital - (capital * (drawdownPct / 100)),
         startDate: startDate,
         isFailed: false
       };
@@ -1396,91 +1403,56 @@
       document.getElementById('accountSetupModal').style.display = 'none';
     };
 
-    // FUNCIÓN CORE REVISADA: Lógica de Capital Base Ajustado y Drawdown Fijo
     function renderAccountInfo() {
       if (!currentAccount) return;
       
-      const initialCapital = currentAccount.initialBaseCapital || 400;
-      
-      // 1. Inyecciones/Retiros acumulados en Tesorería
-      const totalTreasuryInjections = treasuryLog.reduce((acc, item) => {
-        return acc + (item.type === 'DEPOSIT' ? item.amount : -item.amount);
-      }, 0);
-
-      // 2. Capital Base Ajustado por Tesorería (no afectado por PnL de operaciones)
-      const adjustedBaseCapital = initialCapital + totalTreasuryInjections;
-
-      // 3. PnL Total Acumulado de Trades
       const totalPnL = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
-
-      // 4. Saldo Actual = Capital Base Ajustado + PnL Trades
-      const currentBalance = adjustedBaseCapital + totalPnL;
-      const balanceColor = currentBalance >= adjustedBaseCapital ? 'var(--neon-green)' : 'var(--neon-red)';
-
-      // 5. CÁLCULO DE DRAWDOWN FIJO: Basado en el Capital Base Ajustado
-      const maxLossAmount = adjustedBaseCapital * (currentAccount.maxDrawdownPct / 100);
+      const currentBalance = currentAccount.baseCapital + totalPnL;
+      const balanceColor = currentBalance >= currentAccount.baseCapital ? 'var(--neon-green)' : 'var(--neon-red)';
 
       const bar = document.getElementById('accBadgeBar');
       bar.innerHTML = `
         <span>OPERADOR: <b>${currentAccount.name}</b></span> | 
         <span>CUENTA #: <b>#${currentAccount.accNumber}</b></span> | 
         <span>INICIO: <b>${currentAccount.startDate || 'N/A'}</b></span> | 
-        <span>CAPITAL BASE: <b>$${adjustedBaseCapital.toFixed(2)}</b></span> | 
+        <span>CAPITAL BASE: <b>$${currentAccount.baseCapital.toFixed(2)}</b></span> | 
         <span class="highlight-balance">
           <span class="stat-label">SALDO ACTUAL:</span>
           <span class="stat-value" style="color:${balanceColor};">$${currentBalance.toFixed(2)}</span>
         </span> | 
-        <span>DRAWDOWN MÁX: <b style="color:var(--neon-red);">${currentAccount.maxDrawdownPct}% ($${maxLossAmount.toFixed(2)})</b></span>
+        <span>DRAWDOWN MÁX: <b style="color:var(--neon-red);">${currentAccount.maxDrawdownPct}% ($${currentAccount.maxLossAmount.toFixed(2)})</b></span>
       `;
     }
 
     function renderTradingPlanData() {
       if (!currentAccount) return;
-      const initialCapital = currentAccount.initialBaseCapital || 400;
-      const totalTreasuryInjections = treasuryLog.reduce((acc, item) => {
-        return acc + (item.type === 'DEPOSIT' ? item.amount : -item.amount);
-      }, 0);
-
-      const adjustedBaseCapital = initialCapital + totalTreasuryInjections;
       const totalPnL = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
-      const activeCap = adjustedBaseCapital + totalPnL;
+      const activeCap = currentAccount.baseCapital + totalPnL;
 
       const r1 = activeCap * 0.01;
       const r2 = activeCap * 0.02;
       const target2R = r1 * 2;
 
-      document.getElementById('planLiveCapLabel').textContent = `CAPITAL BASE AJUSTADO: $${adjustedBaseCapital.toFixed(2)}`;
+      document.getElementById('planLiveCapLabel').textContent = `CAPITAL OPERATIVO: $${activeCap.toFixed(2)}`;
       document.getElementById('planRisk1Pct').textContent = `$${r1.toFixed(2)}`;
       document.getElementById('planRisk2Pct').textContent = `$${r2.toFixed(2)}`;
       document.getElementById('planTarget2R').textContent = `+$${target2R.toFixed(2)}`;
     }
 
-    // VERIFICACIÓN DE LIQUIDACIÓN REVISADA
     function checkAccountBreach(totalPnL) {
       if (!currentAccount) return false;
-      const initialCapital = currentAccount.initialBaseCapital || 400;
-      const totalTreasuryInjections = treasuryLog.reduce((acc, item) => {
-        return acc + (item.type === 'DEPOSIT' ? item.amount : -item.amount);
-      }, 0);
+      const currentBalance = currentAccount.baseCapital + totalPnL;
 
-      const adjustedBaseCapital = initialCapital + totalTreasuryInjections;
-      const currentBalance = adjustedBaseCapital + totalPnL;
-
-      // Drawdown MÁXIMO en USD fijado sobre el Capital Base
-      const maxLossAmount = adjustedBaseCapital * (currentAccount.maxDrawdownPct / 100);
-      const minBalanceLimit = adjustedBaseCapital - maxLossAmount;
-
-      if (currentBalance <= minBalanceLimit || totalPnL <= -maxLossAmount) {
+      if (currentBalance <= currentAccount.minBalanceLimit || totalPnL <= -currentAccount.maxLossAmount) {
         currentAccount.isFailed = true;
         syncToCloud();
 
         const details = document.getElementById('failedDetails');
         details.innerHTML = `
           <p><b>Operador:</b> ${currentAccount.name} (#${currentAccount.accNumber})</p>
-          <p><b>Capital Base Ajustado:</b> $${adjustedBaseCapital.toFixed(2)}</p>
-          <p><b>Saldo al Fallar:</b> $${currentBalance.toFixed(2)}</p>
-          <p><b>Límite Fijo de Drawdown (${currentAccount.maxDrawdownPct}%):</b> -$${maxLossAmount.toFixed(2)}</p>
-          <p><b>Pérdida Acumulada Operativa:</b> <span style="color:var(--neon-red); font-weight:bold;">-$${Math.abs(totalPnL).toFixed(2)}</span></p>
+          <p><b>Capital Inicial:</b> $${currentAccount.baseCapital.toFixed(2)}</p>
+          <p><b>Límite Drawdown (${currentAccount.maxDrawdownPct}%):</b> -$${currentAccount.maxLossAmount.toFixed(2)}</p>
+          <p><b>Pérdida Acumulada:</b> <span style="color:var(--neon-red); font-weight:bold;">-$${Math.abs(totalPnL).toFixed(2)}</span></p>
         `;
 
         document.getElementById('accountFailedModal').style.display = 'flex';
@@ -1525,7 +1497,7 @@
       }
     };
 
-    /* MÓDULO DE ANALÍTICA AVANZADA */
+    /* NUEVO MÓDULO DE ANALÍTICA AVANZADA MEJORADO */
     function renderAnalytics() {
       if (trades.length === 0) return;
 
@@ -1557,9 +1529,11 @@
         if (t.direction === 'BUY') longsCount++;
         else shortsCount++;
 
+        // Frecuencia por par
         const sym = t.symbol.toUpperCase();
         symbolMap[sym] = (symbolMap[sym] || 0) + 1;
 
+        // Trade más rentable
         if (!bestTrade || t.pnl > bestTrade.pnl) {
           bestTrade = t;
         }
@@ -1568,6 +1542,7 @@
       const totalTradesCount = trades.length;
       const avgQuality = totalQuality / totalTradesCount;
 
+      // 1. MEJOR TRADE (OPERATIVA MÁS RENTABLE)
       if (bestTrade) {
         const bestPnL = bestTrade.pnl;
         document.getElementById('anBestTradePnL').textContent = (bestPnL >= 0 ? '+$' : '-$') + Math.abs(bestPnL).toFixed(2);
@@ -1575,17 +1550,20 @@
         document.getElementById('anBestTradeMeta').textContent = `${bestTrade.symbol} | ${bestTrade.direction} | ${bestTrade.openTime.split(' ')[0]} (${bestTrade.quality.toFixed(0)}% Calidad)`;
       }
 
+      // 2. SHORTS VS LONGS (CANTIDAD Y PORCENTAJES)
       const shortsPct = ((shortsCount / totalTradesCount) * 100).toFixed(0);
       const longsPct = ((longsCount / totalTradesCount) * 100).toFixed(0);
       document.getElementById('anShortsVsLongsCount').textContent = `${shortsCount} S / ${longsCount} L`;
       document.getElementById('anShortsVsLongsPct').textContent = `(${shortsPct}% Shorts / ${longsPct}% Longs)`;
 
+      // 3. ESTADÍSTICAS DE CALIDAD
       document.getElementById('anAvgQuality').textContent = `${avgQuality.toFixed(1)}%`;
       document.getElementById('anQualityBreakdown').textContent = `Alta (100%): ${highQualityCount} | Media (50-83%): ${midQualityCount} | Baja (<50%): ${lowQualityCount}`;
 
       document.getElementById('anHighQualityPnL').textContent = (highQualityPnL >= 0 ? '+$' : '-$') + Math.abs(highQualityPnL).toFixed(2);
       document.getElementById('anLowQualityPnL').textContent = (lowQualityPnL >= 0 ? '+$' : '-$') + Math.abs(lowQualityPnL).toFixed(2);
 
+      // 4. PAR MÁS TRADEADO Y GRÁFICO
       let mostTradedSym = "N/A";
       let maxCount = 0;
       Object.keys(symbolMap).forEach(s => {
@@ -1598,8 +1576,10 @@
       document.getElementById('anMostTradedSymbol').textContent = mostTradedSym;
       document.getElementById('anMostTradedCount').textContent = `${maxCount} Operaciones (${((maxCount / totalTradesCount) * 100).toFixed(0)}% del Total)`;
 
+      // Actualizar Chart de Pares
       updateSymbolChart(symbolMap);
 
+      // 5. REFLEXIONES INTERACTIVAS
       const reflectionsContainer = document.getElementById('analyticsReflectionList');
       reflectionsContainer.innerHTML = '';
 
@@ -1644,20 +1624,15 @@
       if (!tbody) return;
       tbody.innerHTML = '';
 
-      const initialCapital = (currentAccount && currentAccount.initialBaseCapital) ? currentAccount.initialBaseCapital : 400;
-      let accumInjections = 0;
-
       treasuryLog.forEach((item, idx) => {
-        accumInjections += (item.type === 'DEPOSIT' ? item.amount : -item.amount);
-        const adjustedBase = initialCapital + accumInjections;
-
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${item.date}</td>
           <td><b style="color:${item.type === 'DEPOSIT' ? 'var(--neon-green)' : 'var(--neon-red)'}">${item.type === 'DEPOSIT' ? 'DEPÓSITO' : 'RETIRO'}</b></td>
           <td class="${item.type === 'DEPOSIT' ? 'val-pos' : 'val-neg'}">${item.type === 'DEPOSIT' ? '+$' : '-$'}${item.amount.toFixed(2)}</td>
           <td>${item.note}</td>
-          <td style="color:var(--neon-blue); font-weight:bold;">$${adjustedBase.toFixed(2)}</td>
+          <td>$${item.oldBaseCapital.toFixed(2)}</td>
+          <td><b>$${item.newBaseCapital.toFixed(2)}</b></td>
           <td><button class="btn btn-red" style="padding: 2px 6px; font-size: 9px;" onclick="deleteTreasuryItem(${idx})">X</button></td>
         `;
         tbody.appendChild(row);
@@ -1668,16 +1643,6 @@
       e.preventDefault();
       if (!currentAccount) return;
 
-      const rawDateTime = document.getElementById('inpTreasuryTime').value;
-      let formattedTime = "";
-      if (rawDateTime) {
-        const [datePart, timePart] = rawDateTime.split('T');
-        const [year, month, day] = datePart.split('-');
-        formattedTime = `${day}/${month}/${year} ${timePart}`;
-      } else {
-        formattedTime = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString().slice(0, 5);
-      }
-
       const type = document.getElementById('inpTreasuryType').value;
       const amount = parseFloat(document.getElementById('inpTreasuryAmount').value);
       const note = document.getElementById('inpTreasuryNote').value;
@@ -1687,28 +1652,44 @@
         return;
       }
 
+      const oldBaseCapital = currentAccount.baseCapital;
+      let newBaseCapital = oldBaseCapital;
+
+      if (type === 'DEPOSIT') {
+        newBaseCapital += amount;
+      } else {
+        if (amount >= oldBaseCapital) {
+          alert("El monto del retiro no puede superar el Capital Base actual.");
+          return;
+        }
+        newBaseCapital -= amount;
+      }
+
+      currentAccount.baseCapital = newBaseCapital;
+      currentAccount.maxLossAmount = newBaseCapital * (currentAccount.maxDrawdownPct / 100);
+      currentAccount.minBalanceLimit = newBaseCapital - currentAccount.maxLossAmount;
+
       treasuryLog.push({
-        date: formattedTime,
+        date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString().slice(0, 5),
         type: type,
         amount: amount,
-        note: note
+        note: note,
+        oldBaseCapital: oldBaseCapital,
+        newBaseCapital: newBaseCapital
       });
 
       await syncToCloud();
       document.getElementById('frmTreasury').reset();
-      setCurrentDateTimeInput();
       renderAccountInfo();
       renderTreasury();
+      renderInvestmentModel();
       renderTradingPlanData();
     };
 
     window.deleteTreasuryItem = async function(index) {
-      if (confirm("¿Eliminar este registro de tesorería?")) {
+      if (confirm("¿Eliminar este registro de tesorería? Nota: Se recomienda ajustar manualmente el Capital Base si afectó tus fondos.")) {
         treasuryLog.splice(index, 1);
         await syncToCloud();
-        renderAccountInfo();
-        renderTreasury();
-        renderTradingPlanData();
       }
     };
 
@@ -1717,7 +1698,6 @@
         trades.splice(index, 1);
         trades.forEach((t, i) => t.id = i + 1);
         await syncToCloud();
-        renderDashboard();
       }
     };
 
@@ -1730,14 +1710,7 @@
       let lossCount = 0;
       let grossProfit = 0;
       let grossLoss = 0;
-
-      const initialCapital = (currentAccount && currentAccount.initialBaseCapital) ? currentAccount.initialBaseCapital : 400;
-      const totalTreasuryInjections = treasuryLog.reduce((acc, item) => {
-        return acc + (item.type === 'DEPOSIT' ? item.amount : -item.amount);
-      }, 0);
-      const adjustedBaseCapital = initialCapital + totalTreasuryInjections;
-
-      let peakBalance = adjustedBaseCapital;
+      let peakBalance = currentAccount ? currentAccount.baseCapital : 400;
       let maxDrawdown = 0;
 
       trades.forEach((t, idx) => {
@@ -1750,7 +1723,7 @@
           grossLoss += Math.abs(t.pnl);
         }
 
-        let currentCap = adjustedBaseCapital + accumPnL;
+        let currentCap = (currentAccount ? currentAccount.baseCapital : 400) + accumPnL;
         if (currentCap > peakBalance) peakBalance = currentCap;
         let dd = peakBalance - currentCap;
         if (dd > maxDrawdown) maxDrawdown = dd;
@@ -1767,7 +1740,7 @@
           <td>${t.closePrice}</td>
           <td><span class="badge-dir ${t.direction === 'BUY' ? 'badge-buy' : 'badge-sell'}">${t.direction}</span></td>
           <td>${t.leverage}</td>
-          <td>$${adjustedBaseCapital.toFixed(2)}</td>
+          <td>$${t.capital.toFixed(2)}</td>
           <td>${t.commission ? '$' + t.commission.toFixed(2) : '-'}</td>
           <td class="${t.pnl >= 0 ? 'val-pos' : 'val-neg'}">${t.pnl >= 0 ? '+$' + t.pnl.toFixed(2) : '-$' + Math.abs(t.pnl).toFixed(2)}</td>
           <td>$${t.risk.toFixed(2)}</td>
@@ -1797,22 +1770,6 @@
 
       let currentXp = Math.max(0, Math.round(accumPnL * 5));
       document.getElementById('txtXp').textContent = `${currentXp} XP`;
-
-      let lvl = getLevelData(currentXp);
-      let pct = ((currentXp - lvl.minXp) / (lvl.maxXp - lvl.minXp + 1)) * 100;
-      let clampedPct = Math.min(100, Math.max(0, pct));
-
-      const barXp = document.getElementById('barXp');
-      if (barXp) barXp.style.width = clampedPct + '%';
-
-      const txtLvl = document.getElementById('txtLvl');
-      if (txtLvl) txtLvl.textContent = lvl.name;
-
-      const badgeTitle = document.getElementById('badgeTitle');
-      if (badgeTitle) badgeTitle.textContent = lvl.name;
-
-      const sideAvatar = document.getElementById('sideAvatar');
-      if (sideAvatar) sideAvatar.src = lvl.img;
 
       updateCharts(trades);
       updateCharacterTab();
@@ -1878,12 +1835,11 @@
       if (!tbody) return;
       tbody.innerHTML = '';
 
-      const baseCap = (currentAccount && currentAccount.initialBaseCapital) ? currentAccount.initialBaseCapital : 400;
+      const baseCap = parseFloat(document.getElementById('cfgBaseCap').value) || 0;
       const monthlyContrib = parseFloat(document.getElementById('cfgMonthlyContrib').value) || 0;
       const targetPct = parseFloat(document.getElementById('cfgTargetPct').value) || 0;
       const durationMonths = parseInt(document.getElementById('cfgDurationMonths').value) || 12;
 
-      document.getElementById('cfgBaseCap').value = baseCap;
       document.getElementById('thPnlProy').textContent = `PNL PROY. (${targetPct}%)`;
 
       const totalRealPnLAllTime = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
@@ -2036,12 +1992,7 @@
 
       const pnl = parseFloat(document.getElementById('inpPnl').value);
       const risk = parseFloat(document.getElementById('inpRisk').value);
-      
-      const initialCapital = (currentAccount && currentAccount.initialBaseCapital) ? currentAccount.initialBaseCapital : 400;
-      const totalTreasuryInjections = treasuryLog.reduce((acc, item) => {
-        return acc + (item.type === 'DEPOSIT' ? item.amount : -item.amount);
-      }, 0);
-      const adjustedBaseCapital = initialCapital + totalTreasuryInjections;
+      const capital = currentAccount ? currentAccount.baseCapital : 400;
 
       trades.push({
         id: trades.length + 1,
@@ -2053,12 +2004,12 @@
         closePrice: parseFloat(document.getElementById('inpClosePrice').value),
         direction: document.getElementById('inpDirection').value,
         leverage: parseInt(document.getElementById('inpLeverage').value),
-        capital: adjustedBaseCapital,
+        capital: capital,
         commission: parseFloat(document.getElementById('inpCommission').value) || 0,
         pnl: pnl,
         risk: risk,
         rMultiple: (pnl / risk).toFixed(2) + 'R',
-        pctCt: ((pnl / adjustedBaseCapital) * 100),
+        pctCt: ((pnl / capital) * 100),
         quality: calculatedQualityScore
       });
 
