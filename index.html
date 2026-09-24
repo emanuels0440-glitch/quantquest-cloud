@@ -229,6 +229,12 @@
       border-color: var(--neon-green);
       box-shadow: 0 0 8px rgba(0, 230, 118, 0.3);
     }
+    .form-field input:disabled {
+      background: #121620;
+      color: #667085;
+      cursor: not-allowed;
+      border-color: #1E2638;
+    }
 
     .btn {
       background: var(--neon-green);
@@ -251,6 +257,8 @@
     }
     .btn-red { background: var(--neon-red); color: #FFF; }
     .btn-red:hover { background: #D50000; box-shadow: 0 0 15px rgba(255, 23, 68, 0.5); }
+    .btn-purple { background: var(--neon-purple); color: #FFF; }
+    .btn-purple:hover { background: #AA00FF; box-shadow: 0 0 15px rgba(213, 0, 249, 0.5); }
 
     .form-disabled-panel {
       opacity: 0.35;
@@ -547,7 +555,6 @@
     
     <div class="cloud-controls">
       <button class="btn btn-red" onclick="logoutCloud()">🚪 CERRAR SESIÓN</button>
-      <button class="btn" style="background:#333; color:#fff;" onclick="exportJSON()">💾 BACKUP JSON</button>
     </div>
   </header>
 
@@ -697,35 +704,30 @@
     </div>
   </div>
 
-  <!-- TAB 2: MÓDULO ACTUALIZADO DE ANALÍTICA AVANZADA -->
+  <!-- TAB 2: MÓDULO DE ANALÍTICA AVANZADA -->
   <div id="tab-analytics" class="tab-content">
     <div class="card-title" style="margin-bottom: 15px;">💡 DIAGNÓSTICO CUANTITATIVO, PARES Y EJECUCIÓN</div>
 
-    <!-- FILA DE TARJETAS DE ESTADÍSTICAS SOLICITADAS -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px;">
       
-      <!-- OPERATIVA MÁS RENTABLE (BEST TRADE) -->
       <div class="card" style="border-color: var(--neon-green);">
         <div class="card-title">🚀 OPERATIVA MÁS RENTABLE</div>
         <p id="anBestTradePnL" style="font-size: 22px; font-weight: bold; color: var(--neon-green); font-family: 'Orbitron';">+$0.00</p>
         <div id="anBestTradeMeta" style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">Sin trades registrados</div>
       </div>
 
-      <!-- SHORTS VS LONGS (CANTIDAD Y %) -->
       <div class="card">
         <div class="card-title">⚖️ SHORTS VS LONGS</div>
         <p id="anShortsVsLongsCount" style="font-size: 18px; font-weight: bold; color: var(--text-main); font-family: 'Orbitron';">0 S / 0 L</p>
         <div id="anShortsVsLongsPct" style="font-size: 10px; color: var(--neon-blue); margin-top: 6px;">(0% Shorts / 0% Longs)</div>
       </div>
 
-      <!-- ESTADÍSTICA DE CALIDAD DEL CHECKLIST -->
       <div class="card">
         <div class="card-title">🎯 CALIDAD PROMEDIO CHECKLIST</div>
         <p id="anAvgQuality" style="font-size: 22px; font-weight: bold; color: var(--neon-blue); font-family: 'Orbitron';">0.0%</p>
         <div id="anQualityBreakdown" style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">Alta: 0 | Media: 0 | Baja: 0</div>
       </div>
 
-      <!-- PAR MÁS TRADEADO -->
       <div class="card">
         <div class="card-title">🔥 PAR MÁS TRADEADO</div>
         <p id="anMostTradedSymbol" style="font-size: 20px; font-weight: bold; color: var(--neon-orange); font-family: 'Orbitron';">N/A</p>
@@ -734,9 +736,7 @@
 
     </div>
 
-    <!-- GRÁFICO DE VOLUMEN POR PAR & REFLEXIONES -->
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
-      
       <div class="card">
         <div class="card-title">VOLUMEN DE OPERACIONES POR PAR</div>
         <div class="chart-box" style="height: 220px;">
@@ -757,10 +757,8 @@
           </div>
         </div>
       </div>
-
     </div>
 
-    <!-- CARDS DE REFLEXIONES Y RECOMENDACIONES TÁCTICAS -->
     <div class="checklist-container">
       <div class="card-title">
         <span>🧠 REFLEXIONES AUTOMÁTICAS DEL ALGORITMO QUANTQUEST</span>
@@ -785,6 +783,10 @@
       <form id="frmTreasury" onsubmit="handleTreasurySubmit(event)" style="margin-top:15px;">
         <div class="form-grid">
           <div class="form-field">
+            <label>Fecha Registro Depósito / Retiro</label>
+            <input type="date" id="inpTreasuryDate" required>
+          </div>
+          <div class="form-field">
             <label>Tipo de Movimiento</label>
             <select id="inpTreasuryType">
               <option value="DEPOSIT">➕ Depósito / Inyección de Capital Extra</option>
@@ -800,9 +802,15 @@
             <input type="text" id="inpTreasuryNote" placeholder="Ej. Aporte extra por bono laboral" required>
           </div>
         </div>
-        <button type="submit" class="btn" style="margin-top:15px; width:100%;">
-          🔄 REGISTRAR MOVIMIENTO Y RECUPERAR LÍMITES DE RIESGO
-        </button>
+        
+        <div style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+          <button type="submit" class="btn" style="flex: 2;">
+            🔄 REGISTRAR MOVIMIENTO Y RECUPERAR LÍMITES DE RIESGO
+          </button>
+          <button type="button" class="btn btn-purple" onclick="capitalizePnL()" style="flex: 1; white-space: nowrap;">
+            ✨ CAPITALIZAR PNL EN CAPITAL BASE
+          </button>
+        </div>
       </form>
     </div>
 
@@ -843,8 +851,8 @@
       </div>
       <div class="form-grid" style="align-items: flex-end;">
         <div class="form-field">
-          <label>Capital Base Inicial ($)</label>
-          <input type="number" id="cfgBaseCap" value="400" step="any" oninput="renderInvestmentModel()">
+          <label>Capital Base Inicial ($) [🔒 ANCLADO]</label>
+          <input type="number" id="cfgBaseCap" value="400" step="any" disabled title="El Capital Base inicial está anclado a 400 por los datos base de QuantQuest.">
         </div>
         <div class="form-field">
           <label>Aporte Mensual ($)</label>
@@ -869,7 +877,7 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
       <div class="card">
         <div class="card-title">Base Inicial Cuenta</div>
-        <p id="lblModelBaseCap" style="font-size: 22px; font-weight: bold; color: var(--neon-orange); font-family: 'Orbitron';">$0.00</p>
+        <p id="lblModelBaseCap" style="font-size: 22px; font-weight: bold; color: var(--neon-orange); font-family: 'Orbitron';">$400.00</p>
       </div>
       <div class="card">
         <div class="card-title">Aporte Mensual Config.</div>
@@ -1205,8 +1213,8 @@
             const cfgTarget = document.getElementById('cfgTargetPct');
             const cfgDuration = document.getElementById('cfgDurationMonths');
 
-            if (cfgBase && (!cfgBase.value || cfgBase.dataset.userEdited !== "true")) {
-              cfgBase.value = currentAccount.baseCapital;
+            if (cfgBase) {
+              cfgBase.value = 400; // Capital Base inicial anclado a 400 siempre
             }
             if (cfgContrib && (!cfgContrib.value || cfgContrib.dataset.userEdited !== "true")) {
               cfgContrib.value = currentAccount.monthlyContrib || 200;
@@ -1236,6 +1244,9 @@
       const today = new Date().toISOString().slice(0, 10);
       const startInp = document.getElementById('setupStartDate');
       if (startInp && !startInp.value) startInp.value = today;
+      
+      const treasuryDateInp = document.getElementById('inpTreasuryDate');
+      if (treasuryDateInp && !treasuryDateInp.value) treasuryDateInp.value = today;
     }
 
     async function syncToCloud() {
@@ -1252,18 +1263,13 @@
     window.saveSimulatorParams = async function() {
       if (!currentAccount) return;
 
-      const baseCap = parseFloat(document.getElementById('cfgBaseCap').value) || 0;
       const monthlyContrib = parseFloat(document.getElementById('cfgMonthlyContrib').value) || 0;
       const targetPct = parseFloat(document.getElementById('cfgTargetPct').value) || 0;
       const durationMonths = parseInt(document.getElementById('cfgDurationMonths').value) || 18;
 
-      currentAccount.baseCapital = baseCap;
       currentAccount.monthlyContrib = monthlyContrib;
       currentAccount.targetPct = targetPct;
       currentAccount.durationMonths = durationMonths;
-
-      currentAccount.maxLossAmount = baseCap * (currentAccount.maxDrawdownPct / 100);
-      currentAccount.minBalanceLimit = baseCap - currentAccount.maxLossAmount;
 
       const btn = document.getElementById('btnSaveSimParams');
       const originalText = btn.textContent;
@@ -1292,7 +1298,7 @@
       rotateInvestmentTips();
       rotatePlanReminders();
 
-      ['cfgBaseCap', 'cfgMonthlyContrib', 'cfgTargetPct', 'cfgDurationMonths'].forEach(id => {
+      ['cfgMonthlyContrib', 'cfgTargetPct', 'cfgDurationMonths'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
           el.addEventListener('input', (e) => { e.target.dataset.userEdited = "true"; });
@@ -1334,6 +1340,10 @@
       const now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
       document.getElementById('inpOpenTime').value = now.toISOString().slice(0, 16);
+      
+      const dateOnly = now.toISOString().slice(0, 10);
+      const treasuryDateInp = document.getElementById('inpTreasuryDate');
+      if (treasuryDateInp) treasuryDateInp.value = dateOnly;
     }
 
     window.autoCalculatePnL = function() {
@@ -1633,6 +1643,7 @@
       e.preventDefault();
       if (!currentAccount) return;
 
+      const customDate = document.getElementById('inpTreasuryDate').value;
       const type = document.getElementById('inpTreasuryType').value;
       const amount = parseFloat(document.getElementById('inpTreasuryAmount').value);
       const note = document.getElementById('inpTreasuryNote').value;
@@ -1641,6 +1652,8 @@
         alert("Ingresa un monto válido.");
         return;
       }
+
+      const formattedDate = customDate ? customDate : new Date().toLocaleDateString();
 
       const oldBaseCapital = currentAccount.baseCapital;
       let newBaseCapital = oldBaseCapital;
@@ -1660,7 +1673,7 @@
       currentAccount.minBalanceLimit = newBaseCapital - currentAccount.maxLossAmount;
 
       treasuryLog.push({
-        date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString().slice(0, 5),
+        date: formattedDate,
         type: type,
         amount: amount,
         note: note,
@@ -1670,10 +1683,52 @@
 
       await syncToCloud();
       document.getElementById('frmTreasury').reset();
+      setTodayAsDefaultStartDate();
       renderAccountInfo();
       renderTreasury();
       renderInvestmentModel();
       renderTradingPlanData();
+    };
+
+    window.capitalizePnL = async function() {
+      if (!currentAccount) return;
+
+      const totalPnL = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
+
+      if (totalPnL <= 0) {
+        alert("No tienes PnL positivo acumulado disponible para capitalizar.");
+        return;
+      }
+
+      if (confirm(`¿Deseas capitalizar +$${totalPnL.toFixed(2)} de ganancias en tu Capital Base?\nEsto ajustará tu nuevo Capital Base y recalculará el Drawdown Máximo al 25%.`)) {
+        const oldBase = currentAccount.baseCapital;
+        const newBase = oldBase + totalPnL;
+
+        currentAccount.baseCapital = newBase;
+        currentAccount.maxLossAmount = newBase * (currentAccount.maxDrawdownPct / 100);
+        currentAccount.minBalanceLimit = newBase - currentAccount.maxLossAmount;
+
+        treasuryLog.push({
+          date: new Date().toISOString().slice(0, 10),
+          type: 'DEPOSIT',
+          amount: totalPnL,
+          note: '✨ Capitalización de PnL Acumulado (Interés Compuesto)',
+          oldBaseCapital: oldBase,
+          newBaseCapital: newBase
+        });
+
+        // Reiniciar las ganancias contables ya convertidas a capital base
+        trades.forEach(t => t.pnl = 0);
+
+        await syncToCloud();
+        renderAccountInfo();
+        renderDashboard();
+        renderTreasury();
+        renderInvestmentModel();
+        renderTradingPlanData();
+
+        alert(`¡PnL Capitalizado con Éxito!\nNuevo Capital Base: $${newBase.toFixed(2)}\nNuevo Drawdown Máximo (25%): $${currentAccount.maxLossAmount.toFixed(2)}`);
+      }
     };
 
     window.deleteTreasuryItem = async function(index) {
@@ -1681,6 +1736,60 @@
         treasuryLog.splice(index, 1);
         await syncToCloud();
       }
+    };
+
+    window.handleTradeSubmit = async function(e) {
+      e.preventDefault();
+      if (!currentAccount) return;
+
+      const openTime = document.getElementById('inpOpenTime').value.replace('T', ' ');
+      const symbol = document.getElementById('inpSymbol').value.toUpperCase();
+      const direction = document.getElementById('inpDirection').value;
+      const amount = parseFloat(document.getElementById('inpAmount').value) || 0;
+      const leverage = parseFloat(document.getElementById('inpLeverage').value) || 1;
+      const entryPrice = parseFloat(document.getElementById('inpEntryPrice').value) || 0;
+      const closePrice = parseFloat(document.getElementById('inpClosePrice').value) || 0;
+      const commission = parseFloat(document.getElementById('inpCommission').value) || 0;
+      const risk = parseFloat(document.getElementById('inpRisk').value) || 0;
+      const pnl = parseFloat(document.getElementById('inpPnl').value) || 0;
+
+      const currentCapital = currentAccount.baseCapital + trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
+      const rMultiple = risk > 0 ? (pnl / risk).toFixed(2) : "0.00";
+      const pctCt = currentCapital > 0 ? (pnl / currentCapital) * 100 : 0;
+
+      const newTrade = {
+        id: trades.length + 1,
+        openTime: openTime,
+        symbol: symbol,
+        direction: direction,
+        amount: amount,
+        leverage: leverage,
+        entryPrice: entryPrice,
+        closePrice: closePrice,
+        commission: commission,
+        risk: risk,
+        pnl: pnl,
+        capital: currentCapital,
+        rMultiple: rMultiple,
+        quality: calculatedQualityScore,
+        pctCt: pctCt
+      };
+
+      trades.push(newTrade);
+      await syncToCloud();
+
+      document.getElementById('frmTrade').reset();
+      setCurrentDateTimeInput();
+      document.getElementById('inpSymbol').value = "BTCUSDT";
+      document.getElementById('inpAmount').value = "0.01";
+      document.getElementById('inpLeverage').value = "10";
+      
+      const panel = document.getElementById('tradeFormPanel');
+      panel.classList.add('form-disabled-panel');
+      document.querySelectorAll('.chk-box').forEach(cb => cb.checked = false);
+      updateQualityScore();
+
+      renderDashboard();
     };
 
     window.deleteTrade = async function(index) {
@@ -1758,9 +1867,6 @@
       document.getElementById('kpiAvgWinLoss').textContent = `$${avgWin.toFixed(1)} / $${avgLoss.toFixed(1)}`;
       document.getElementById('kpiMaxDrawdown').textContent = `-$${maxDrawdown.toFixed(2)}`;
 
-      let currentXp = Math.max(0, Math.round(accumPnL * 5));
-      document.getElementById('txtXp').textContent = `${currentXp} XP`;
-
       updateCharts(trades);
       updateCharacterTab();
       renderInvestmentModel();
@@ -1784,9 +1890,14 @@
     }
 
     function updateCharacterTab() {
-      let totalPnL = trades.reduce((acc, t) => acc + t.pnl, 0);
+      let totalPnL = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
       let currentXp = Math.max(0, Math.round(totalPnL * 5));
       let lvl = getLevelData(currentXp);
+
+      document.getElementById('txtXp').textContent = `${currentXp} XP`;
+      document.getElementById('txtLvl').textContent = lvl.name;
+      document.getElementById('badgeTitle').textContent = lvl.name;
+      document.getElementById('sideAvatar').src = lvl.img;
 
       document.getElementById('mainAvatarDisplay').src = lvl.img;
       document.getElementById('charTitleDisplay').textContent = lvl.name;
@@ -1794,7 +1905,19 @@
       document.getElementById('charXpNum').textContent = `${currentXp} / ${lvl.maxXp + 1} XP`;
 
       let pct = ((currentXp - lvl.minXp) / (lvl.maxXp - lvl.minXp + 1)) * 100;
-      document.getElementById('charBarFill').style.width = Math.min(100, Math.max(0, pct)) + '%';
+      pct = Math.min(100, Math.max(0, pct));
+
+      document.getElementById('barXp').style.width = pct + '%';
+      document.getElementById('charBarFill').style.width = pct + '%';
+
+      for (let i = 1; i <= 5; i++) {
+        const card = document.getElementById(`cardLvl${i}`);
+        if (card) {
+          card.classList.remove('unlocked', 'active-level');
+          if (LEVEL_DATA[i - 1].minXp <= currentXp) card.classList.add('unlocked');
+          if (lvl.lvl === i) card.classList.add('active-level');
+        }
+      }
     }
 
     function parseTradeMonthKey(openTimeStr) {
@@ -1825,7 +1948,7 @@
       if (!tbody) return;
       tbody.innerHTML = '';
 
-      const baseCap = parseFloat(document.getElementById('cfgBaseCap').value) || 0;
+      const baseCap = 400; // Anclado fijo a 400
       const monthlyContrib = parseFloat(document.getElementById('cfgMonthlyContrib').value) || 0;
       const targetPct = parseFloat(document.getElementById('cfgTargetPct').value) || 0;
       const durationMonths = parseInt(document.getElementById('cfgDurationMonths').value) || 12;
@@ -1911,7 +2034,8 @@
         tbody.appendChild(row);
       }
 
-      const totalBalance = baseCap + totalAportesRealizados + totalRealPnLAllTime;
+      const activeBaseCap = currentAccount ? currentAccount.baseCapital : 400;
+      const totalBalance = activeBaseCap + totalRealPnLAllTime;
 
       document.getElementById('lblModelBaseCap').textContent = '$' + baseCap.toFixed(2);
       document.getElementById('lblModelMonthlyContrib').textContent = '$' + monthlyContrib.toFixed(2);
@@ -1922,7 +2046,7 @@
 
       const totalCapLabel = document.getElementById('lblModelCapTotal');
       totalCapLabel.textContent = '$' + totalBalance.toFixed(2);
-      totalCapLabel.style.color = totalBalance >= baseCap ? 'var(--neon-green)' : 'var(--neon-red)';
+      totalCapLabel.style.color = totalBalance >= activeBaseCap ? 'var(--neon-green)' : 'var(--neon-red)';
     };
 
     function initCharts() {
@@ -1961,85 +2085,6 @@
       winrateChartInstance.data.datasets[0].data = [tp, sl];
       winrateChartInstance.update();
     }
-
-    window.handleTradeSubmit = async function(e) {
-      e.preventDefault();
-
-      if (currentAccount && currentAccount.isFailed) {
-        alert("🚨 Esta cuenta está liquidada.");
-        return;
-      }
-
-      const rawDateTime = document.getElementById('inpOpenTime').value;
-      let formattedOpenTime = "";
-      if (rawDateTime) {
-        const [datePart, timePart] = rawDateTime.split('T');
-        const [year, month, day] = datePart.split('-');
-        formattedOpenTime = `${day}/${month}/${year} ${timePart}`;
-      } else {
-        formattedOpenTime = new Date().toLocaleString();
-      }
-
-      const symbol = document.getElementById('inpSymbol').value.toUpperCase();
-      const direction = document.getElementById('inpDirection').value;
-      const amount = parseFloat(document.getElementById('inpAmount').value);
-      const leverage = parseFloat(document.getElementById('inpLeverage').value);
-      const entryPrice = parseFloat(document.getElementById('inpEntryPrice').value);
-      const closePrice = parseFloat(document.getElementById('inpClosePrice').value);
-      const commission = parseFloat(document.getElementById('inpCommission').value) || 0;
-      const risk = parseFloat(document.getElementById('inpRisk').value);
-      const pnl = parseFloat(document.getElementById('inpPnl').value);
-
-      const marginCapital = (entryPrice * amount) / leverage;
-      const rMultipleStr = risk > 0 ? (pnl / risk).toFixed(2) + 'R' : '0.00R';
-
-      const prevAccumPnL = trades.reduce((acc, t) => acc + t.pnl, 0);
-      const currentBalance = (currentAccount ? currentAccount.baseCapital : 400) + prevAccumPnL;
-      const pctCt = currentBalance > 0 ? (pnl / currentBalance) * 100 : 0;
-
-      const newTrade = {
-        id: trades.length + 1,
-        openTime: formattedOpenTime,
-        symbol: symbol,
-        direction: direction,
-        amount: amount,
-        leverage: leverage,
-        entryPrice: entryPrice,
-        closePrice: closePrice,
-        commission: commission,
-        risk: risk,
-        pnl: pnl,
-        capital: marginCapital,
-        rMultiple: rMultipleStr,
-        quality: calculatedQualityScore,
-        pctCt: pctCt
-      };
-
-      trades.push(newTrade);
-      await syncToCloud();
-
-      const panel = document.getElementById('tradeFormPanel');
-      panel.classList.add('form-disabled-panel');
-      document.querySelectorAll('.chk-box').forEach(cb => cb.checked = false);
-      updateQualityScore();
-
-      document.getElementById('frmTrade').reset();
-      setCurrentDateTimeInput();
-    };
-
-    window.exportJSON = function() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
-        account: currentAccount,
-        trades: trades,
-        treasuryLog: treasuryLog
-      }, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `QuantQuest_Backup_${new Date().toISOString().slice(0, 10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    };
   </script>
 </body>
 </html>
