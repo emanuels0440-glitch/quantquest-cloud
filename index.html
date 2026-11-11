@@ -198,7 +198,7 @@
 
     .kpi-strip {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
       gap: 15px;
       padding: 15px;
     }
@@ -208,7 +208,7 @@
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr));
       gap: 12px;
       margin-top: 15px;
     }
@@ -310,7 +310,7 @@
 
     .level-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
       gap: 15px;
     }
     .level-card {
@@ -359,7 +359,7 @@
 
     .plan-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
       gap: 20px;
       margin-bottom: 25px;
     }
@@ -468,6 +468,58 @@
     .tip-icon { font-size: 24px; }
     .tip-body { font-size: 11px; }
     .tip-body b { color: var(--neon-blue); font-family: 'Orbitron', sans-serif; display: block; margin-bottom: 3px; }
+
+    /* ===== RESPONSIVE: PC / TABLET / TELÉFONO (mismo estilo, solo se adapta el layout) ===== */
+    html { -webkit-text-size-adjust: 100%; }
+    img { max-width: 100%; }
+    header > div { min-width: 0; }
+    .form-field input, .form-field select { width: 100%; min-width: 0; }
+
+    .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .table-container table { min-width: 760px; }
+    .table-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+      position: sticky;
+      left: 0;
+    }
+    .table-header-bar .card-title { margin-bottom: 0; }
+
+    .analytics-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+    @media (max-width: 900px) { .analytics-split { grid-template-columns: 1fr; } }
+
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      header h1 { font-size: 16px; letter-spacing: 1px; }
+      .account-badge-bar { font-size: 10px; gap: 8px; padding: 8px 10px; }
+      .tab-nav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .tab-nav::-webkit-scrollbar { display: none; }
+      .tab-btn { flex: 0 0 auto; padding: 10px 14px; }
+      .tab-btn:hover { transform: none; }
+      .checklist-container, .trade-form-panel, .table-container, .card { padding: 14px; }
+      .card-title { flex-wrap: wrap; gap: 6px; }
+      .xp-hero-card { padding: 16px; gap: 16px; }
+      .current-avatar-display { height: 260px; }
+      .modal-card { padding: 20px; max-height: 92vh; overflow-y: auto; }
+      .tip-banner { align-items: flex-start; }
+      #frmTreasury .btn { flex: 1 1 100% !important; white-space: normal !important; }
+    }
+
+    @media (max-width: 480px) {
+      header h1 { font-size: 14px; }
+      .cloud-controls, .cloud-controls .btn { width: 100%; }
+      .form-grid { grid-template-columns: 1fr 1fr; }
+      .kpi-strip { grid-template-columns: 1fr 1fr; }
+      .kpi-item b { font-size: 13px; }
+      .level-grid { grid-template-columns: 1fr 1fr; }
+      .level-card img { height: 130px; }
+      .btn { padding: 12px 14px; }
+      .table-header-bar .btn { width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -644,7 +696,7 @@
         <span id="chkScore" style="color: var(--neon-blue); font-weight: bold;">0 / 6 MARCADOS (0.0% CALIDAD)</span>
       </div>
       
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 10px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 15px; margin-top: 10px;">
         <div style="background:#080A10; padding:12px; border-radius:4px; border:1px solid var(--panel-border);">
           <h4 style="color:var(--neon-orange); font-size:11px; margin-bottom:8px;">PSICOLOGÍA</h4>
           <label style="display:block; font-size:11px; margin-bottom:6px; cursor:pointer;"><input type="checkbox" class="chk-box" onchange="updateQualityScore()"> Estado emocional neutro</label>
@@ -692,11 +744,14 @@
     </div>
 
     <div class="table-container">
-      <div class="card-title" style="margin-bottom: 15px;">HISTORIAL DE TRADES (SINCRONIZADO)</div>
+      <div class="table-header-bar">
+        <div class="card-title">HISTORIAL DE TRADES (SINCRONIZADO)</div>
+        <button type="button" class="btn btn-purple" id="btnExportExcel" onclick="exportTradesToExcel()">📥 EXPORTAR EXCEL</button>
+      </div>
       <table>
         <thead>
           <tr>
-            <th>Nº</th><th>SYMBOL</th><th>FECHA</th><th>ENTRY</th><th>CLOSE</th><th>DIR</th><th>LEV</th><th>CAPITAL</th><th>COMISION</th><th>PNL</th><th>RISK</th><th>R-MULT</th><th>CALIDAD</th><th>% CT</th><th>ACCION</th>
+            <th>Nº</th><th>SYMBOL</th><th>FECHA</th><th>ENTRY</th><th>CLOSE</th><th>DIR</th><th>LEV</th><th>CAPITAL COLOCADO</th><th>COMISION</th><th>PNL</th><th>RISK</th><th>R-MULT</th><th>CALIDAD</th><th>% CT</th><th>ACCION</th>
           </tr>
         </thead>
         <tbody id="tradeTableBody"></tbody>
@@ -708,7 +763,7 @@
   <div id="tab-analytics" class="tab-content">
     <div class="card-title" style="margin-bottom: 15px;">💡 DIAGNÓSTICO CUANTITATIVO, PARES Y EJECUCIÓN</div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 15px; margin-bottom: 25px;">
       
       <div class="card" style="border-color: var(--neon-green);">
         <div class="card-title">🚀 OPERATIVA MÁS RENTABLE</div>
@@ -736,7 +791,7 @@
 
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+    <div class="analytics-split">
       <div class="card">
         <div class="card-title">VOLUMEN DE OPERACIONES POR PAR</div>
         <div class="chart-box" style="height: 220px;">
@@ -874,7 +929,7 @@
       </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 15px; margin-bottom: 25px;">
       <div class="card">
         <div class="card-title">Base Inicial Cuenta</div>
         <p id="lblModelBaseCap" style="font-size: 22px; font-weight: bold; color: var(--neon-orange); font-family: 'Orbitron';">$400.00</p>
@@ -920,7 +975,7 @@
         <span>🧠 MENTALIDAD A LARGO PLAZO Y FILOSOFÍA DE SOSTENIBILIDAD</span>
         <span style="color:var(--neon-green); font-weight:bold;">PILARES DE QUANTQUEST</span>
       </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 15px;">
         <div class="quote-card">
           <p style="color: var(--neon-green); font-size: 12px; font-weight: bold;">"El interés compuesto es la octava maravilla del mundo. Quien lo entiende, lo gana; quien no, lo paga."</p>
           <span style="color: var(--text-muted); font-size: 10px;">— Albert Einstein</span>
@@ -1012,7 +1067,7 @@
         <span style="color:var(--neon-green); font-weight:bold;" id="planLiveCapLabel">CAPITAL OPERATIVO: $0.00</span>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 15px; margin-top: 15px;">
         <div class="card" style="background:#090D16;">
           <div class="card-title">RIESGO BASE (1%)</div>
           <p id="planRisk1Pct" style="font-size: 20px; font-weight: bold; color: var(--neon-green); font-family: 'Orbitron';">$0.00</p>
@@ -1131,6 +1186,14 @@
     let winrateChartInstance = null;
     let symbolChartInstance = null;
 
+    // ⚡ OPTIMIZACIÓN: métricas calculadas UNA sola vez por cambio de datos (antes se recorría el array de trades 6-8 veces por render)
+    let statsCache = null;
+    // ⚡ OPTIMIZACIÓN: solo se renderiza la pestaña visible; el resto se calcula al abrirla
+    let activeTab = 'journal';
+    let sheetJsPromise = null;
+
+    const SHEETJS_URL = "https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js";
+
     const INVESTMENT_TIPS = [
       "Mantener un objetivo mensual conservador entre el 3% y el 5% reduce la presión psicológica y maximiza la supervivencia de tu cuenta a largo plazo.",
       "El capital protegido en las operaciones negativas vale más que las ganancias rápidas e indisciplinadas.",
@@ -1147,21 +1210,170 @@
       "Si alcanzaste tu Take Profit (+2R), activa el bloqueo temporizado en Binance y cierra tu sesión."
     ];
 
+    const LEVEL_DATA = [
+      { lvl: 1, name: "LVL 1 — RETAIL SURVIVOR", minXp: 0, maxXp: 499, img: "https://lh3.googleusercontent.com/u/0/d/16a5I601iH8vaj_lL-pPj4irsfp2Sjy6h", desc: "¡Opera con tu primer aporte de capital, apégate al plan y sobrevive!" },
+      { lvl: 2, name: "LVL 2 — CONSISTENT SCALPER", minXp: 500, maxXp: 999, img: "https://lh3.googleusercontent.com/u/0/d/1jwypjV61uNb9NAl1yFbx8k8ZRM9FMmKH", desc: "Domina tu estrategia y controla tus emociones." },
+      { lvl: 3, name: "LVL 3 — PORTFOLIO STRATEGIST", minXp: 1000, maxXp: 1999, img: "https://lh3.googleusercontent.com/u/0/d/15SQfi9XR3YRY_qspOYlDCDVfeH0cBCHC", desc: "Gestiona Capital de + $1000." },
+      { lvl: 4, name: "LVL 4 — RISK ARCHITECT", minXp: 2000, maxXp: 3499, img: "https://lh3.googleusercontent.com/u/0/d/1UYasWTPoRs_SB9zfz9lkrJipVf27vkNv", desc: "Ejecuta como un Trader de Elite." },
+      { lvl: 5, name: "LVL 5 — INSTITUTIONAL ARCHITECT", minXp: 3500, maxXp: 99999, img: "https://lh3.googleusercontent.com/u/0/d/1HM4c-TBfR5c983SP_-WTeN8Y9HVvmmpe", desc: "Eres un Gestor de Capitales Certificado." }
+    ];
+
+    const MONTH_NAMES = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+
+    const TAB_ORDER = ['journal', 'analytics', 'treasury', 'investment', 'character', 'plan'];
+
+    // ================= UTILIDADES =================
+    const byId = (id) => document.getElementById(id);
+    const num = (v, fallback = 0) => { const n = parseFloat(v); return Number.isFinite(n) ? n : fallback; };
+    const fmtUsd = (v) => '$' + num(v).toFixed(2);
+    const fmtSigned = (v) => (num(v) >= 0 ? '+$' : '-$') + Math.abs(num(v)).toFixed(2);
+    const qualityOf = (t) => (t.quality === undefined || t.quality === null) ? 100 : num(t.quality, 100);
+    const qualityColor = (q) => q >= 80 ? 'var(--neon-green)' : (q >= 50 ? 'var(--neon-orange)' : 'var(--neon-red)');
+    const escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const pad2 = (v) => String(v).padStart(2, '0');
+
+    // ================= FORMATO ÚNICO DE FECHAS Y CAPITAL POR OPERATIVA =================
+    // Formato interno (guardado en la nube): "YYYY-MM-DD HH:mm" → ordenable y sin ambigüedad.
+    // Acepta fechas antiguas "DD/MM/YYYY HH:mm" (importadas) y "YYYY-MM-DDTHH:mm" (formulario).
+    function normalizeOpenTime(value) {
+      const s = String(value ?? '').trim().replace('T', ' ');
+      let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ ,]+(\d{1,2}):(\d{2}))?/);
+      if (m) return `${m[1]}-${pad2(m[2])}-${pad2(m[3])} ${pad2(m[4] || 0)}:${m[5] || '00'}`;
+      m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ ,]+(\d{1,2}):(\d{2}))?/);
+      if (m) return `${m[3]}-${pad2(m[2])}-${pad2(m[1])} ${pad2(m[4] || 0)}:${m[5] || '00'}`;
+      return s;
+    }
+
+    // Visualización uniforme en todo el dashboard: "DD/MM/YYYY HH:mm"
+    function fmtDateTime(value) {
+      const m = normalizeOpenTime(value).match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/);
+      return m ? `${m[3]}/${m[2]}/${m[1]} ${m[4]}:${m[5]}` : String(value ?? '');
+    }
+    function fmtShortDate(value) {
+      const m = normalizeOpenTime(value).match(/^(\d{4})-(\d{2})-(\d{2})/);
+      return m ? `${m[3]}/${m[2]}` : String(value ?? '');
+    }
+
+    // Capital colocado en la operativa = margen = Precio de entrada × Lotes ÷ Apalancamiento
+    function marginOf(t) {
+      const entry = num(t.entryPrice), amount = num(t.amount), lev = num(t.leverage, 1) || 1;
+      return entry > 0 && amount > 0 ? (entry * amount) / lev : null;
+    }
+
+    // Migración automática (idempotente): unifica fechas, corrige el capital guardado como saldo y ordena por fecha.
+    function normalizeTrades(list) {
+      let changed = false;
+      for (const t of list) {
+        const normTime = normalizeOpenTime(t.openTime);
+        if (normTime !== t.openTime) { t.openTime = normTime; changed = true; }
+
+        // Trades registrados con el formulario anterior guardaban el SALDO de la cuenta en "capital".
+        // Se conserva ese dato en "accountBalance" y "capital" pasa a ser el margen realmente colocado.
+        if (!t.capitalIsMargin) {
+          const margin = marginOf(t);
+          if (margin !== null) {
+            const stored = num(t.capital);
+            if (Math.abs(stored - margin) > Math.max(0.05, margin * 0.02)) {
+              if (t.accountBalance === undefined) t.accountBalance = stored;
+              t.capital = Math.round(margin * 100) / 100;
+            }
+          }
+          t.capitalIsMargin = true;
+          changed = true;
+        }
+      }
+
+      list.sort((a, b) => String(a.openTime).localeCompare(String(b.openTime))); // orden estable por fecha
+      list.forEach((t, i) => {
+        if (t.id !== i + 1) { t.id = i + 1; changed = true; }
+      });
+      return changed;
+    }
+
+    // Excel guarda fechas como número serial; se calcula sin zonas horarias para que la hora sea exacta
+    function toExcelDate(value) {
+      const m = normalizeOpenTime(value).match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/);
+      if (!m) return String(value ?? '');
+      return Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) / 86400000 + 25569;
+    }
+
+    // ================= MOTOR DE MÉTRICAS (una sola pasada) =================
+    function computeStats() {
+      const base = currentAccount ? num(currentAccount.baseCapital, 400) : 400;
+      const s = {
+        base,
+        totalPnL: 0, winCount: 0, lossCount: 0,
+        grossProfit: 0, grossLoss: 0, maxDrawdown: 0,
+        totalQuality: 0, cumulative: [], labels: []
+      };
+      let peak = base;
+
+      for (const t of trades) {
+        const pnl = num(t.pnl);
+        s.totalPnL += pnl;
+        s.totalQuality += qualityOf(t);
+        if (pnl >= 0) { s.winCount++; s.grossProfit += pnl; }
+        else { s.lossCount++; s.grossLoss -= pnl; }
+
+        const cap = base + s.totalPnL;
+        if (cap > peak) peak = cap;
+        if (peak - cap > s.maxDrawdown) s.maxDrawdown = peak - cap;
+
+        s.cumulative.push(s.totalPnL);
+        s.labels.push(fmtShortDate(t.openTime));
+      }
+
+      const n = trades.length;
+      s.count = n;
+      // 💎 CAPITALIZACIÓN SIN BORRAR HISTORIAL:
+      //    capitalizedPnL = parte del PnL histórico que ya se movió al Capital Base.
+      //    pendingPnL     = PnL generado desde la última capitalización (aún no forma parte del capital base).
+      //    El saldo real es Capital Base + PnL pendiente, así nada se cuenta dos veces.
+      s.capitalizedPnL = currentAccount ? num(currentAccount.capitalizedPnL) : 0;
+      s.pendingPnL = s.totalPnL - s.capitalizedPnL;
+      s.balance = base + s.pendingPnL;
+      s.avgWin = s.winCount > 0 ? s.grossProfit / s.winCount : 0;
+      s.avgLoss = s.lossCount > 0 ? s.grossLoss / s.lossCount : 0;
+      s.winRate = n > 0 ? s.winCount / n : 0;
+      s.expectancy = (s.winRate * s.avgWin) - ((1 - s.winRate) * s.avgLoss);
+      s.profitFactor = s.grossLoss > 0 ? s.grossProfit / s.grossLoss : (s.grossProfit > 0 ? Infinity : 0);
+      s.avgQuality = n > 0 ? s.totalQuality / n : 0;
+      s.xp = Math.max(0, Math.round(s.totalPnL * 5));
+      return s;
+    }
+
+    function getStats() { return statsCache || (statsCache = computeStats()); }
+    function invalidateStats() { statsCache = null; }
+
+    // Renderizado central: se llama una vez por cada snapshot de Firestore
+    function renderAll() {
+      invalidateStats();
+      renderAccountInfo();
+      renderDashboard();
+      updateCharacterTab();
+      if (activeTab !== 'journal' && activeTab !== 'character') TAB_RENDERERS[activeTab]?.();
+      checkAccountBreach();
+    }
+
+    // ================= AUTENTICACIÓN =================
     onAuthStateChanged(auth, (user) => {
       if (user) {
         currentUser = user;
-        document.getElementById('authModal').style.display = 'none';
+        byId('authModal').style.display = 'none';
         listenToUserData(user.uid);
       } else {
         currentUser = null;
-        document.getElementById('authModal').style.display = 'flex';
+        byId('authModal').style.display = 'flex';
       }
     });
 
     window.toggleAuthMode = function() {
       isRegisterMode = !isRegisterMode;
-      const btn = document.getElementById('btnAuthSubmit');
-      const toggleBtn = document.getElementById('authToggleBtn');
+      const btn = byId('btnAuthSubmit');
+      const toggleBtn = byId('authToggleBtn');
       if (isRegisterMode) {
         btn.textContent = "🚀 REGISTRAR NUEVA CUENTA CLOUD";
         toggleBtn.textContent = "¿Ya tienes cuenta? Inicia sesión aquí.";
@@ -1173,9 +1385,9 @@
 
     window.handleAuthSubmit = async function(e) {
       e.preventDefault();
-      const email = document.getElementById('authEmail').value;
-      const pass = document.getElementById('authPassword').value;
-      const msg = document.getElementById('authMessage');
+      const email = byId('authEmail').value;
+      const pass = byId('authPassword').value;
+      const msg = byId('authMessage');
       msg.textContent = "";
 
       try {
@@ -1202,16 +1414,19 @@
           trades = data.trades || [];
           treasuryLog = data.treasuryLog || [];
 
+          // 🔧 Unifica formato de fechas/capital de trades antiguos y lo guarda una sola vez en la nube
+          if (normalizeTrades(trades) && currentAccount) syncToCloud();
+
           if (!currentAccount) {
             setTodayAsDefaultStartDate();
-            document.getElementById('accountSetupModal').style.display = 'flex';
+            byId('accountSetupModal').style.display = 'flex';
           } else {
-            document.getElementById('accountSetupModal').style.display = 'none';
-            
-            const cfgBase = document.getElementById('cfgBaseCap');
-            const cfgContrib = document.getElementById('cfgMonthlyContrib');
-            const cfgTarget = document.getElementById('cfgTargetPct');
-            const cfgDuration = document.getElementById('cfgDurationMonths');
+            byId('accountSetupModal').style.display = 'none';
+
+            const cfgBase = byId('cfgBaseCap');
+            const cfgContrib = byId('cfgMonthlyContrib');
+            const cfgTarget = byId('cfgTargetPct');
+            const cfgDuration = byId('cfgDurationMonths');
 
             if (cfgBase) {
               cfgBase.value = 400; // Capital Base inicial anclado a 400 siempre
@@ -1226,26 +1441,21 @@
               cfgDuration.value = currentAccount.durationMonths || 18;
             }
 
-            renderAccountInfo();
-            renderDashboard();
-            renderAnalytics();
-            renderTreasury();
-            renderInvestmentModel();
-            renderTradingPlanData();
+            renderAll();
           }
         } else {
           setTodayAsDefaultStartDate();
-          document.getElementById('accountSetupModal').style.display = 'flex';
+          byId('accountSetupModal').style.display = 'flex';
         }
       });
     }
 
     function setTodayAsDefaultStartDate() {
       const today = new Date().toISOString().slice(0, 10);
-      const startInp = document.getElementById('setupStartDate');
+      const startInp = byId('setupStartDate');
       if (startInp && !startInp.value) startInp.value = today;
-      
-      const treasuryDateInp = document.getElementById('inpTreasuryDate');
+
+      const treasuryDateInp = byId('inpTreasuryDate');
       if (treasuryDateInp && !treasuryDateInp.value) treasuryDateInp.value = today;
     }
 
@@ -1263,15 +1473,11 @@
     window.saveSimulatorParams = async function() {
       if (!currentAccount) return;
 
-      const monthlyContrib = parseFloat(document.getElementById('cfgMonthlyContrib').value) || 0;
-      const targetPct = parseFloat(document.getElementById('cfgTargetPct').value) || 0;
-      const durationMonths = parseInt(document.getElementById('cfgDurationMonths').value) || 18;
+      currentAccount.monthlyContrib = num(byId('cfgMonthlyContrib').value);
+      currentAccount.targetPct = num(byId('cfgTargetPct').value);
+      currentAccount.durationMonths = parseInt(byId('cfgDurationMonths').value) || 18;
 
-      currentAccount.monthlyContrib = monthlyContrib;
-      currentAccount.targetPct = targetPct;
-      currentAccount.durationMonths = durationMonths;
-
-      const btn = document.getElementById('btnSaveSimParams');
+      const btn = byId('btnSaveSimParams');
       const originalText = btn.textContent;
       btn.textContent = "⏳ GUARDANDO...";
       btn.disabled = true;
@@ -1295,101 +1501,84 @@
       updateQualityScore();
       autoCalculatePnL();
       setCurrentDateTimeInput();
-      rotateInvestmentTips();
-      rotatePlanReminders();
+      rotateText('dynamicTipTxt', INVESTMENT_TIPS, 10000);
+      rotateText('planReminderTxt', PLAN_REMINDERS, 8000);
 
       ['cfgMonthlyContrib', 'cfgTargetPct', 'cfgDurationMonths'].forEach(id => {
-        const el = document.getElementById(id);
+        const el = byId(id);
         if (el) {
           el.addEventListener('input', (e) => { e.target.dataset.userEdited = "true"; });
         }
       });
     };
 
-    function rotateInvestmentTips() {
+    // ⚡ Unifica las dos funciones de rotación (tips y recordatorios) en una sola
+    function rotateText(elementId, list, intervalMs) {
       let idx = 0;
       setInterval(() => {
-        idx = (idx + 1) % INVESTMENT_TIPS.length;
-        const tipTxt = document.getElementById('dynamicTipTxt');
-        if (tipTxt) {
-          tipTxt.style.opacity = 0;
-          setTimeout(() => {
-            tipTxt.textContent = `"${INVESTMENT_TIPS[idx]}"`;
-            tipTxt.style.opacity = 1;
-          }, 300);
-        }
-      }, 10000);
-    }
-
-    function rotatePlanReminders() {
-      let idx = 0;
-      setInterval(() => {
-        idx = (idx + 1) % PLAN_REMINDERS.length;
-        const remTxt = document.getElementById('planReminderTxt');
-        if (remTxt) {
-          remTxt.style.opacity = 0;
-          setTimeout(() => {
-            remTxt.textContent = `"${PLAN_REMINDERS[idx]}"`;
-            remTxt.style.opacity = 1;
-          }, 300);
-        }
-      }, 8000);
+        const el = byId(elementId);
+        if (!el || document.hidden) return; // no anima si la pestaña del navegador no está visible
+        idx = (idx + 1) % list.length;
+        el.style.opacity = 0;
+        setTimeout(() => {
+          el.textContent = `"${list[idx]}"`;
+          el.style.opacity = 1;
+        }, 300);
+      }, intervalMs);
     }
 
     function setCurrentDateTimeInput() {
       const now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-      document.getElementById('inpOpenTime').value = now.toISOString().slice(0, 16);
-      
-      const dateOnly = now.toISOString().slice(0, 10);
-      const treasuryDateInp = document.getElementById('inpTreasuryDate');
-      if (treasuryDateInp) treasuryDateInp.value = dateOnly;
+      byId('inpOpenTime').value = now.toISOString().slice(0, 16);
+
+      const treasuryDateInp = byId('inpTreasuryDate');
+      if (treasuryDateInp) treasuryDateInp.value = now.toISOString().slice(0, 10);
     }
 
     window.autoCalculatePnL = function() {
-      const entry = parseFloat(document.getElementById('inpEntryPrice').value) || 0;
-      const close = parseFloat(document.getElementById('inpClosePrice').value) || 0;
-      const amount = parseFloat(document.getElementById('inpAmount').value) || 0;
-      const dir = document.getElementById('inpDirection').value;
-      const comm = parseFloat(document.getElementById('inpCommission').value) || 0;
+      const entry = num(byId('inpEntryPrice').value);
+      const close = num(byId('inpClosePrice').value);
+      const amount = num(byId('inpAmount').value);
+      const dir = byId('inpDirection').value;
+      const comm = num(byId('inpCommission').value);
 
       if (entry > 0 && close > 0 && amount > 0) {
-        let rawPnL = dir === 'BUY' ? (close - entry) * amount : (entry - close) * amount;
-        let netPnL = rawPnL - comm;
-        document.getElementById('inpPnl').value = netPnL.toFixed(4);
+        const rawPnL = dir === 'BUY' ? (close - entry) * amount : (entry - close) * amount;
+        byId('inpPnl').value = (rawPnL - comm).toFixed(4);
       }
     };
 
     window.updateQualityScore = function() {
       const checkboxes = document.querySelectorAll('.chk-box');
-      const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+      let checkedCount = 0;
+      checkboxes.forEach(cb => { if (cb.checked) checkedCount++; });
       calculatedQualityScore = (checkedCount / checkboxes.length) * 100;
 
-      const scoreLabel = document.getElementById('chkScore');
+      const scoreLabel = byId('chkScore');
       scoreLabel.textContent = `${checkedCount} / ${checkboxes.length} MARCADOS (${calculatedQualityScore.toFixed(1)}% CALIDAD)`;
-      scoreLabel.style.color = calculatedQualityScore >= 80 ? 'var(--neon-green)' : (calculatedQualityScore >= 50 ? 'var(--neon-orange)' : 'var(--neon-red)');
+      scoreLabel.style.color = qualityColor(calculatedQualityScore);
     };
 
     window.confirmChecklistAndProceed = function() {
       updateQualityScore();
-      const panel = document.getElementById('tradeFormPanel');
-      panel.classList.remove('form-disabled-panel');
-      
-      const badge = document.getElementById('lblConfirmedQuality');
+      byId('tradeFormPanel').classList.remove('form-disabled-panel');
+
+      const badge = byId('lblConfirmedQuality');
       badge.textContent = `CALIDAD CONFIRMADA: ${calculatedQualityScore.toFixed(1)}%`;
-      badge.style.color = calculatedQualityScore >= 80 ? 'var(--neon-green)' : (calculatedQualityScore >= 50 ? 'var(--neon-orange)' : 'var(--neon-red)');
-      
-      document.getElementById('inpSymbol').focus();
+      badge.style.color = qualityColor(calculatedQualityScore);
+
+      byId('inpSymbol').focus();
     };
 
     window.handleCreateAccount = async function(e) {
       e.preventDefault();
-      const name = document.getElementById('setupName').value;
-      const capital = parseFloat(document.getElementById('setupCapital').value);
-      const contrib = parseFloat(document.getElementById('setupMonthlyContrib').value);
-      const targetPct = parseFloat(document.getElementById('setupTargetPct').value);
-      const drawdownPct = parseFloat(document.getElementById('setupDrawdown').value);
-      const startDate = document.getElementById('setupStartDate').value || new Date().toISOString().slice(0, 10);
+      const name = byId('setupName').value;
+      const capital = num(byId('setupCapital').value);
+      const contrib = num(byId('setupMonthlyContrib').value);
+      const targetPct = num(byId('setupTargetPct').value);
+      const drawdownPct = num(byId('setupDrawdown').value);
+      const startDate = byId('setupStartDate').value || new Date().toISOString().slice(0, 10);
       const accNumber = Math.floor(100000 + Math.random() * 900000);
 
       currentAccount = {
@@ -1403,68 +1592,67 @@
         maxLossAmount: capital * (drawdownPct / 100),
         minBalanceLimit: capital - (capital * (drawdownPct / 100)),
         startDate: startDate,
-        isFailed: false
+        isFailed: false,
+        maxLevelReached: 1,
+        capitalizedPnL: 0
       };
 
       trades = [];
       treasuryLog = [];
       await syncToCloud();
-      document.getElementById('accountSetupModal').style.display = 'none';
+      byId('accountSetupModal').style.display = 'none';
     };
 
     function renderAccountInfo() {
       if (!currentAccount) return;
-      
-      const totalPnL = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
-      const currentBalance = currentAccount.baseCapital + totalPnL;
-      const balanceColor = currentBalance >= currentAccount.baseCapital ? 'var(--neon-green)' : 'var(--neon-red)';
+      const { balance, base, pendingPnL } = getStats();
+      const balanceColor = balance >= base ? 'var(--neon-green)' : 'var(--neon-red)';
 
-      const bar = document.getElementById('accBadgeBar');
-      bar.innerHTML = `
-        <span>OPERADOR: <b>${currentAccount.name}</b></span> | 
-        <span>CUENTA #: <b>#${currentAccount.accNumber}</b></span> | 
-        <span>INICIO: <b>${currentAccount.startDate || 'N/A'}</b></span> | 
-        <span>CAPITAL BASE: <b>$${currentAccount.baseCapital.toFixed(2)}</b></span> | 
+      byId('accBadgeBar').innerHTML = `
+        <span>OPERADOR: <b>${escapeHtml(currentAccount.name)}</b></span> |
+        <span>CUENTA #: <b>#${escapeHtml(currentAccount.accNumber)}</b></span> |
+        <span>INICIO: <b>${escapeHtml(currentAccount.startDate || 'N/A')}</b></span> |
+        <span>CAPITAL BASE: <b>${fmtUsd(base)}</b></span> |
         <span class="highlight-balance">
           <span class="stat-label">SALDO ACTUAL:</span>
-          <span class="stat-value" style="color:${balanceColor};">$${currentBalance.toFixed(2)}</span>
-        </span> | 
-        <span>DRAWDOWN MÁX: <b style="color:var(--neon-red);">${currentAccount.maxDrawdownPct}% ($${currentAccount.maxLossAmount.toFixed(2)})</b></span>
+          <span class="stat-value" style="color:${balanceColor};">${fmtUsd(balance)}</span>
+        </span> |
+        <span>PNL SIN CAPITALIZAR: <b style="color:${pendingPnL >= 0 ? 'var(--neon-green)' : 'var(--neon-red)'};">${fmtSigned(pendingPnL)}</b></span> |
+        <span>DRAWDOWN MÁX: <b style="color:var(--neon-red);">${currentAccount.maxDrawdownPct}% (${fmtUsd(currentAccount.maxLossAmount)})</b></span>
       `;
     }
 
     function renderTradingPlanData() {
       if (!currentAccount) return;
-      const totalPnL = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
-      const activeCap = currentAccount.baseCapital + totalPnL;
-
+      const activeCap = getStats().balance;
       const r1 = activeCap * 0.01;
-      const r2 = activeCap * 0.02;
-      const target2R = r1 * 2;
 
-      document.getElementById('planLiveCapLabel').textContent = `CAPITAL OPERATIVO: $${activeCap.toFixed(2)}`;
-      document.getElementById('planRisk1Pct').textContent = `$${r1.toFixed(2)}`;
-      document.getElementById('planRisk2Pct').textContent = `$${r2.toFixed(2)}`;
-      document.getElementById('planTarget2R').textContent = `+$${target2R.toFixed(2)}`;
+      byId('planLiveCapLabel').textContent = `CAPITAL OPERATIVO: ${fmtUsd(activeCap)}`;
+      byId('planRisk1Pct').textContent = fmtUsd(r1);
+      byId('planRisk2Pct').textContent = fmtUsd(activeCap * 0.02);
+      byId('planTarget2R').textContent = `+${fmtUsd(r1 * 2)}`;
     }
 
-    function checkAccountBreach(totalPnL) {
+    function checkAccountBreach() {
       if (!currentAccount) return false;
-      const currentBalance = currentAccount.baseCapital + totalPnL;
+      // El drawdown se mide contra el Capital Base vigente (el último capitalizado), usando solo el PnL pendiente
+      const { pendingPnL: totalPnL, balance } = getStats();
 
-      if (currentBalance <= currentAccount.minBalanceLimit || totalPnL <= -currentAccount.maxLossAmount) {
-        currentAccount.isFailed = true;
-        syncToCloud();
+      if (balance <= currentAccount.minBalanceLimit || totalPnL <= -currentAccount.maxLossAmount) {
+        // 🐛 FIX: antes se sincronizaba en CADA render → snapshot → render → sync... (bucle infinito de escrituras)
+        if (!currentAccount.isFailed) {
+          currentAccount.isFailed = true;
+          syncToCloud();
+        }
 
-        const details = document.getElementById('failedDetails');
-        details.innerHTML = `
-          <p><b>Operador:</b> ${currentAccount.name} (#${currentAccount.accNumber})</p>
-          <p><b>Capital Inicial:</b> $${currentAccount.baseCapital.toFixed(2)}</p>
-          <p><b>Límite Drawdown (${currentAccount.maxDrawdownPct}%):</b> -$${currentAccount.maxLossAmount.toFixed(2)}</p>
-          <p><b>Pérdida Acumulada:</b> <span style="color:var(--neon-red); font-weight:bold;">-$${Math.abs(totalPnL).toFixed(2)}</span></p>
+        byId('failedDetails').innerHTML = `
+          <p><b>Operador:</b> ${escapeHtml(currentAccount.name)} (#${escapeHtml(currentAccount.accNumber)})</p>
+          <p><b>Capital Inicial:</b> ${fmtUsd(currentAccount.baseCapital)}</p>
+          <p><b>Límite Drawdown (${currentAccount.maxDrawdownPct}%):</b> -${fmtUsd(currentAccount.maxLossAmount)}</p>
+          <p><b>Pérdida Acumulada:</b> <span style="color:var(--neon-red); font-weight:bold;">-${fmtUsd(Math.abs(totalPnL))}</span></p>
         `;
 
-        document.getElementById('accountFailedModal').style.display = 'flex';
+        byId('accountFailedModal').style.display = 'flex';
         return true;
       }
       return false;
@@ -1475,120 +1663,88 @@
       trades = [];
       treasuryLog = [];
       await syncToCloud();
-      document.getElementById('accountFailedModal').style.display = 'none';
+      byId('accountFailedModal').style.display = 'none';
       setTodayAsDefaultStartDate();
-      document.getElementById('accountSetupModal').style.display = 'flex';
+      byId('accountSetupModal').style.display = 'flex';
     };
 
     window.switchTab = function(tabName) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      const idx = TAB_ORDER.indexOf(tabName);
+      if (idx === -1) return;
+      activeTab = tabName;
 
-      const tabsMap = {
-        'journal': 0,
-        'analytics': 1,
-        'treasury': 2,
-        'investment': 3,
-        'character': 4,
-        'plan': 5
-      };
+      document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === idx));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === `tab-${tabName}`));
 
-      const idx = tabsMap[tabName];
-      if (idx !== undefined) {
-        document.querySelectorAll('.tab-btn')[idx].classList.add('active');
-        document.getElementById(`tab-${tabName}`).classList.add('active');
-        
-        if (tabName === 'investment') renderInvestmentModel();
-        if (tabName === 'character') updateCharacterTab();
-        if (tabName === 'plan') renderTradingPlanData();
-        if (tabName === 'analytics') renderAnalytics();
-        if (tabName === 'treasury') renderTreasury();
-      }
+      TAB_RENDERERS[tabName]?.();
     };
 
     function renderAnalytics() {
       if (trades.length === 0) return;
 
-      let totalQuality = 0;
-      let highQualityCount = 0;
-      let midQualityCount = 0;
-      let lowQualityCount = 0;
-
-      let highQualityPnL = 0;
-      let lowQualityPnL = 0;
-
-      let longsCount = 0;
-      let shortsCount = 0;
-
+      let highQualityCount = 0, midQualityCount = 0, lowQualityCount = 0;
+      let highQualityPnL = 0, lowQualityPnL = 0;
+      let longsCount = 0, shortsCount = 0;
       let bestTrade = null;
       const symbolMap = {};
 
-      trades.forEach(t => {
-        const q = t.quality !== undefined ? t.quality : 100;
-        totalQuality += q;
+      for (const t of trades) {
+        const q = qualityOf(t);
+        const pnl = num(t.pnl);
 
         if (q === 100) highQualityCount++;
         else if (q >= 50) midQualityCount++;
         else lowQualityCount++;
 
-        if (q >= 80) highQualityPnL += t.pnl;
-        else lowQualityPnL += t.pnl;
+        if (q >= 80) highQualityPnL += pnl;
+        else lowQualityPnL += pnl;
 
         if (t.direction === 'BUY') longsCount++;
         else shortsCount++;
 
-        const sym = t.symbol.toUpperCase();
+        const sym = String(t.symbol || 'N/A').toUpperCase();
         symbolMap[sym] = (symbolMap[sym] || 0) + 1;
 
-        if (!bestTrade || t.pnl > bestTrade.pnl) {
-          bestTrade = t;
-        }
-      });
+        if (!bestTrade || pnl > num(bestTrade.pnl)) bestTrade = t;
+      }
 
       const totalTradesCount = trades.length;
-      const avgQuality = totalQuality / totalTradesCount;
+      const avgQuality = getStats().avgQuality;
 
       if (bestTrade) {
-        const bestPnL = bestTrade.pnl;
-        document.getElementById('anBestTradePnL').textContent = (bestPnL >= 0 ? '+$' : '-$') + Math.abs(bestPnL).toFixed(2);
-        document.getElementById('anBestTradePnL').style.color = bestPnL >= 0 ? 'var(--neon-green)' : 'var(--neon-red)';
-        document.getElementById('anBestTradeMeta').textContent = `${bestTrade.symbol} | ${bestTrade.direction} | ${bestTrade.openTime.split(' ')[0]} (${bestTrade.quality.toFixed(0)}% Calidad)`;
+        const bestPnL = num(bestTrade.pnl);
+        const bestEl = byId('anBestTradePnL');
+        bestEl.textContent = fmtSigned(bestPnL);
+        bestEl.style.color = bestPnL >= 0 ? 'var(--neon-green)' : 'var(--neon-red)';
+        // 🐛 FIX: antes fallaba con trades antiguos sin campo "quality" (quality.toFixed de undefined)
+        byId('anBestTradeMeta').textContent = `${bestTrade.symbol} | ${bestTrade.direction} | ${fmtDateTime(bestTrade.openTime).split(' ')[0]} (${qualityOf(bestTrade).toFixed(0)}% Calidad)`;
       }
 
       const shortsPct = ((shortsCount / totalTradesCount) * 100).toFixed(0);
       const longsPct = ((longsCount / totalTradesCount) * 100).toFixed(0);
-      document.getElementById('anShortsVsLongsCount').textContent = `${shortsCount} S / ${longsCount} L`;
-      document.getElementById('anShortsVsLongsPct').textContent = `(${shortsPct}% Shorts / ${longsPct}% Longs)`;
+      byId('anShortsVsLongsCount').textContent = `${shortsCount} S / ${longsCount} L`;
+      byId('anShortsVsLongsPct').textContent = `(${shortsPct}% Shorts / ${longsPct}% Longs)`;
 
-      document.getElementById('anAvgQuality').textContent = `${avgQuality.toFixed(1)}%`;
-      document.getElementById('anQualityBreakdown').textContent = `Alta (100%): ${highQualityCount} | Media (50-83%): ${midQualityCount} | Baja (<50%): ${lowQualityCount}`;
+      byId('anAvgQuality').textContent = `${avgQuality.toFixed(1)}%`;
+      byId('anQualityBreakdown').textContent = `Alta (100%): ${highQualityCount} | Media (50-83%): ${midQualityCount} | Baja (<50%): ${lowQualityCount}`;
 
-      document.getElementById('anHighQualityPnL').textContent = (highQualityPnL >= 0 ? '+$' : '-$') + Math.abs(highQualityPnL).toFixed(2);
-      document.getElementById('anLowQualityPnL').textContent = (lowQualityPnL >= 0 ? '+$' : '-$') + Math.abs(lowQualityPnL).toFixed(2);
+      byId('anHighQualityPnL').textContent = fmtSigned(highQualityPnL);
+      byId('anLowQualityPnL').textContent = fmtSigned(lowQualityPnL);
 
       let mostTradedSym = "N/A";
       let maxCount = 0;
-      Object.keys(symbolMap).forEach(s => {
-        if (symbolMap[s] > maxCount) {
-          maxCount = symbolMap[s];
-          mostTradedSym = s;
-        }
-      });
+      for (const [s, c] of Object.entries(symbolMap)) {
+        if (c > maxCount) { maxCount = c; mostTradedSym = s; }
+      }
 
-      document.getElementById('anMostTradedSymbol').textContent = mostTradedSym;
-      document.getElementById('anMostTradedCount').textContent = `${maxCount} Operaciones (${((maxCount / totalTradesCount) * 100).toFixed(0)}% del Total)`;
+      byId('anMostTradedSymbol').textContent = mostTradedSym;
+      byId('anMostTradedCount').textContent = `${maxCount} Operaciones (${((maxCount / totalTradesCount) * 100).toFixed(0)}% del Total)`;
 
       updateSymbolChart(symbolMap);
 
-      const reflectionsContainer = document.getElementById('analyticsReflectionList');
-      reflectionsContainer.innerHTML = '';
-
+      const reflections = [];
       const addReflection = (title, text, color) => {
-        const div = document.createElement('div');
-        div.className = 'reflection-box';
-        div.style.borderColor = color;
-        div.innerHTML = `<b style="color:${color}">${title}:</b> ${text}`;
-        reflectionsContainer.appendChild(div);
+        reflections.push(`<div class="reflection-box" style="border-color:${color};"><b style="color:${color}">${title}:</b> ${text}</div>`);
       };
 
       if (avgQuality >= 85) {
@@ -1598,7 +1754,7 @@
       }
 
       if (lowQualityPnL < 0) {
-        addReflection("📉 FUGA DE CAPITAL POR REGLAS ROTAS", `Has perdido <b>$${Math.abs(lowQualityPnL).toFixed(2)}</b> en operaciones registradas con baja calidad (&lt;80%). Eliminar estas entradas habría mejorado directamente tu rentabilidad.`, "var(--neon-red)");
+        addReflection("📉 FUGA DE CAPITAL POR REGLAS ROTAS", `Has perdido <b>${fmtUsd(Math.abs(lowQualityPnL))}</b> en operaciones registradas con baja calidad (&lt;80%). Eliminar estas entradas habría mejorado directamente tu rentabilidad.`, "var(--neon-red)");
       }
 
       if (shortsCount > longsCount * 2 && totalTradesCount >= 4) {
@@ -1606,56 +1762,51 @@
       } else if (longsCount > shortsCount * 2 && totalTradesCount >= 4) {
         addReflection("📊 SESGO DE COMPRA DETECTADO", `El ${longsPct}% de tus operativas han sido Longs. Asegúrate de estar operando a favor de la tendencia estructural de mayor temporalidad.`, "var(--neon-blue)");
       }
+
+      byId('analyticsReflectionList').innerHTML = reflections.join('');
     }
 
     function updateSymbolChart(symbolMap) {
-      const labels = Object.keys(symbolMap);
-      const data = Object.values(symbolMap);
-
-      if (symbolChartInstance) {
-        symbolChartInstance.data.labels = labels;
-        symbolChartInstance.data.datasets[0].data = data;
-        symbolChartInstance.update();
-      }
+      if (!symbolChartInstance) return;
+      symbolChartInstance.data.labels = Object.keys(symbolMap);
+      symbolChartInstance.data.datasets[0].data = Object.values(symbolMap);
+      symbolChartInstance.update();
     }
 
     function renderTreasury() {
-      const tbody = document.getElementById('treasuryTableBody');
+      const tbody = byId('treasuryTableBody');
       if (!tbody) return;
-      tbody.innerHTML = '';
 
-      treasuryLog.forEach((item, idx) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${item.date}</td>
-          <td><b style="color:${item.type === 'DEPOSIT' ? 'var(--neon-green)' : 'var(--neon-red)'}">${item.type === 'DEPOSIT' ? 'DEPÓSITO' : 'RETIRO'}</b></td>
-          <td class="${item.type === 'DEPOSIT' ? 'val-pos' : 'val-neg'}">${item.type === 'DEPOSIT' ? '+$' : '-$'}${item.amount.toFixed(2)}</td>
-          <td>${item.note}</td>
-          <td>$${item.oldBaseCapital.toFixed(2)}</td>
-          <td><b>$${item.newBaseCapital.toFixed(2)}</b></td>
+      // ⚡ Una sola escritura al DOM en lugar de un appendChild por fila
+      tbody.innerHTML = treasuryLog.map((item, idx) => {
+        const isDeposit = item.type === 'DEPOSIT';
+        return `<tr>
+          <td>${escapeHtml(item.date)}</td>
+          <td><b style="color:${isDeposit ? 'var(--neon-green)' : 'var(--neon-red)'}">${isDeposit ? 'DEPÓSITO' : 'RETIRO'}</b></td>
+          <td class="${isDeposit ? 'val-pos' : 'val-neg'}">${isDeposit ? '+' : '-'}${fmtUsd(item.amount)}</td>
+          <td>${escapeHtml(item.note)}</td>
+          <td>${fmtUsd(item.oldBaseCapital)}</td>
+          <td><b>${fmtUsd(item.newBaseCapital)}</b></td>
           <td><button class="btn btn-red" style="padding: 2px 6px; font-size: 9px;" onclick="deleteTreasuryItem(${idx})">X</button></td>
-        `;
-        tbody.appendChild(row);
-      });
+        </tr>`;
+      }).join('');
     }
 
     window.handleTreasurySubmit = async function(e) {
       e.preventDefault();
       if (!currentAccount) return;
 
-      const customDate = document.getElementById('inpTreasuryDate').value;
-      const type = document.getElementById('inpTreasuryType').value;
-      const amount = parseFloat(document.getElementById('inpTreasuryAmount').value);
-      const note = document.getElementById('inpTreasuryNote').value;
+      const customDate = byId('inpTreasuryDate').value;
+      const type = byId('inpTreasuryType').value;
+      const amount = num(byId('inpTreasuryAmount').value);
+      const note = byId('inpTreasuryNote').value;
 
       if (amount <= 0) {
         alert("Ingresa un monto válido.");
         return;
       }
 
-      const formattedDate = customDate ? customDate : new Date().toLocaleDateString();
-
-      const oldBaseCapital = currentAccount.baseCapital;
+      const oldBaseCapital = num(currentAccount.baseCapital);
       let newBaseCapital = oldBaseCapital;
 
       if (type === 'DEPOSIT') {
@@ -1673,7 +1824,7 @@
       currentAccount.minBalanceLimit = newBaseCapital - currentAccount.maxLossAmount;
 
       treasuryLog.push({
-        date: formattedDate,
+        date: customDate || new Date().toLocaleDateString(),
         type: type,
         amount: amount,
         note: note,
@@ -1681,57 +1832,66 @@
         newBaseCapital: newBaseCapital
       });
 
+      // ⚡ El listener onSnapshot re-renderiza automáticamente tras la escritura (antes se renderizaba dos veces)
       await syncToCloud();
-      document.getElementById('frmTreasury').reset();
+      byId('frmTreasury').reset();
       setTodayAsDefaultStartDate();
-      renderAccountInfo();
-      renderTreasury();
-      renderInvestmentModel();
-      renderTradingPlanData();
     };
 
     window.capitalizePnL = async function() {
       if (!currentAccount) return;
 
-      const totalPnL = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
+      invalidateStats();
+      const pendingPnL = getStats().pendingPnL;
 
-      if (totalPnL <= 0) {
-        alert("No tienes PnL positivo acumulado disponible para capitalizar.");
+      if (pendingPnL <= 0) {
+        alert("No tienes PnL positivo pendiente para capitalizar desde tu última capitalización.");
         return;
       }
 
-      if (confirm(`¿Deseas capitalizar +$${totalPnL.toFixed(2)} de ganancias en tu Capital Base?\nEsto ajustará tu nuevo Capital Base y recalculará el Drawdown Máximo al 25%.`)) {
-        const oldBase = currentAccount.baseCapital;
-        const newBase = oldBase + totalPnL;
+      if (confirm(`¿Deseas capitalizar +$${pendingPnL.toFixed(2)} de ganancias en tu Capital Base?\nTu historial de trades, winrate y métricas se conservan intactos. Se recalcularán el riesgo por trade y el Drawdown Máximo (${currentAccount.maxDrawdownPct}%) sobre el nuevo capital.`)) {
+        const oldBase = num(currentAccount.baseCapital);
+        const newBase = oldBase + pendingPnL;
 
         currentAccount.baseCapital = newBase;
+        currentAccount.capitalizedPnL = num(currentAccount.capitalizedPnL) + pendingPnL;
         currentAccount.maxLossAmount = newBase * (currentAccount.maxDrawdownPct / 100);
         currentAccount.minBalanceLimit = newBase - currentAccount.maxLossAmount;
 
         treasuryLog.push({
           date: new Date().toISOString().slice(0, 10),
           type: 'DEPOSIT',
-          amount: totalPnL,
+          amount: pendingPnL,
           note: '✨ Capitalización de PnL Acumulado (Interés Compuesto)',
           oldBaseCapital: oldBase,
-          newBaseCapital: newBase
+          newBaseCapital: newBase,
+          isCapitalization: true
         });
 
-        // Reiniciar las ganancias contables ya convertidas a capital base
-        trades.forEach(t => t.pnl = 0);
-
+        // ✅ Los trades NO se modifican: el PnL histórico, winrate, profit factor, XP y analítica se mantienen.
         await syncToCloud();
-        renderAccountInfo();
-        renderDashboard();
-        renderTreasury();
-        renderInvestmentModel();
-        renderTradingPlanData();
 
-        alert(`¡PnL Capitalizado con Éxito!\nNuevo Capital Base: $${newBase.toFixed(2)}\nNuevo Drawdown Máximo (25%): $${currentAccount.maxLossAmount.toFixed(2)}`);
+        alert(`¡PnL Capitalizado con Éxito!\nNuevo Capital Base: $${newBase.toFixed(2)}\nNuevo Riesgo Base (1%): $${(newBase * 0.01).toFixed(2)}\nNuevo Drawdown Máximo (${currentAccount.maxDrawdownPct}%): $${currentAccount.maxLossAmount.toFixed(2)}`);
       }
     };
 
     window.deleteTreasuryItem = async function(index) {
+      const item = treasuryLog[index];
+      if (!item) return;
+
+      // Una capitalización se puede revertir de forma exacta: el PnL vuelve a quedar "pendiente" y el capital base regresa
+      if (item.isCapitalization && currentAccount) {
+        if (!confirm(`¿Revertir esta capitalización de ${fmtUsd(item.amount)}?\nEl Capital Base bajará en ese monto y el PnL volverá a quedar pendiente por capitalizar. El historial de trades no cambia.`)) return;
+        const amount = num(item.amount);
+        currentAccount.baseCapital = num(currentAccount.baseCapital) - amount;
+        currentAccount.capitalizedPnL = num(currentAccount.capitalizedPnL) - amount;
+        currentAccount.maxLossAmount = currentAccount.baseCapital * (currentAccount.maxDrawdownPct / 100);
+        currentAccount.minBalanceLimit = currentAccount.baseCapital - currentAccount.maxLossAmount;
+        treasuryLog.splice(index, 1);
+        await syncToCloud();
+        return;
+      }
+
       if (confirm("¿Eliminar este registro de tesorería? Nota: Se recomienda ajustar manualmente el Capital Base si afectó tus fondos.")) {
         treasuryLog.splice(index, 1);
         await syncToCloud();
@@ -1742,54 +1902,48 @@
       e.preventDefault();
       if (!currentAccount) return;
 
-      const openTime = document.getElementById('inpOpenTime').value.replace('T', ' ');
-      const symbol = document.getElementById('inpSymbol').value.toUpperCase();
-      const direction = document.getElementById('inpDirection').value;
-      const amount = parseFloat(document.getElementById('inpAmount').value) || 0;
-      const leverage = parseFloat(document.getElementById('inpLeverage').value) || 1;
-      const entryPrice = parseFloat(document.getElementById('inpEntryPrice').value) || 0;
-      const closePrice = parseFloat(document.getElementById('inpClosePrice').value) || 0;
-      const commission = parseFloat(document.getElementById('inpCommission').value) || 0;
-      const risk = parseFloat(document.getElementById('inpRisk').value) || 0;
-      const pnl = parseFloat(document.getElementById('inpPnl').value) || 0;
+      const pnl = num(byId('inpPnl').value);
+      const risk = num(byId('inpRisk').value);
 
-      const currentCapital = currentAccount.baseCapital + trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
-      const rMultiple = risk > 0 ? (pnl / risk).toFixed(2) : "0.00";
-      const pctCt = currentCapital > 0 ? (pnl / currentCapital) * 100 : 0;
+      invalidateStats();
+      const accountBalance = getStats().balance; // saldo de la cuenta antes del trade (base para % CT)
 
       const newTrade = {
         id: trades.length + 1,
-        openTime: openTime,
-        symbol: symbol,
-        direction: direction,
-        amount: amount,
-        leverage: leverage,
-        entryPrice: entryPrice,
-        closePrice: closePrice,
-        commission: commission,
+        openTime: normalizeOpenTime(byId('inpOpenTime').value),
+        symbol: byId('inpSymbol').value.toUpperCase(),
+        direction: byId('inpDirection').value,
+        amount: num(byId('inpAmount').value),
+        leverage: num(byId('inpLeverage').value, 1),
+        entryPrice: num(byId('inpEntryPrice').value),
+        closePrice: num(byId('inpClosePrice').value),
+        commission: num(byId('inpCommission').value),
         risk: risk,
         pnl: pnl,
-        capital: currentCapital,
-        rMultiple: rMultiple,
+        rMultiple: risk > 0 ? (pnl / risk).toFixed(2) : "0.00",
         quality: calculatedQualityScore,
-        pctCt: pctCt
+        pctCt: accountBalance > 0 ? (pnl / accountBalance) * 100 : 0,
+        accountBalance: accountBalance,
+        capitalIsMargin: true
       };
+      // Capital colocado = margen de la posición (Entry × Lotes ÷ Apalancamiento)
+      newTrade.capital = Math.round((marginOf(newTrade) || 0) * 100) / 100;
 
       trades.push(newTrade);
+      normalizeTrades(trades); // mantiene el orden cronológico aunque registres un trade con fecha pasada
+
+      // ⚡ onSnapshot se encarga del render (antes renderDashboard() se ejecutaba 2 veces por trade)
       await syncToCloud();
 
-      document.getElementById('frmTrade').reset();
+      byId('frmTrade').reset();
       setCurrentDateTimeInput();
-      document.getElementById('inpSymbol').value = "BTCUSDT";
-      document.getElementById('inpAmount').value = "0.01";
-      document.getElementById('inpLeverage').value = "10";
-      
-      const panel = document.getElementById('tradeFormPanel');
-      panel.classList.add('form-disabled-panel');
+      byId('inpSymbol').value = "BTCUSDT";
+      byId('inpAmount').value = "0.01";
+      byId('inpLeverage').value = "10";
+
+      byId('tradeFormPanel').classList.add('form-disabled-panel');
       document.querySelectorAll('.chk-box').forEach(cb => cb.checked = false);
       updateQualityScore();
-
-      renderDashboard();
     };
 
     window.deleteTrade = async function(index) {
@@ -1801,87 +1955,47 @@
     };
 
     function renderDashboard() {
-      renderAccountInfo();
-      const tbody = document.getElementById('tradeTableBody');
-      tbody.innerHTML = '';
-      let accumPnL = 0;
-      let winCount = 0;
-      let lossCount = 0;
-      let grossProfit = 0;
-      let grossLoss = 0;
-      let peakBalance = currentAccount ? currentAccount.baseCapital : 400;
-      let maxDrawdown = 0;
+      const s = getStats();
 
-      trades.forEach((t, idx) => {
-        accumPnL += t.pnl;
-        if (t.pnl >= 0) {
-          winCount++;
-          grossProfit += t.pnl;
-        } else {
-          lossCount++;
-          grossLoss += Math.abs(t.pnl);
-        }
-
-        let currentCap = (currentAccount ? currentAccount.baseCapital : 400) + accumPnL;
-        if (currentCap > peakBalance) peakBalance = currentCap;
-        let dd = peakBalance - currentCap;
-        if (dd > maxDrawdown) maxDrawdown = dd;
-
-        const qualityVal = t.quality !== undefined ? t.quality : 100;
-        const qualityColor = qualityVal >= 80 ? 'var(--neon-green)' : (qualityVal >= 50 ? 'var(--neon-orange)' : 'var(--neon-red)');
-
-        const row = document.createElement('tr');
-        row.innerHTML = `
+      // ⚡ Construcción de la tabla en un solo string → una sola escritura al DOM
+      byId('tradeTableBody').innerHTML = trades.map((t, idx) => {
+        const pnl = num(t.pnl);
+        const q = qualityOf(t);
+        const pctCt = num(t.pctCt);
+        const commission = num(t.commission);
+        const pnlClass = pnl >= 0 ? 'val-pos' : 'val-neg';
+        return `<tr>
           <td>${t.id}</td>
-          <td><b>${t.symbol}</b></td>
-          <td>${t.openTime}</td>
-          <td>${t.entryPrice}</td>
-          <td>${t.closePrice}</td>
-          <td><span class="badge-dir ${t.direction === 'BUY' ? 'badge-buy' : 'badge-sell'}">${t.direction}</span></td>
-          <td>${t.leverage}</td>
-          <td>$${t.capital.toFixed(2)}</td>
-          <td>${t.commission ? '$' + t.commission.toFixed(2) : '-'}</td>
-          <td class="${t.pnl >= 0 ? 'val-pos' : 'val-neg'}">${t.pnl >= 0 ? '+$' + t.pnl.toFixed(2) : '-$' + Math.abs(t.pnl).toFixed(2)}</td>
-          <td>$${t.risk.toFixed(2)}</td>
-          <td class="${t.pnl >= 0 ? 'val-pos' : 'val-neg'}">${t.rMultiple}</td>
-          <td><span class="badge-quality" style="color:${qualityColor}">${qualityVal.toFixed(0)}%</span></td>
-          <td class="${t.pctCt >= 0 ? 'val-pos' : 'val-neg'}">${t.pctCt > 0 ? '+' : ''}${t.pctCt.toFixed(2)}%</td>
+          <td><b>${escapeHtml(t.symbol)}</b></td>
+          <td>${escapeHtml(fmtDateTime(t.openTime))}</td>
+          <td>${num(t.entryPrice)}</td>
+          <td>${num(t.closePrice)}</td>
+          <td><span class="badge-dir ${t.direction === 'BUY' ? 'badge-buy' : 'badge-sell'}">${escapeHtml(t.direction)}</span></td>
+          <td>${num(t.leverage, 1)}</td>
+          <td>${fmtUsd(t.capital)}</td>
+          <td>${commission ? fmtUsd(commission) : '-'}</td>
+          <td class="${pnlClass}">${fmtSigned(pnl)}</td>
+          <td>${fmtUsd(t.risk)}</td>
+          <td class="${pnlClass}">${escapeHtml(t.rMultiple)}</td>
+          <td><span class="badge-quality" style="color:${qualityColor(q)}">${q.toFixed(0)}%</span></td>
+          <td class="${pctCt >= 0 ? 'val-pos' : 'val-neg'}">${pctCt > 0 ? '+' : ''}${pctCt.toFixed(2)}%</td>
           <td><button class="btn btn-red" style="padding: 2px 6px; font-size: 9px;" onclick="deleteTrade(${idx})">X</button></td>
-        `;
-        tbody.appendChild(row);
-      });
+        </tr>`;
+      }).join('');
 
-      document.getElementById('lblTotalPnL').textContent = (accumPnL >= 0 ? '+$' : '-$') + Math.abs(accumPnL).toFixed(2);
-      document.getElementById('tpCount').textContent = winCount;
-      document.getElementById('slCount').textContent = lossCount;
+      byId('lblTotalPnL').textContent = fmtSigned(s.totalPnL);
+      byId('tpCount').textContent = s.winCount;
+      byId('slCount').textContent = s.lossCount;
 
-      let pf = grossLoss > 0 ? (grossProfit / grossLoss).toFixed(2) : (grossProfit > 0 ? "∞" : "0.00");
-      let avgWin = winCount > 0 ? grossProfit / winCount : 0;
-      let avgLoss = lossCount > 0 ? grossLoss / lossCount : 0;
-      let totalTrades = trades.length;
-      let winRate = totalTrades > 0 ? winCount / totalTrades : 0;
-      let expectancy = (winRate * avgWin) - ((1 - winRate) * avgLoss);
+      byId('kpiProfitFactor').textContent = s.profitFactor === Infinity ? "∞" : s.profitFactor.toFixed(2);
+      byId('kpiExpectancy').textContent = fmtSigned(s.expectancy);
+      byId('kpiAvgWinLoss').textContent = `$${s.avgWin.toFixed(1)} / $${s.avgLoss.toFixed(1)}`;
+      byId('kpiMaxDrawdown').textContent = `-${fmtUsd(s.maxDrawdown)}`;
 
-      document.getElementById('kpiProfitFactor').textContent = pf;
-      document.getElementById('kpiExpectancy').textContent = (expectancy >= 0 ? '+$' : '-$') + Math.abs(expectancy).toFixed(2);
-      document.getElementById('kpiAvgWinLoss').textContent = `$${avgWin.toFixed(1)} / $${avgLoss.toFixed(1)}`;
-      document.getElementById('kpiMaxDrawdown').textContent = `-$${maxDrawdown.toFixed(2)}`;
-
-      updateCharts(trades);
-      updateCharacterTab();
-      renderInvestmentModel();
-      renderTradingPlanData();
-      checkAccountBreach(accumPnL);
+      updateCharts(s);
     }
 
-    const LEVEL_DATA = [
-      { lvl: 1, name: "LVL 1 — RETAIL SURVIVOR", minXp: 0, maxXp: 499, img: "https://lh3.googleusercontent.com/u/0/d/16a5I601iH8vaj_lL-pPj4irsfp2Sjy6h", desc: "¡Opera con tu primer aporte de capital, apégate al plan y sobrevive!" },
-      { lvl: 2, name: "LVL 2 — CONSISTENT SCALPER", minXp: 500, maxXp: 999, img: "https://lh3.googleusercontent.com/u/0/d/1jwypjV61uNb9NAl1yFbx8k8ZRM9FMmKH", desc: "Domina tu estrategia y controla tus emociones." },
-      { lvl: 3, name: "LVL 3 — PORTFOLIO STRATEGIST", minXp: 1000, maxXp: 1999, img: "https://lh3.googleusercontent.com/u/0/d/15SQfi9XR3YRY_qspOYlDCDVfeH0cBCHC", desc: "Gestiona Capital de + $1000." },
-      { lvl: 4, name: "LVL 4 — RISK ARCHITECT", minXp: 2000, maxXp: 3499, img: "https://lh3.googleusercontent.com/u/0/d/1UYasWTPoRs_SB9zfz9lkrJipVf27vkNv", desc: "Ejecuta como un Trader de Elite." },
-      { lvl: 5, name: "LVL 5 — INSTITUTIONAL ARCHITECT", minXp: 3500, maxXp: 99999, img: "https://lh3.googleusercontent.com/u/0/d/1HM4c-TBfR5c983SP_-WTeN8Y9HVvmmpe", desc: "Eres un Gestor de Capitales Certificado." }
-    ];
-
+    // ================= CHARACTER XP CON NIVEL ANCLADO =================
     function getLevelData(xp) {
       for (let i = LEVEL_DATA.length - 1; i >= 0; i--) {
         if (xp >= LEVEL_DATA[i].minXp) return LEVEL_DATA[i];
@@ -1889,37 +2003,54 @@
       return LEVEL_DATA[0];
     }
 
+    // 🔒 Devuelve el nivel anclado (el máximo alcanzado). Si el XP actual desbloquea un nivel nuevo, lo guarda en la nube.
+    //    Un trade perdedor puede bajar el XP, pero NUNCA el nivel: QuantQuest premia la ejecución, no el PnL.
+    function resolveAnchoredLevel(xpLevelNum) {
+      if (!currentAccount) return xpLevelNum;
+      const stored = Math.min(LEVEL_DATA.length, Math.max(1, parseInt(currentAccount.maxLevelReached) || 1));
+
+      if (xpLevelNum > stored) {
+        currentAccount.maxLevelReached = xpLevelNum;
+        currentAccount.maxLevelReachedAt = new Date().toISOString();
+        syncToCloud();
+        return xpLevelNum;
+      }
+      return stored;
+    }
+
     function updateCharacterTab() {
-      let totalPnL = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
-      let currentXp = Math.max(0, Math.round(totalPnL * 5));
-      let lvl = getLevelData(currentXp);
+      const currentXp = getStats().xp;
+      const xpLevel = getLevelData(currentXp);
+      const anchoredNum = resolveAnchoredLevel(xpLevel.lvl);
+      const lvl = LEVEL_DATA[anchoredNum - 1];
+      const isProtected = anchoredNum > xpLevel.lvl; // el XP cayó bajo el piso del nivel, pero el rango se conserva
 
-      document.getElementById('txtXp').textContent = `${currentXp} XP`;
-      document.getElementById('txtLvl').textContent = lvl.name;
-      document.getElementById('badgeTitle').textContent = lvl.name;
-      document.getElementById('sideAvatar').src = lvl.img;
+      const pct = Math.min(100, Math.max(0, ((currentXp - lvl.minXp) / (lvl.maxXp - lvl.minXp + 1)) * 100));
 
-      document.getElementById('mainAvatarDisplay').src = lvl.img;
-      document.getElementById('charTitleDisplay').textContent = lvl.name;
-      document.getElementById('charDescDisplay').textContent = lvl.desc;
-      document.getElementById('charXpNum').textContent = `${currentXp} / ${lvl.maxXp + 1} XP`;
+      byId('txtXp').textContent = `${currentXp} XP`;
+      byId('txtLvl').textContent = isProtected ? `${lvl.name} 🔒` : lvl.name;
+      byId('badgeTitle').textContent = lvl.name;
+      byId('sideAvatar').src = lvl.img;
 
-      let pct = ((currentXp - lvl.minXp) / (lvl.maxXp - lvl.minXp + 1)) * 100;
-      pct = Math.min(100, Math.max(0, pct));
+      byId('mainAvatarDisplay').src = lvl.img;
+      byId('charTitleDisplay').textContent = lvl.name;
+      byId('charDescDisplay').textContent = isProtected
+        ? `${lvl.desc} 🔒 Nivel anclado: tu rango está asegurado aunque el PnL retroceda. Recupera ${lvl.minXp - currentXp} XP para volver a progresar hacia el siguiente nivel.`
+        : lvl.desc;
+      byId('charXpNum').textContent = `${currentXp} / ${lvl.maxXp + 1} XP`;
 
-      document.getElementById('barXp').style.width = pct + '%';
-      document.getElementById('charBarFill').style.width = pct + '%';
+      byId('barXp').style.width = pct + '%';
+      byId('charBarFill').style.width = pct + '%';
 
-      for (let i = 1; i <= 5; i++) {
-        const card = document.getElementById(`cardLvl${i}`);
-        if (card) {
-          card.classList.remove('unlocked', 'active-level');
-          if (LEVEL_DATA[i - 1].minXp <= currentXp) card.classList.add('unlocked');
-          if (lvl.lvl === i) card.classList.add('active-level');
-        }
+      for (let i = 1; i <= LEVEL_DATA.length; i++) {
+        const card = byId(`cardLvl${i}`);
+        if (!card) continue;
+        card.classList.toggle('unlocked', i <= anchoredNum);
+        card.classList.toggle('active-level', i === anchoredNum);
       }
     }
 
+    // ================= MODELO DE INVERSIÓN =================
     function parseTradeMonthKey(openTimeStr) {
       if (!openTimeStr) return null;
       if (openTimeStr.includes('/')) {
@@ -1928,46 +2059,34 @@
           return `${parts[1].padStart(2, '0')}/${parts[2]}`;
         }
       } else if (openTimeStr.includes('-')) {
-        const d = new Date(openTimeStr);
-        if (!isNaN(d)) {
-          const m = String(d.getMonth() + 1).padStart(2, '0');
-          const y = d.getFullYear();
-          return `${m}/${y}`;
-        }
+        // ⚡ Lectura directa de "YYYY-MM-DD" sin crear objetos Date (también evita desfases de zona horaria)
+        const m = openTimeStr.match(/^(\d{4})-(\d{2})/);
+        if (m) return `${m[2]}/${m[1]}`;
       }
       return null;
     }
 
-    const MONTH_NAMES = [
-      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-    ];
-
-    window.renderInvestmentModel = function() {
-      const tbody = document.getElementById('investmentTableBody');
+    function renderInvestmentModel() {
+      const tbody = byId('investmentTableBody');
       if (!tbody) return;
-      tbody.innerHTML = '';
 
       const baseCap = 400; // Anclado fijo a 400
-      const monthlyContrib = parseFloat(document.getElementById('cfgMonthlyContrib').value) || 0;
-      const targetPct = parseFloat(document.getElementById('cfgTargetPct').value) || 0;
-      const durationMonths = parseInt(document.getElementById('cfgDurationMonths').value) || 12;
+      const monthlyContrib = num(byId('cfgMonthlyContrib').value);
+      const targetPct = num(byId('cfgTargetPct').value);
+      const durationMonths = parseInt(byId('cfgDurationMonths').value) || 12;
 
-      document.getElementById('thPnlProy').textContent = `PNL PROY. (${targetPct}%)`;
+      byId('thPnlProy').textContent = `PNL PROY. (${targetPct}%)`;
 
-      const totalRealPnLAllTime = trades.reduce((acc, t) => acc + (t.pnl || 0), 0);
+      const totalRealPnLAllTime = getStats().totalPnL;
 
       const pnlMap = {};
-      trades.forEach(t => {
+      for (const t of trades) {
         const key = parseTradeMonthKey(t.openTime);
-        if (key) {
-          pnlMap[key] = (pnlMap[key] || 0) + (t.pnl || 0);
-        }
-      });
+        if (key) pnlMap[key] = (pnlMap[key] || 0) + num(t.pnl);
+      }
 
       let currentCapProy = baseCap;
       let currentCapReal = baseCap;
-      let totalAportesRealizados = 0;
 
       let startMonth = 8;
       let startYear = 2026;
@@ -1980,33 +2099,31 @@
         }
       }
 
+      const rows = [];
       for (let i = 0; i < durationMonths; i++) {
-        let monthIdx = (startMonth + i) % 12;
-        let yearOffset = Math.floor((startMonth + i) / 12);
-        let year = startYear + yearOffset;
+        const monthIdx = (startMonth + i) % 12;
+        const year = startYear + Math.floor((startMonth + i) / 12);
 
-        let monthName = `${MONTH_NAMES[monthIdx]} ${year}`;
-        let mm = String(monthIdx + 1).padStart(2, '0');
-        let key = `${mm}/${year}`;
-        let aporteFecha = `10/${mm}/${year}`;
+        const monthName = `${MONTH_NAMES[monthIdx]} ${year}`;
+        const mm = String(monthIdx + 1).padStart(2, '0');
+        const key = `${mm}/${year}`;
+        const aporteFecha = `10/${mm}/${year}`;
 
-        let capInicialMesProy = currentCapProy;
-        let aporte = (i === 0) ? 0 : monthlyContrib;
-        let totalBaseProy = capInicialMesProy + aporte;
-        let pnlProyectado = totalBaseProy * (targetPct / 100);
+        const capInicialMesProy = currentCapProy;
+        const aporte = (i === 0) ? 0 : monthlyContrib;
+        const totalBaseProy = capInicialMesProy + aporte;
+        const pnlProyectado = totalBaseProy * (targetPct / 100);
         currentCapProy = totalBaseProy + pnlProyectado;
 
-        let capInicialMesReal = currentCapReal;
-        let hasTradesInMonth = Object.prototype.hasOwnProperty.call(pnlMap, key);
-        let realPnLMonth = hasTradesInMonth ? pnlMap[key] : 0;
-        let difPnL = realPnLMonth - pnlProyectado;
+        const hasTradesInMonth = Object.prototype.hasOwnProperty.call(pnlMap, key);
+        const realPnLMonth = hasTradesInMonth ? pnlMap[key] : 0;
+        const difPnL = realPnLMonth - pnlProyectado;
 
         if (hasTradesInMonth) {
-          totalAportesRealizados += aporte;
-          currentCapReal = capInicialMesReal + aporte + realPnLMonth;
+          currentCapReal = currentCapReal + aporte + realPnLMonth;
         }
 
-        let statusBadge = "";
+        let statusBadge;
         if (!hasTradesInMonth) {
           statusBadge = `<span style="color:var(--text-muted);">PENDIENTE</span>`;
         } else if (realPnLMonth >= pnlProyectado) {
@@ -2017,74 +2134,265 @@
           statusBadge = `<span style="color:var(--neon-red); font-weight:bold;">❌ NO CUMPLIDO</span>`;
         }
 
-        const row = document.createElement('tr');
-        row.innerHTML = `
+        rows.push(`<tr>
           <td><b>${monthName}</b></td>
           <td style="color:var(--neon-orange);">${aporteFecha}</td>
-          <td>$${capInicialMesProy.toFixed(2)}</td>
-          <td style="color:var(--neon-green);">+$${aporte.toFixed(2)}</td>
-          <td>$${totalBaseProy.toFixed(2)}</td>
-          <td>$${pnlProyectado.toFixed(2)}</td>
-          <td style="color:var(--neon-orange); font-weight:bold;">$${currentCapProy.toFixed(2)}</td>
-          <td class="${realPnLMonth >= 0 ? 'val-pos' : 'val-neg'}">${hasTradesInMonth ? (realPnLMonth >= 0 ? '+$' : '-$') + Math.abs(realPnLMonth).toFixed(2) : '-'}</td>
-          <td class="${difPnL >= 0 ? 'val-pos' : 'val-neg'}">${hasTradesInMonth ? (difPnL >= 0 ? '+$' : '-$') + Math.abs(difPnL).toFixed(2) : '-'}</td>
-          <td style="font-weight:bold;">${hasTradesInMonth ? '$' + currentCapReal.toFixed(2) : '-'}</td>
+          <td>${fmtUsd(capInicialMesProy)}</td>
+          <td style="color:var(--neon-green);">+${fmtUsd(aporte)}</td>
+          <td>${fmtUsd(totalBaseProy)}</td>
+          <td>${fmtUsd(pnlProyectado)}</td>
+          <td style="color:var(--neon-orange); font-weight:bold;">${fmtUsd(currentCapProy)}</td>
+          <td class="${realPnLMonth >= 0 ? 'val-pos' : 'val-neg'}">${hasTradesInMonth ? fmtSigned(realPnLMonth) : '-'}</td>
+          <td class="${difPnL >= 0 ? 'val-pos' : 'val-neg'}">${hasTradesInMonth ? fmtSigned(difPnL) : '-'}</td>
+          <td style="font-weight:bold;">${hasTradesInMonth ? fmtUsd(currentCapReal) : '-'}</td>
           <td>${statusBadge}</td>
-        `;
-        tbody.appendChild(row);
+        </tr>`);
       }
+      tbody.innerHTML = rows.join('');
 
-      const activeBaseCap = currentAccount ? currentAccount.baseCapital : 400;
-      const totalBalance = activeBaseCap + totalRealPnLAllTime;
+      const activeBaseCap = currentAccount ? num(currentAccount.baseCapital, 400) : 400;
+      const totalBalance = getStats().balance; // Capital Base + PnL pendiente (evita contar dos veces lo capitalizado)
 
-      document.getElementById('lblModelBaseCap').textContent = '$' + baseCap.toFixed(2);
-      document.getElementById('lblModelMonthlyContrib').textContent = '$' + monthlyContrib.toFixed(2);
+      byId('lblModelBaseCap').textContent = fmtUsd(baseCap);
+      byId('lblModelMonthlyContrib').textContent = fmtUsd(monthlyContrib);
 
-      const realPnlLabel = document.getElementById('lblModelRealPnL');
-      realPnlLabel.textContent = (totalRealPnLAllTime >= 0 ? '+$' : '-$') + Math.abs(totalRealPnLAllTime).toFixed(2);
+      const realPnlLabel = byId('lblModelRealPnL');
+      realPnlLabel.textContent = fmtSigned(totalRealPnLAllTime);
       realPnlLabel.style.color = totalRealPnLAllTime >= 0 ? 'var(--neon-green)' : 'var(--neon-red)';
 
-      const totalCapLabel = document.getElementById('lblModelCapTotal');
-      totalCapLabel.textContent = '$' + totalBalance.toFixed(2);
+      const totalCapLabel = byId('lblModelCapTotal');
+      totalCapLabel.textContent = fmtUsd(totalBalance);
       totalCapLabel.style.color = totalBalance >= activeBaseCap ? 'var(--neon-green)' : 'var(--neon-red)';
+    }
+    window.renderInvestmentModel = renderInvestmentModel;
+
+    // Pestañas que se renderizan bajo demanda
+    const TAB_RENDERERS = {
+      journal: renderDashboard,
+      analytics: renderAnalytics,
+      treasury: renderTreasury,
+      investment: renderInvestmentModel,
+      character: updateCharacterTab,
+      plan: renderTradingPlanData
     };
 
+    // ================= GRÁFICOS =================
     function initCharts() {
-      const ctxPnL = document.getElementById('pnlChart').getContext('2d');
-      pnlChartInstance = new Chart(ctxPnL, {
+      pnlChartInstance = new Chart(byId('pnlChart').getContext('2d'), {
         type: 'line',
         data: { labels: [], datasets: [{ label: 'PNL ($)', data: [], borderColor: '#00E676', borderWidth: 2, tension: 0.3 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
       });
 
-      const ctxWin = document.getElementById('winrateChart').getContext('2d');
-      winrateChartInstance = new Chart(ctxWin, {
+      winrateChartInstance = new Chart(byId('winrateChart').getContext('2d'), {
         type: 'doughnut',
         data: { labels: ['TP', 'SL'], datasets: [{ data: [0, 0], backgroundColor: ['#00E676', '#FF1744'] }] },
         options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } }
       });
 
-      const ctxSymbol = document.getElementById('symbolChart').getContext('2d');
-      symbolChartInstance = new Chart(ctxSymbol, {
+      symbolChartInstance = new Chart(byId('symbolChart').getContext('2d'), {
         type: 'bar',
         data: { labels: [], datasets: [{ label: 'Trades', data: [], backgroundColor: '#FF9100' }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
       });
     }
 
-    function updateCharts(tradeList) {
-      let cumPnL = 0;
-      const pnlData = tradeList.map(t => cumPnL += t.pnl);
-
-      pnlChartInstance.data.labels = tradeList.map(t => t.openTime.split(' ')[0]);
-      pnlChartInstance.data.datasets[0].data = pnlData;
+    // ⚡ Reutiliza la curva acumulada y el conteo TP/SL ya calculados (antes: 3 recorridos extra del array)
+    function updateCharts(s) {
+      if (!pnlChartInstance || !winrateChartInstance) return;
+      pnlChartInstance.data.labels = s.labels;
+      pnlChartInstance.data.datasets[0].data = s.cumulative;
       pnlChartInstance.update();
 
-      const tp = tradeList.filter(t => t.pnl >= 0).length;
-      const sl = tradeList.filter(t => t.pnl < 0).length;
-      winrateChartInstance.data.datasets[0].data = [tp, sl];
+      winrateChartInstance.data.datasets[0].data = [s.winCount, s.lossCount];
       winrateChartInstance.update();
     }
+
+    // ================= EXPORTAR A EXCEL (.xlsx) =================
+    // La librería SheetJS solo se descarga al pulsar el botón, así no afecta la velocidad de carga del dashboard.
+    function loadSheetJS() {
+      if (window.XLSX) return Promise.resolve(window.XLSX);
+      if (!sheetJsPromise) {
+        sheetJsPromise = new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = SHEETJS_URL;
+          script.async = true;
+          script.onload = () => window.XLSX ? resolve(window.XLSX) : reject(new Error("La librería de Excel no se inicializó."));
+          script.onerror = () => { sheetJsPromise = null; reject(new Error("No se pudo descargar la librería de Excel. Revisa tu conexión.")); };
+          document.head.appendChild(script);
+        });
+      }
+      return sheetJsPromise;
+    }
+
+    const XL_FMT = {
+      usd: '"$"#,##0.00',
+      usdSigned: '"$"#,##0.00;[Red]-"$"#,##0.00',
+      price: '#,##0.########',
+      dec2: '0.00',
+      pct: '0.00%',
+      qual: '0"%"',
+      int: '0'
+    };
+
+    // Aplica formato numérico a columnas completas (fila 0 = encabezados)
+    function formatColumns(XLSX, ws, colFormats, lastRow) {
+      colFormats.forEach((fmt, c) => {
+        if (!fmt) return;
+        for (let r = 1; r <= lastRow; r++) {
+          const cell = ws[XLSX.utils.encode_cell({ r, c })];
+          if (cell && cell.t === 'n') cell.z = fmt;
+        }
+      });
+    }
+
+    function buildTradesSheet(XLSX) {
+      const columns = [
+        ['Nº', XL_FMT.int, 6],
+        ['Fecha / Hora', 'dd/mm/yyyy hh:mm', 18],
+        ['Symbol', null, 12],
+        ['Dirección', null, 10],
+        ['Lotes', XL_FMT.price, 10],
+        ['Apalancamiento', XL_FMT.int, 14],
+        ['Entry', XL_FMT.price, 12],
+        ['Close', XL_FMT.price, 12],
+        ['Capital Colocado ($)', XL_FMT.usd, 19],
+        ['Comisión ($)', XL_FMT.usd, 12],
+        ['Riesgo ($)', XL_FMT.usd, 11],
+        ['PnL Neto ($)', XL_FMT.usdSigned, 13],
+        ['R-Múltiple', XL_FMT.dec2, 11],
+        ['Calidad Checklist', XL_FMT.qual, 16],
+        ['% Cuenta', XL_FMT.pct, 10],
+        ['Resultado', null, 10],
+        ['PnL Acumulado ($)', XL_FMT.usdSigned, 17]
+      ];
+
+      let accum = 0;
+      const rows = trades.map(t => {
+        const pnl = num(t.pnl);
+        accum += pnl;
+        return [
+          num(t.id),
+          toExcelDate(t.openTime),
+          String(t.symbol || ''),
+          String(t.direction || ''),
+          num(t.amount),
+          num(t.leverage, 1),
+          num(t.entryPrice),
+          num(t.closePrice),
+          num(t.capital),
+          num(t.commission),
+          num(t.risk),
+          pnl,
+          num(t.rMultiple),
+          qualityOf(t),
+          num(t.pctCt) / 100,
+          pnl >= 0 ? 'TP' : 'SL',
+          accum
+        ];
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet([columns.map(c => c[0]), ...rows]);
+      formatColumns(XLSX, ws, columns.map(c => c[1]), rows.length);
+      ws['!cols'] = columns.map(c => ({ wch: c[2] }));
+      ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: rows.length, c: columns.length - 1 } }) };
+      return ws;
+    }
+
+    function buildSummarySheet(XLSX) {
+      const s = getStats();
+      const lvl = LEVEL_DATA[resolveAnchoredLevel(getLevelData(s.xp).lvl) - 1];
+      const acc = currentAccount || {};
+
+      const data = [
+        ['QUANTQUEST — RESUMEN DE CUENTA', '', null],
+        ['Operador', acc.name || '', null],
+        ['Cuenta #', acc.accNumber ? `#${acc.accNumber}` : '', null],
+        ['Fecha de inicio', acc.startDate || '', null],
+        ['Fecha de exportación', new Date().toLocaleString(), null],
+        ['', '', null],
+        ['Capital Base', num(acc.baseCapital), XL_FMT.usd],
+        ['Saldo Actual', s.balance, XL_FMT.usd],
+        ['PnL Capitalizado', s.capitalizedPnL, XL_FMT.usdSigned],
+        ['PnL Sin Capitalizar', s.pendingPnL, XL_FMT.usdSigned],
+        ['PnL Total', s.totalPnL, XL_FMT.usdSigned],
+        ['Drawdown Máx. Permitido', num(acc.maxLossAmount), XL_FMT.usd],
+        ['Max Drawdown Real', s.maxDrawdown, XL_FMT.usd],
+        ['', '', null],
+        ['Total de Trades', s.count, XL_FMT.int],
+        ['Take Profits (TP)', s.winCount, XL_FMT.int],
+        ['Stop Losses (SL)', s.lossCount, XL_FMT.int],
+        ['Winrate', s.winRate, XL_FMT.pct],
+        ['Profit Factor', s.profitFactor === Infinity ? '∞' : s.profitFactor, XL_FMT.dec2],
+        ['Esperanza Matemática', s.expectancy, XL_FMT.usdSigned],
+        ['Ganancia Promedio', s.avgWin, XL_FMT.usd],
+        ['Pérdida Promedio', s.avgLoss, XL_FMT.usd],
+        ['Calidad Promedio Checklist', s.avgQuality, XL_FMT.qual],
+        ['', '', null],
+        ['XP Actual', s.xp, XL_FMT.int],
+        ['Nivel Anclado', lvl.name, null]
+      ];
+
+      const ws = XLSX.utils.aoa_to_sheet(data.map(r => [r[0], r[1]]));
+      data.forEach((r, i) => {
+        const cell = ws[XLSX.utils.encode_cell({ r: i, c: 1 })];
+        if (r[2] && cell && cell.t === 'n') cell.z = r[2];
+      });
+      ws['!cols'] = [{ wch: 30 }, { wch: 34 }];
+      return ws;
+    }
+
+    function buildTreasurySheet(XLSX) {
+      const header = ['Fecha', 'Tipo', 'Monto ($)', 'Nota / Origen', 'Capital Base Anterior', 'Nuevo Capital Base'];
+      const rows = treasuryLog.map(item => [
+        String(item.date || ''),
+        item.type === 'DEPOSIT' ? 'DEPÓSITO' : 'RETIRO',
+        (item.type === 'DEPOSIT' ? 1 : -1) * num(item.amount),
+        String(item.note || ''),
+        num(item.oldBaseCapital),
+        num(item.newBaseCapital)
+      ]);
+      const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+      formatColumns(XLSX, ws, [null, null, XL_FMT.usdSigned, null, XL_FMT.usd, XL_FMT.usd], rows.length);
+      ws['!cols'] = [{ wch: 12 }, { wch: 11 }, { wch: 12 }, { wch: 44 }, { wch: 20 }, { wch: 18 }];
+      return ws;
+    }
+
+    window.exportTradesToExcel = async function() {
+      if (!trades.length) {
+        alert("No hay operaciones registradas para exportar.");
+        return;
+      }
+
+      const btn = byId('btnExportExcel');
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "⏳ GENERANDO...";
+
+      try {
+        const XLSX = await loadSheetJS();
+        invalidateStats();
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, buildTradesSheet(XLSX), 'Trades');
+        XLSX.utils.book_append_sheet(wb, buildSummarySheet(XLSX), 'Resumen');
+        if (treasuryLog.length) XLSX.utils.book_append_sheet(wb, buildTreasurySheet(XLSX), 'Tesoreria');
+
+        const today = new Date().toISOString().slice(0, 10);
+        const accTag = currentAccount && currentAccount.accNumber ? `_${currentAccount.accNumber}` : '';
+        XLSX.writeFile(wb, `QuantQuest_Trades${accTag}_${today}.xlsx`, { compression: true });
+
+        btn.textContent = "✅ EXPORTADO";
+      } catch (err) {
+        alert("Error al exportar a Excel: " + err.message);
+        btn.textContent = originalText;
+      } finally {
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }, 1500);
+      }
+    };
   </script>
 </body>
 </html>
