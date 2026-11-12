@@ -645,6 +645,138 @@
       .pager-bar { justify-content: center; text-align: center; }
       .ground-timer .count { font-size: 36px; }
     }
+
+    /* ===== FX VISUALES CYBERPUNK (animaciones de entrada; solo el punto en vivo y el brillo de XP son permanentes) ===== */
+    @keyframes qqRiseIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .tab-content.qq-enter > * { animation: qqRiseIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; animation-delay: calc(var(--qq-i, 0) * 70ms); }
+    .qq-cascade > * { animation: qqRiseIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+    .qq-cascade > *:nth-child(1) { animation-delay: 0.10s; }
+    .qq-cascade > *:nth-child(2) { animation-delay: 0.18s; }
+    .qq-cascade > *:nth-child(3) { animation-delay: 0.26s; }
+    .qq-cascade > *:nth-child(4) { animation-delay: 0.34s; }
+    .qq-cascade > *:nth-child(5) { animation-delay: 0.42s; }
+    .qq-cascade > *:nth-child(n+6) { animation-delay: 0.50s; }
+
+    /* Punto en vivo sobre el último trade de la curva de PnL */
+    .top-grid .card { overflow: hidden; } /* el anillo del punto nunca desborda la tarjeta */
+    .pulse-dot {
+      position: absolute;
+      width: 10px; height: 10px;
+      margin: -5px 0 0 -5px;
+      border-radius: 50%;
+      background: var(--neon-green);
+      color: var(--neon-green);
+      box-shadow: 0 0 10px currentColor;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .pulse-dot.on { opacity: 1; }
+    .pulse-dot::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+      animation: qqPulseRing 1.8s ease-out infinite;
+    }
+    @keyframes qqPulseRing { 0% { transform: scale(1); opacity: 0.9; } 100% { transform: scale(3.4); opacity: 0; } }
+
+    /* Centro de la dona de winrate */
+    .donut-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .donut-center b { font-family: 'Orbitron', sans-serif; font-size: 20px; color: #FFF; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); }
+    .donut-center span { font-size: 9px; color: var(--text-muted); letter-spacing: 1.5px; }
+
+    /* Medidor circular de ejecución perfecta */
+    .gauge-wrap { display: flex; align-items: center; gap: 14px; }
+    .gauge { width: 84px; height: 84px; flex: 0 0 auto; transform: rotate(-90deg); }
+    .gauge circle { fill: none; stroke-width: 8; }
+    .gauge .track { stroke: #151C2C; }
+    .gauge .value {
+      stroke: var(--neon-green);
+      stroke-linecap: round;
+      stroke-dasharray: 263.9;
+      stroke-dashoffset: 263.9;
+      filter: drop-shadow(0 0 5px currentColor);
+      transition: stroke-dashoffset 1.3s cubic-bezier(0.2, 0.8, 0.2, 1), stroke 0.4s ease;
+    }
+
+    /* Brillo que recorre la barra de XP */
+    .progress-bar-fill.shimmer { position: relative; overflow: hidden; }
+    .progress-bar-fill.shimmer::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      left: -60px;
+      width: 60px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+      animation: qqShimmer 2.8s ease-in-out infinite;
+    }
+    @keyframes qqShimmer { 0% { left: -60px; } 60%, 100% { left: 100%; } }
+
+    /* Anillo de respiración de la pausa guiada */
+    .breath-ring {
+      width: 130px; height: 130px;
+      margin: 26px auto 32px auto;
+      border-radius: 50%;
+      border: 2px solid var(--neon-blue);
+      color: var(--neon-blue);
+      box-shadow: 0 0 18px currentColor, inset 0 0 18px rgba(0, 229, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: scale(0.85);
+      transition: transform 4s ease-in-out, border-color 0.6s ease, color 0.6s ease;
+    }
+    .breath-ring.inhale { transform: scale(1.2); }
+    .breath-ring.hold { transform: scale(1.2); border-color: var(--neon-orange); color: var(--neon-orange); }
+    .breath-ring.exhale { transform: scale(0.85); border-color: var(--neon-green); color: var(--neon-green); transition-duration: 6s, 0.6s, 0.6s; }
+    .breath-ring .count { color: #FFF; }
+
+    /* Escaneo de luz al cambiar la idea de mentoría */
+    .mentor-card { position: relative; overflow: hidden; }
+    .mentor-card.scan::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      left: -45%;
+      width: 45%;
+      background: linear-gradient(90deg, transparent, rgba(213, 0, 249, 0.28), transparent);
+      animation: qqScan 0.9s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes qqScan { to { left: 110%; } }
+
+    /* Partículas al subir de nivel */
+    .qq-particle {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 7px; height: 7px;
+      border-radius: 1px;
+      pointer-events: none;
+      box-shadow: 0 0 8px currentColor;
+      background: currentColor;
+      animation: qqBurst 1.7s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+    @keyframes qqBurst {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2) rotate(240deg); opacity: 0; }
+    }
+    #levelUpModal .modal-card { animation: qqRiseIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+
+    /* Accesibilidad: si el dispositivo pide menos movimiento, todo queda estático */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      .pulse-dot::after, .progress-bar-fill.shimmer::after { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -769,6 +901,7 @@
         </div>
         <div class="chart-box">
           <canvas id="pnlChart"></canvas>
+          <div class="pulse-dot" id="pnlPulseDot"></div>
         </div>
       </div>
 
@@ -776,6 +909,7 @@
         <div class="card-title">WINRATE OPERATIVO</div>
         <div class="chart-box" style="height: 140px;">
           <canvas id="winrateChart"></canvas>
+          <div class="donut-center"><b id="winrateCenter">0%</b><span>WINRATE</span></div>
         </div>
         <div style="margin-top: 10px; font-size: 11px; display: flex; justify-content: center; gap: 15px;">
           <span style="color: var(--neon-green);">● TP: <b id="tpCount">0</b></span>
@@ -788,7 +922,7 @@
         <div class="hero-stats">
           <div>
             <div class="stat-row"><span>XP ACTUAL</span><span id="txtXp">0 XP</span></div>
-            <div class="progress-bar-bg"><div class="progress-bar-fill" id="barXp" style="width: 0%;"></div></div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill shimmer" id="barXp" style="width: 0%;"></div></div>
           </div>
           <div class="stat-row" style="margin-top: 5px;">
             <span>ESTADO:</span><span id="txtRacha" style="color:var(--neon-green); font-weight:700;">🛡️ ACTIVO</span>
@@ -940,6 +1074,20 @@
         <div id="anMostTradedCount" style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">0 Operaciones</div>
       </div>
 
+      <div class="card" style="border-color: var(--neon-purple);">
+        <div class="card-title">⚔️ EJECUCIÓN PERFECTA</div>
+        <div class="gauge-wrap">
+          <svg class="gauge" viewBox="0 0 100 100" aria-hidden="true">
+            <circle class="track" cx="50" cy="50" r="42"></circle>
+            <circle class="value" id="gaugeValue" cx="50" cy="50" r="42"></circle>
+          </svg>
+          <div>
+            <p id="anPerfectPct" style="font-size: 22px; font-weight: bold; color: var(--neon-green); font-family: 'Orbitron';">0%</p>
+            <div id="anPerfectMeta" style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">Sin trades registrados</div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <div class="analytics-split">
@@ -962,6 +1110,16 @@
             <p id="anLowQualityPnL" style="font-size:18px; font-weight:bold; color:var(--neon-red); font-family:'Orbitron';">$0.00</p>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 25px;">
+      <div class="card-title">
+        <span>⚡ XP POR TRADE: TU EJECUCIÓN OPERACIÓN POR OPERACIÓN (ÚLTIMOS 60)</span>
+        <span style="font-weight:bold;"><span style="color:var(--neon-green);">■ LIMPIA</span> &nbsp;<span style="color:var(--neon-orange);">■ CON SALIDAS</span> &nbsp;<span style="color:var(--neon-red);">■ XP NEGATIVO</span></span>
+      </div>
+      <div class="chart-box" style="height: 200px;">
+        <canvas id="xpChart"></canvas>
       </div>
     </div>
 
@@ -1000,7 +1158,7 @@
       </div>
 
       <div class="ground-timer" id="groundTimer" style="display:none;">
-        <div class="count" id="groundCount">60</div>
+        <div class="breath-ring" id="breathRing"><div class="count" id="groundCount">60</div></div>
         <div class="phase" id="groundPhase">INHALA</div>
         <p style="font-size:10px; color:var(--text-muted); margin-top:8px;">Manos fuera del mouse. El mercado seguirá ahí dentro de un minuto.</p>
       </div>
@@ -1215,7 +1373,7 @@
             <span>PROGRESO DE EXP</span>
             <span id="charXpNum" style="color:var(--neon-green); font-weight:bold;">0 / 1000 XP</span>
           </div>
-          <div class="progress-bar-bg"><div class="progress-bar-fill" id="charBarFill" style="width: 0%;"></div></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill shimmer" id="charBarFill" style="width: 0%;"></div></div>
         </div>
       </div>
     </div>
@@ -1589,6 +1747,64 @@
       const m = normalizeOpenTime(value).match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/);
       if (!m) return String(value ?? '');
       return Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) / 86400000 + 25569;
+    }
+
+    // ================= FX VISUALES: UTILIDADES DE ANIMACIÓN =================
+    const REDUCED_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    let analyticsFresh = false;  // true al entrar a la pestaña: los números cuentan desde 0 y las barras vuelven a crecer
+    let journalFresh = false;    // true al volver a la bitácora: la curva de PnL se vuelve a dibujar
+
+    // Cuenta un número hasta su valor final (una sola vez; luego queda quieto)
+    function animateNumber(el, to, fmt, fromZero) {
+      if (!el) return;
+      const from = fromZero ? 0 : (Number.isFinite(el._qqVal) ? el._qqVal : 0);
+      el._qqVal = to;
+      cancelAnimationFrame(el._qqRaf);
+      if (REDUCED_MOTION || document.hidden || from === to) { el.textContent = fmt(to); return; }
+      const t0 = performance.now();
+      const duration = 900;
+      const step = (now) => {
+        const k = Math.min(1, Math.max(0, (now - t0) / duration));
+        const eased = 1 - Math.pow(1 - k, 3);
+        el.textContent = fmt(from + (to - from) * eased);
+        if (k < 1) el._qqRaf = requestAnimationFrame(step);
+      };
+      el._qqRaf = requestAnimationFrame(step);
+    }
+
+    // Entrada en cascada de las tarjetas de una pestaña
+    function playTabEnter(tabEl) {
+      if (!tabEl || REDUCED_MOTION) return;
+      Array.from(tabEl.children).forEach((child, i) => child.style.setProperty('--qq-i', Math.min(i, 8)));
+      tabEl.classList.remove('qq-enter');
+      void tabEl.offsetWidth; // reinicia la animación
+      tabEl.classList.add('qq-enter');
+      clearTimeout(tabEl._qqEnterTimer);
+      tabEl._qqEnterTimer = setTimeout(() => tabEl.classList.remove('qq-enter'), 1400);
+    }
+
+    function replayClass(el, cls) {
+      if (!el) return;
+      el.classList.remove(cls);
+      void el.offsetWidth;
+      el.classList.add(cls);
+    }
+
+    function launchLevelParticles(container) {
+      if (REDUCED_MOTION || !container) return;
+      const colors = ['#00E676', '#00E5FF', '#D500F9', '#FF9100', '#FFFFFF'];
+      for (let i = 0; i < 46; i++) {
+        const p = document.createElement('span');
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 120 + Math.random() * 260;
+        p.className = 'qq-particle';
+        p.style.color = colors[i % colors.length];
+        p.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+        p.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
+        p.style.animationDelay = `${Math.random() * 0.25}s`;
+        container.appendChild(p);
+        setTimeout(() => p.remove(), 2200);
+      }
     }
 
     // ================= MOTOR DE GAMIFICACIÓN: XP POR EJECUCIÓN =================
@@ -2094,15 +2310,22 @@
       const idx = TAB_ORDER.indexOf(tabName);
       if (idx === -1) return;
       activeTab = tabName;
+      if (tabName === 'analytics') analyticsFresh = true;
+      if (tabName === 'journal') journalFresh = true;
 
       document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === idx));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === `tab-${tabName}`));
 
       TAB_RENDERERS[tabName]?.();
+      playTabEnter(byId(`tab-${tabName}`));
     };
 
     function renderAnalytics() {
+      const fresh = analyticsFresh;
+      analyticsFresh = false;
       renderGroundPanel();
+      updateDisciplineGauge(getStats().game, trades.length, fresh);
+      updateXpChart(getStats().game, fresh);
       if (trades.length === 0) return;
 
       let highQualityCount = 0, midQualityCount = 0, lowQualityCount = 0;
@@ -2137,7 +2360,7 @@
       if (bestTrade) {
         const bestPnL = num(bestTrade.pnl);
         const bestEl = byId('anBestTradePnL');
-        bestEl.textContent = fmtSigned(bestPnL);
+        animateNumber(bestEl, bestPnL, fmtSigned, fresh);
         bestEl.style.color = bestPnL >= 0 ? 'var(--neon-green)' : 'var(--neon-red)';
         // 🐛 FIX: antes fallaba con trades antiguos sin campo "quality" (quality.toFixed de undefined)
         byId('anBestTradeMeta').textContent = `${bestTrade.symbol} | ${bestTrade.direction} | ${fmtDateTime(bestTrade.openTime).split(' ')[0]} (${qualityOf(bestTrade).toFixed(0)}% Calidad)`;
@@ -2148,11 +2371,11 @@
       byId('anShortsVsLongsCount').textContent = `${shortsCount} S / ${longsCount} L`;
       byId('anShortsVsLongsPct').textContent = `(${shortsPct}% Shorts / ${longsPct}% Longs)`;
 
-      byId('anAvgQuality').textContent = `${avgQuality.toFixed(1)}%`;
+      animateNumber(byId('anAvgQuality'), avgQuality, v => `${v.toFixed(1)}%`, fresh);
       byId('anQualityBreakdown').textContent = `Alta (100%): ${highQualityCount} | Media (50-83%): ${midQualityCount} | Baja (<50%): ${lowQualityCount}`;
 
-      byId('anHighQualityPnL').textContent = fmtSigned(highQualityPnL);
-      byId('anLowQualityPnL').textContent = fmtSigned(lowQualityPnL);
+      animateNumber(byId('anHighQualityPnL'), highQualityPnL, fmtSigned, fresh);
+      animateNumber(byId('anLowQualityPnL'), lowQualityPnL, fmtSigned, fresh);
 
       let mostTradedSym = "N/A";
       let maxCount = 0;
@@ -2205,7 +2428,9 @@
         addReflection("🪜 ESCALERA DESCENDENTE ACTIVA", `Llevas ${g.slStreak} Stop Loss consecutivo(s). Tu próximo trade debe arriesgar como máximo <b>${g.nextRiskPct}%</b> del saldo. Un trade ganador restablece el riesgo base de ${BASE_RISK_PCT}%.`, "var(--neon-orange)");
       }
 
-      byId('analyticsReflectionList').innerHTML = reflections.join('');
+      const reflectionList = byId('analyticsReflectionList');
+      reflectionList.innerHTML = reflections.join('');
+      if (fresh && !REDUCED_MOTION) replayClass(reflectionList, 'qq-cascade');
     }
 
     function updateSymbolChart(symbolMap) {
@@ -2479,7 +2704,7 @@
 
       renderTradeTable();
 
-      byId('lblTotalPnL').textContent = fmtSigned(s.totalPnL);
+      animateNumber(byId('lblTotalPnL'), s.totalPnL, fmtSigned, false);
       byId('tpCount').textContent = s.winCount;
       byId('slCount').textContent = s.lossCount;
 
@@ -2541,7 +2766,9 @@
       byId('levelUpText').textContent = next
         ? `${lvl.desc} Cumpliste los 5 requisitos: XP de ejecución, muestra de trades, calidad, disciplina y capital. Siguiente misión: ${next.name}.`
         : `${lvl.desc} Completaste el camino entero de QuantQuest ejecutando tu plan. Ahora el trabajo es sostenerlo.`;
-      byId('levelUpModal').style.display = 'flex';
+      const modal = byId('levelUpModal');
+      modal.style.display = 'flex';
+      launchLevelParticles(modal);
     }
     window.closeLevelUpModal = function() { byId('levelUpModal').style.display = 'none'; };
 
@@ -2874,11 +3101,15 @@
         const phase = elapsed % 14;
         const phaseEl = byId('groundPhase');
         byId('groundCount').textContent = remaining;
-        if (phase < 4) { phaseEl.textContent = 'INHALA'; phaseEl.style.color = 'var(--neon-blue)'; }
-        else if (phase < 8) { phaseEl.textContent = 'SOSTÉN'; phaseEl.style.color = 'var(--neon-orange)'; }
-        else { phaseEl.textContent = 'EXHALA LENTO'; phaseEl.style.color = 'var(--neon-green)'; }
+        const ring = byId('breathRing');
+        let ringClass;
+        if (phase < 4) { phaseEl.textContent = 'INHALA'; phaseEl.style.color = 'var(--neon-blue)'; ringClass = 'inhale'; }
+        else if (phase < 8) { phaseEl.textContent = 'SOSTÉN'; phaseEl.style.color = 'var(--neon-orange)'; ringClass = 'hold'; }
+        else { phaseEl.textContent = 'EXHALA LENTO'; phaseEl.style.color = 'var(--neon-green)'; ringClass = 'exhale'; }
+        if (ring && !ring.classList.contains(ringClass)) ring.className = `breath-ring ${ringClass}`; // el anillo se expande y contrae con la respiración
       };
-      paint();
+      byId('breathRing').className = 'breath-ring';
+      requestAnimationFrame(paint);
 
       groundTimerId = setInterval(() => {
         remaining--;
@@ -2958,6 +3189,7 @@
         byId('mentorAction').innerHTML = `<b>APLÍCALO HOY:</b> ${escapeHtml(note.action)}`;
         byId('mentorCounter').textContent = `${mentorIdx + 1} / ${MENTOR_NOTES.length}`;
         card.style.opacity = 1;
+        if (delta !== 0 && !REDUCED_MOTION) replayClass(card, 'scan');
       }, delta === 0 ? 0 : 200);
     };
 
@@ -2965,24 +3197,235 @@
       byId('groundPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
-    // ================= GRÁFICOS =================
+    // ================= GRÁFICOS (con FX cyberpunk) =================
+    const NEON = { green: '#00E676', red: '#FF1744', orange: '#FF9100', blue: '#00E5FF', muted: '#8B95A5', grid: 'rgba(30, 38, 56, 0.7)' };
+    let xpChartInstance = null;
+    let pnlReveal = 1;          // 0 → 1: porción de la curva ya dibujada
+    let pnlRevealRaf = null;
+    let lastPnlKey = null;
+
+    function pnlLastValue() {
+      const data = pnlChartInstance ? pnlChartInstance.data.datasets[0].data : [];
+      return data.length ? num(data[data.length - 1]) : 0;
+    }
+
+    function positionPulseDot(chart) {
+      const dot = byId('pnlPulseDot');
+      if (!dot) return;
+      const points = chart.getDatasetMeta(0).data || [];
+      const last = points[points.length - 1];
+      if (!last || pnlReveal < 1 || !Number.isFinite(last.x) || !Number.isFinite(last.y)) { dot.classList.remove('on'); return; }
+      const color = pnlLastValue() >= 0 ? NEON.green : NEON.red;
+      dot.style.left = last.x + 'px';
+      dot.style.top = last.y + 'px';
+      dot.style.background = color;
+      dot.style.color = color;
+      dot.classList.add('on');
+    }
+
+    // Plugin de la curva de PnL: línea cero punteada, dibujado progresivo, resplandor neón y punto en vivo
+    const pnlFxPlugin = {
+      id: 'qqPnlFx',
+      beforeDatasetsDraw(chart) {
+        const area = chart.chartArea;
+        chart._qqSaved = false;
+        if (!area) return;
+        const ctx = chart.ctx;
+
+        const yScale = chart.scales && chart.scales.y;
+        if (yScale) {
+          const y0 = yScale.getPixelForValue(0);
+          if (y0 >= area.top && y0 <= area.bottom) {
+            ctx.save();
+            ctx.setLineDash([4, 4]);
+            ctx.strokeStyle = 'rgba(139, 149, 165, 0.45)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(area.left, y0);
+            ctx.lineTo(area.right, y0);
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
+
+        ctx.save();
+        chart._qqSaved = true;
+        ctx.beginPath();
+        ctx.rect(area.left - 8, area.top - 14, (area.right - area.left + 16) * pnlReveal, area.bottom - area.top + 28);
+        ctx.clip();
+        ctx.shadowColor = pnlLastValue() >= 0 ? 'rgba(0, 230, 118, 0.6)' : 'rgba(255, 23, 68, 0.6)';
+        ctx.shadowBlur = 12;
+      },
+      afterDatasetsDraw(chart) {
+        if (chart._qqSaved) { chart.ctx.restore(); chart._qqSaved = false; }
+        positionPulseDot(chart);
+      }
+    };
+
+    // Relleno degradado: verde sobre la línea cero, rojo por debajo
+    function pnlFillGradient(context) {
+      const chart = context.chart;
+      const area = chart.chartArea;
+      if (!area) return 'rgba(0, 230, 118, 0.10)';
+      const yScale = chart.scales.y;
+      const y0 = yScale ? yScale.getPixelForValue(0) : area.bottom;
+      const zero = Math.min(1, Math.max(0, (y0 - area.top) / Math.max(1, area.bottom - area.top)));
+      const gradient = chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
+      gradient.addColorStop(0, 'rgba(0, 230, 118, 0.38)');
+      gradient.addColorStop(zero, 'rgba(0, 230, 118, 0.02)');
+      gradient.addColorStop(zero, 'rgba(255, 23, 68, 0.02)');
+      gradient.addColorStop(1, 'rgba(255, 23, 68, 0.38)');
+      return gradient;
+    }
+
+    function playPnlReveal() {
+      cancelAnimationFrame(pnlRevealRaf);
+      if (!pnlChartInstance) return;
+      const redraw = () => { try { (pnlChartInstance.draw || pnlChartInstance.render).call(pnlChartInstance); } catch (e) { /* el gráfico sigue funcionando sin la animación */ } };
+      if (REDUCED_MOTION || document.hidden) { pnlReveal = 1; redraw(); return; }
+
+      const t0 = performance.now();
+      const duration = 1500;
+      pnlReveal = 0;
+      const dot = byId('pnlPulseDot');
+      if (dot) dot.classList.remove('on');
+      const step = (now) => {
+        const k = Math.min(1, Math.max(0, (now - t0) / duration));
+        pnlReveal = 1 - Math.pow(1 - k, 3);
+        redraw();
+        if (k < 1) pnlRevealRaf = requestAnimationFrame(step);
+      };
+      pnlRevealRaf = requestAnimationFrame(step);
+    }
+
+    const hudTooltip = (accent) => ({
+      backgroundColor: 'rgba(8, 10, 16, 0.96)',
+      borderColor: accent,
+      borderWidth: 1,
+      titleColor: accent,
+      bodyColor: '#FFFFFF',
+      titleFont: { family: 'Orbitron', size: 11, weight: '700' },
+      bodyFont: { family: 'Roboto Mono', size: 11 },
+      padding: 10,
+      cornerRadius: 4,
+      displayColors: false
+    });
+    const hudScales = () => ({
+      x: { ticks: { color: NEON.muted, maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, grid: { color: 'rgba(30, 38, 56, 0.35)' } },
+      y: { ticks: { color: NEON.muted }, grid: { color: NEON.grid } }
+    });
+
     function initCharts() {
+      try {
+        Chart.defaults.color = NEON.muted;
+        Chart.defaults.font.family = "'Roboto Mono', monospace";
+        Chart.defaults.font.size = 10;
+      } catch (e) { /* valores por defecto del gráfico */ }
+
       pnlChartInstance = new Chart(byId('pnlChart').getContext('2d'), {
         type: 'line',
-        data: { labels: [], datasets: [{ label: 'PNL ($)', data: [], borderColor: '#00E676', borderWidth: 2, tension: 0.3 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        data: { labels: [], datasets: [{
+          label: 'PNL ($)',
+          data: [],
+          borderColor: NEON.green,
+          borderWidth: 2.5,
+          tension: 0.3,
+          fill: 'origin',
+          backgroundColor: pnlFillGradient,
+          segment: { borderColor: (seg) => (seg.p1.parsed.y < 0 ? NEON.red : NEON.green) },
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#FFFFFF',
+          pointHoverBorderColor: NEON.blue,
+          pointHoverBorderWidth: 2
+        }] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false, // la entrada la controla el dibujado progresivo propio
+          interaction: { mode: 'index', intersect: false },
+          scales: hudScales(),
+          plugins: {
+            legend: { display: false },
+            tooltip: Object.assign(hudTooltip(NEON.blue), {
+              callbacks: {
+                title: (items) => {
+                  const t = items.length ? trades[items[0].dataIndex] : null;
+                  return t ? `#${t.id} · ${fmtDateTime(t.openTime)}` : '';
+                },
+                label: (item) => {
+                  const t = trades[item.dataIndex];
+                  const info = getStats().game.perTrade[item.dataIndex];
+                  if (!t || !info) return '';
+                  return [
+                    `PNL ACUMULADO: ${fmtSigned(item.parsed.y)}`,
+                    `ESTE TRADE: ${fmtSigned(t.pnl)} (${num(t.pnl) >= 0 ? 'TP' : 'SL'}) · ${t.symbol}`,
+                    `EJECUCIÓN: ${info.total > 0 ? '+' : ''}${info.total} XP${info.perfect ? ' ★' : ''}`
+                  ];
+                }
+              }
+            })
+          }
+        },
+        plugins: [pnlFxPlugin]
       });
 
       winrateChartInstance = new Chart(byId('winrateChart').getContext('2d'), {
         type: 'doughnut',
-        data: { labels: ['TP', 'SL'], datasets: [{ data: [0, 0], backgroundColor: ['#00E676', '#FF1744'] }] },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } }
+        data: { labels: ['TP', 'SL'], datasets: [{ data: [0, 0], backgroundColor: [NEON.green, NEON.red], borderWidth: 0, hoverOffset: 6 }] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '75%',
+          animation: REDUCED_MOTION ? false : { animateRotate: true, duration: 1300, easing: 'easeOutCubic' },
+          plugins: { legend: { display: false }, tooltip: hudTooltip(NEON.green) }
+        }
       });
 
       symbolChartInstance = new Chart(byId('symbolChart').getContext('2d'), {
         type: 'bar',
-        data: { labels: [], datasets: [{ label: 'Trades', data: [], backgroundColor: '#FF9100' }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        data: { labels: [], datasets: [{ label: 'Trades', data: [], backgroundColor: 'rgba(255, 145, 0, 0.75)', borderColor: NEON.orange, borderWidth: 1, borderRadius: 3 }] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: REDUCED_MOTION ? false : { duration: 900, easing: 'easeOutCubic' },
+          scales: hudScales(),
+          plugins: { legend: { display: false }, tooltip: hudTooltip(NEON.orange) }
+        }
+      });
+
+      // XP por trade: barras verdes (ejecución limpia), naranjas (con salidas del plan) y rojas (XP negativo)
+      xpChartInstance = new Chart(byId('xpChart').getContext('2d'), {
+        type: 'bar',
+        data: { labels: [], datasets: [{ label: 'XP', data: [], backgroundColor: [], borderRadius: 2 }] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: REDUCED_MOTION ? false : {
+            duration: 600,
+            easing: 'easeOutCubic',
+            delay: (ctx) => (ctx.type === 'data' && ctx.mode === 'default' ? ctx.dataIndex * (xpChartInstance ? Math.min(30, 1200 / Math.max(1, xpChartInstance.data.labels.length)) : 20) : 0)
+          },
+          scales: hudScales(),
+          plugins: {
+            legend: { display: false },
+            tooltip: Object.assign(hudTooltip(NEON.green), {
+              callbacks: {
+                title: (items) => {
+                  const idx = items.length ? xpChartInstance._qqOffset + items[0].dataIndex : -1;
+                  const t = trades[idx];
+                  return t ? `#${t.id} · ${fmtDateTime(t.openTime)}` : '';
+                },
+                label: (item) => {
+                  const info = getStats().game.perTrade[xpChartInstance._qqOffset + item.dataIndex];
+                  if (!info) return '';
+                  return [`TOTAL: ${info.total > 0 ? '+' : ''}${info.total} XP${info.perfect ? ' ★' : ''}`]
+                    .concat(info.items.filter(it => it.xp !== 0).map(it => `${it.xp > 0 ? '+' : ''}${it.xp} · ${it.label}`));
+                }
+              }
+            })
+          }
+        }
       });
     }
 
@@ -2993,8 +3436,52 @@
       pnlChartInstance.data.datasets[0].data = s.cumulative;
       pnlChartInstance.update();
 
+      // La curva se dibuja de izquierda a derecha cuando cambian los datos o al volver a la bitácora
+      const key = `${s.count}|${s.totalPnL.toFixed(4)}`;
+      if (key !== lastPnlKey || journalFresh) {
+        lastPnlKey = key;
+        if (s.count) playPnlReveal();
+      }
+
       winrateChartInstance.data.datasets[0].data = [s.winCount, s.lossCount];
+      if (journalFresh && !REDUCED_MOTION && typeof winrateChartInstance.reset === 'function') winrateChartInstance.reset();
       winrateChartInstance.update();
+      animateNumber(byId('winrateCenter'), s.winRate * 100, v => `${v.toFixed(0)}%`, journalFresh);
+      journalFresh = false;
+    }
+
+    function updateXpChart(g, fresh) {
+      if (!xpChartInstance) return;
+      const MAX_BARS = 60;
+      const offset = Math.max(0, trades.length - MAX_BARS);
+      const slice = g.perTrade.slice(offset);
+      xpChartInstance._qqOffset = offset;
+      xpChartInstance.data.labels = slice.map((_, i) => `#${trades[offset + i].id}`);
+      xpChartInstance.data.datasets[0].data = slice.map(p => p.total);
+      xpChartInstance.data.datasets[0].backgroundColor = slice.map(p => p.total < 0 ? 'rgba(255, 23, 68, 0.85)' : (p.violations.length ? 'rgba(255, 145, 0, 0.85)' : 'rgba(0, 230, 118, 0.85)'));
+      if (fresh && !REDUCED_MOTION && typeof xpChartInstance.reset === 'function') xpChartInstance.reset();
+      xpChartInstance.update();
+    }
+
+    function updateDisciplineGauge(g, count, fresh) {
+      const ring = byId('gaugeValue');
+      if (!ring) return;
+      const pct = count ? (g.perfectCount / count) * 100 : 0;
+      const circumference = 263.9;
+      const color = pct >= 70 ? 'var(--neon-green)' : (pct >= 40 ? 'var(--neon-orange)' : 'var(--neon-red)');
+      if (fresh && !REDUCED_MOTION) {
+        ring.style.transition = 'none';
+        ring.style.strokeDashoffset = circumference;
+        void ring.getBoundingClientRect();
+        ring.style.transition = '';
+      }
+      ring.style.stroke = color;
+      ring.style.color = color;
+      ring.style.strokeDashoffset = circumference * (1 - pct / 100);
+      const label = byId('anPerfectPct');
+      label.style.color = color;
+      animateNumber(label, pct, v => `${v.toFixed(0)}%`, fresh);
+      byId('anPerfectMeta').textContent = `${g.perfectCount} de ${count} trades · racha actual ${g.perfectStreak} · mejor ${g.bestStreak}`;
     }
 
     // ================= EXPORTAR A EXCEL (.xlsx) =================
