@@ -8,6 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Tema guardado en este dispositivo: se aplica antes de pintar la página
+    try { if (localStorage.getItem('qq-theme') === 'classic') document.documentElement.setAttribute('data-theme', 'classic'); } catch (e) {}
+  </script>
   
   <style>
     :root {
@@ -21,7 +25,82 @@
       --neon-purple: #D500F9;
       --text-main: #FFFFFF;
       --text-muted: #8B95A5;
+
+      /* Variables de tema (modo CYBERPUNK = valores originales) */
+      --accent: #00E676;            /* color de marca: botones, pestaña activa, barras de progreso */
+      --accent-hover: #00C865;
+      --accent-contrast: #000000;   /* texto sobre el color de marca */
+      --accent-glow: rgba(0, 230, 118, 0.5);
+      --accent-soft: rgba(0, 230, 118, 0.12);
+      --on-blue: #000000;
+      --blue-hover: #00B8D4;
+      --purple-hover: #AA00FF;
+      --inset-bg: var(--inset-bg);
+      --inset-bg-2: var(--inset-bg-2);
+      --input-bg: #07090E;
+      --track-bg: var(--track-bg);
+      --track-border: var(--track-border);
+      --row-border: var(--row-border);
+      --img-bg: #111111;
+      --disabled-bg: #121620;
+      --disabled-text: #667085;
+      --overlay-bg: rgba(4, 6, 10, 0.88);
+      --modal-bg: rgba(13, 17, 26, 0.95);
+      --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      --text-soft: #DDDDDD;
     }
+
+    /* ===== MODO CLARO (CLASSIC): azul real, azul claro y grises ===== */
+    html[data-theme="classic"] {
+      --bg: #EDF1F7;
+      --panel-bg: #FFFFFF;
+      --panel-border: #C9D4E6;
+      --neon-green: #0B8F55;        /* ganancias / cumplido */
+      --neon-red: #D92D20;          /* pérdidas / violaciones */
+      --neon-orange: #B45309;
+      --neon-blue: #0B4FC4;         /* azul real */
+      --neon-purple: #1F4B8F;       /* azul marino */
+      --text-main: #18212F;
+      --text-muted: #667085;        /* gris */
+
+      --accent: #0B4FC4;
+      --accent-hover: #0A3F9C;
+      --accent-contrast: #FFFFFF;
+      --accent-glow: rgba(11, 79, 196, 0.28);
+      --accent-soft: #D6E4FF;       /* azul claro */
+      --on-blue: #FFFFFF;
+      --blue-hover: #0A3F9C;
+      --purple-hover: #17396D;
+      --inset-bg: #F1F5FB;
+      --inset-bg-2: #F6F8FC;
+      --input-bg: #FFFFFF;
+      --track-bg: #DCE5F3;
+      --track-border: #C3D0E6;
+      --row-border: #E3E9F3;
+      --img-bg: #DCE5F3;
+      --disabled-bg: #EEF1F6;
+      --disabled-text: #98A2B3;
+      --overlay-bg: rgba(24, 33, 47, 0.5);
+      --modal-bg: #FFFFFF;
+      --card-shadow: 0 2px 10px rgba(31, 75, 143, 0.10);
+      --text-soft: #344054;
+    }
+    html[data-theme="classic"] * { text-shadow: none !important; }
+    html[data-theme="classic"] .card,
+    html[data-theme="classic"] .modal-overlay { backdrop-filter: none; }
+    html[data-theme="classic"] .tab-btn:not(.active) { background: #FFFFFF; }
+    html[data-theme="classic"] .tab-btn.active { color: var(--accent-contrast) !important; border-color: var(--accent) !important; }
+    html[data-theme="classic"] .animated-reminder { background: var(--accent-soft); box-shadow: none; animation: none; }
+    html[data-theme="classic"] .tip-banner { background: var(--accent-soft); }
+    html[data-theme="classic"] .progress-bar-fill,
+    html[data-theme="classic"] .pulse-dot,
+    html[data-theme="classic"] .breath-ring,
+    html[data-theme="classic"] .xp-chip:hover { box-shadow: none; }
+    html[data-theme="classic"] .gauge .value { filter: none; }
+    html[data-theme="classic"] .modal-card { box-shadow: 0 12px 40px rgba(24, 33, 47, 0.25) !important; }
+    html[data-theme="classic"] .level-card.active-level { box-shadow: 0 0 0 3px var(--accent-soft); }
+    html[data-theme="classic"] .progress-bar-fill.shimmer::after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent); }
+    body { transition: background-color 0.3s ease, color 0.3s ease; }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -47,14 +126,14 @@
     header h1 {
       font-size: 22px;
       letter-spacing: 2px;
-      color: #FFF;
+      color: var(--text-main);
       text-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
     }
 
     .account-badge-bar {
       display: flex;
       gap: 15px;
-      background: #080A10;
+      background: var(--inset-bg);
       border: 1px solid var(--panel-border);
       padding: 8px 15px;
       border-radius: 4px;
@@ -108,12 +187,12 @@
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .tab-btn:hover { color: var(--text-main); border-color: var(--neon-green); transform: translateY(-2px); }
+    .tab-btn:hover { color: var(--text-main); border-color: var(--accent); transform: translateY(-2px); }
     .tab-btn.active {
-      background: var(--neon-green);
-      color: #000;
-      border-color: var(--neon-green);
-      box-shadow: 0 0 15px rgba(0, 230, 118, 0.5);
+      background: var(--accent);
+      color: var(--accent-contrast);
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
     }
 
     .tab-content { display: none; opacity: 0; transition: opacity 0.4s ease-in-out; }
@@ -134,10 +213,10 @@
       border: 1px solid var(--panel-border);
       border-radius: 6px;
       padding: 18px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      box-shadow: var(--card-shadow);
       transition: border-color 0.3s ease;
     }
-    .card:hover { border-color: rgba(0, 230, 118, 0.3); }
+    .card:hover { border-color: var(--accent-glow); }
 
     .card-title {
       font-size: 11px;
@@ -154,23 +233,23 @@
     .progress-bar-bg {
       width: 100%;
       height: 12px;
-      background: #151C2C;
+      background: var(--track-bg);
       border-radius: 3px;
       overflow: hidden;
       margin-top: 4px;
-      border: 1px solid #232D42;
+      border: 1px solid var(--track-border);
     }
     .progress-bar-fill {
       height: 100%;
-      background: var(--neon-green);
-      box-shadow: 0 0 8px var(--neon-green);
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
       transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .character-box {
       margin-top: 15px;
       padding: 12px;
-      background: #090C14;
+      background: var(--inset-bg);
       border: 1px solid var(--panel-border);
       border-radius: 4px;
       display: flex;
@@ -181,9 +260,9 @@
       width: 65px;
       height: 65px;
       border-radius: 4px;
-      border: 2px solid var(--neon-green);
+      border: 2px solid var(--accent);
       object-fit: cover;
-      background: #111;
+      background: var(--img-bg);
     }
     .char-info { font-size: 11px; color: var(--text-muted); }
     .char-info b { color: var(--text-main); font-size: 12px; }
@@ -215,7 +294,7 @@
     .form-field { display: flex; flex-direction: column; gap: 5px; }
     .form-field label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
     .form-field input, .form-field select {
-      background: #07090E;
+      background: var(--input-bg);
       border: 1px solid var(--panel-border);
       color: var(--text-main);
       padding: 8px;
@@ -226,19 +305,19 @@
     }
     .form-field input:focus, .form-field select:focus {
       outline: none;
-      border-color: var(--neon-green);
-      box-shadow: 0 0 8px rgba(0, 230, 118, 0.3);
+      border-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
     }
     .form-field input:disabled {
-      background: #121620;
-      color: #667085;
+      background: var(--disabled-bg);
+      color: var(--disabled-text);
       cursor: not-allowed;
-      border-color: #1E2638;
+      border-color: var(--panel-border);
     }
 
     .btn {
-      background: var(--neon-green);
-      color: #000;
+      background: var(--accent);
+      color: var(--accent-contrast);
       font-family: 'Orbitron', sans-serif;
       font-weight: 700;
       border: none;
@@ -251,14 +330,14 @@
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .btn:hover:not(:disabled) {
-      background: #00C865;
-      box-shadow: 0 0 15px rgba(0, 230, 118, 0.5);
+      background: var(--accent-hover);
+      box-shadow: 0 0 15px var(--accent-glow);
       transform: translateY(-1px);
     }
     .btn-red { background: var(--neon-red); color: #FFF; }
     .btn-red:hover { background: #D50000; box-shadow: 0 0 15px rgba(255, 23, 68, 0.5); }
     .btn-purple { background: var(--neon-purple); color: #FFF; }
-    .btn-purple:hover { background: #AA00FF; box-shadow: 0 0 15px rgba(213, 0, 249, 0.5); }
+    .btn-purple:hover { background: var(--purple-hover); box-shadow: 0 0 15px rgba(213, 0, 249, 0.5); }
 
     .form-disabled-panel {
       opacity: 0.35;
@@ -268,8 +347,8 @@
     }
 
     table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; }
-    th { background: #080A10; color: var(--text-muted); padding: 10px 6px; border-bottom: 2px solid var(--panel-border); }
-    td { padding: 10px 6px; border-bottom: 1px solid #141A28; }
+    th { background: var(--inset-bg); color: var(--text-muted); padding: 10px 6px; border-bottom: 2px solid var(--panel-border); }
+    td { padding: 10px 6px; border-bottom: 1px solid var(--row-border); }
 
     .val-pos { color: var(--neon-green); font-weight: 700; }
     .val-neg { color: var(--neon-red); font-weight: 700; }
@@ -302,10 +381,10 @@
       width: 100%;
       height: 320px;
       border-radius: 6px;
-      border: 2px solid var(--neon-green);
+      border: 2px solid var(--accent);
       object-fit: cover;
-      background: #111;
-      box-shadow: 0 0 20px rgba(0,230,118,0.2);
+      background: var(--img-bg);
+      box-shadow: 0 0 20px var(--accent-glow);
     }
 
     .level-grid {
@@ -326,11 +405,11 @@
     .level-card.unlocked {
       opacity: 1;
       filter: grayscale(0%);
-      border-color: var(--neon-green);
+      border-color: var(--accent);
     }
     .level-card.active-level {
-      box-shadow: 0 0 15px rgba(0,230,118,0.4);
-      border: 2px solid var(--neon-green);
+      box-shadow: 0 0 15px var(--accent-glow);
+      border: 2px solid var(--accent);
     }
     .level-card img {
       width: 100%;
@@ -338,7 +417,7 @@
       object-fit: cover;
       border-radius: 4px;
       margin-bottom: 10px;
-      background: #111;
+      background: var(--img-bg);
     }
     .level-card h4 { font-size: 11px; margin-bottom: 4px; }
     .level-card p { font-size: 10px; color: var(--text-muted); }
@@ -346,7 +425,7 @@
     .chart-box { position: relative; height: 180px; width: 100%; }
 
     .quote-card {
-      background: #080A10;
+      background: var(--inset-bg);
       border-left: 3px solid var(--neon-green);
       border-radius: 4px;
       padding: 15px;
@@ -386,7 +465,7 @@
     }
     .step-list { display: flex; flex-direction: column; gap: 10px; }
     .step-item {
-      background: #080A10;
+      background: var(--inset-bg);
       border-left: 3px solid var(--neon-green);
       padding: 10px 12px;
       border-radius: 0 4px 4px 0;
@@ -408,10 +487,10 @@
       100% { box-shadow: 0 0 15px rgba(213,0,249,0.2); }
     }
     .risk-table { width: 100%; margin-top: 10px; font-size: 11px; }
-    .risk-table th { background: #0A0E17; color: var(--neon-orange); }
+    .risk-table th { background: var(--inset-bg); color: var(--neon-orange); }
 
     .reflection-box {
-      background: #080A10;
+      background: var(--inset-bg);
       border: 1px solid var(--neon-blue);
       border-radius: 6px;
       padding: 15px;
@@ -423,7 +502,7 @@
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(4, 6, 10, 0.88);
+      background: var(--overlay-bg);
       backdrop-filter: blur(12px);
       z-index: 9999;
       display: flex;
@@ -433,8 +512,8 @@
       transition: all 0.3s ease;
     }
     .modal-card {
-      background: rgba(13, 17, 26, 0.95);
-      border: 2px solid var(--neon-green);
+      background: var(--modal-bg);
+      border: 2px solid var(--accent);
       border-radius: 12px;
       padding: 30px;
       max-width: 520px;
@@ -444,7 +523,7 @@
       position: relative;
       overflow: hidden;
     }
-    .modal-card h2 { color: var(--neon-green); font-size: 18px; margin-bottom: 10px; letter-spacing: 1px; }
+    .modal-card h2 { color: var(--accent); font-size: 18px; margin-bottom: 10px; letter-spacing: 1px; }
     .modal-card p { color: var(--text-muted); font-size: 11px; margin-bottom: 20px; }
 
     .auth-toggle {
@@ -523,10 +602,10 @@
 
     /* ===== GAMIFICACIÓN v2: XP POR EJECUCIÓN, PAGINACIÓN Y PANEL MENTAL (mismo lenguaje visual) ===== */
     .btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    .btn-ghost { background: #080A10; color: var(--neon-green); border: 1px solid var(--neon-green); }
-    .btn-ghost:hover:not(:disabled) { background: rgba(0, 230, 118, 0.12); }
-    .btn-blue { background: var(--neon-blue); color: #000; }
-    .btn-blue:hover:not(:disabled) { background: #00B8D4; box-shadow: 0 0 15px rgba(0, 229, 255, 0.5); }
+    .btn-ghost { background: var(--inset-bg); color: var(--accent); border: 1px solid var(--accent); }
+    .btn-ghost:hover:not(:disabled) { background: var(--accent-soft); box-shadow: none; }
+    .btn-blue { background: var(--neon-blue); color: var(--on-blue); }
+    .btn-blue:hover:not(:disabled) { background: var(--blue-hover); box-shadow: 0 0 15px rgba(0, 229, 255, 0.5); }
 
     .xp-chip {
       display: inline-block;
@@ -541,7 +620,7 @@
       white-space: nowrap;
     }
     .xp-chip:hover { box-shadow: 0 0 8px currentColor; }
-    .xp-detail-row td { background: #080A10; text-align: left; padding: 10px 12px; }
+    .xp-detail-row td { background: var(--inset-bg); text-align: left; padding: 10px 12px; }
     .xp-detail-list { display: flex; flex-wrap: wrap; gap: 8px; }
     .xp-detail-item {
       border: 1px solid var(--panel-border);
@@ -580,7 +659,7 @@
     .req-row .stat-row span:last-child { text-align: right; font-weight: 700; }
     .mini-list { display: flex; flex-direction: column; gap: 8px; font-size: 11px; }
     .mini-list .mini-item {
-      background: #080A10;
+      background: var(--inset-bg);
       border-left: 3px solid var(--neon-green);
       border-radius: 0 4px 4px 0;
       padding: 8px 10px;
@@ -597,7 +676,7 @@
       margin-top: 12px;
     }
     .ground-state > div {
-      background: #080A10;
+      background: var(--inset-bg);
       border: 1px solid var(--panel-border);
       border-radius: 4px;
       padding: 12px;
@@ -608,14 +687,14 @@
       text-align: center;
       padding: 20px;
       margin-top: 15px;
-      background: #080A10;
+      background: var(--inset-bg);
       border: 1px solid var(--neon-blue);
       border-radius: 6px;
     }
     .ground-timer .count { font-family: 'Orbitron', sans-serif; font-size: 44px; color: var(--neon-blue); text-shadow: 0 0 14px rgba(0, 229, 255, 0.5); }
     .ground-timer .phase { font-family: 'Orbitron', sans-serif; font-size: 13px; margin-top: 6px; letter-spacing: 2px; }
     .ground-question {
-      background: #080A10;
+      background: var(--inset-bg);
       border-left: 3px solid var(--panel-border);
       border-radius: 0 4px 4px 0;
       padding: 10px 12px;
@@ -629,14 +708,14 @@
     .ground-question .answers { display: flex; gap: 6px; }
     .ground-question .answers .btn { padding: 6px 12px; }
     .mentor-card {
-      background: #080A10;
+      background: var(--inset-bg);
       border-left: 3px solid var(--neon-purple);
       border-radius: 4px;
       padding: 16px;
       margin-top: 12px;
       transition: opacity 0.3s ease;
     }
-    .mentor-card .idea { font-size: 13px; font-weight: 700; color: #FFF; line-height: 1.5; }
+    .mentor-card .idea { font-size: 13px; font-weight: 700; color: var(--text-main); line-height: 1.5; }
     .mentor-card .author { font-size: 10px; color: var(--neon-purple); margin-top: 8px; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
     .mentor-card .action { font-size: 11px; color: var(--text-muted); margin-top: 10px; border-top: 1px solid var(--panel-border); padding-top: 10px; }
     .mentor-card .action b { color: var(--neon-green); }
@@ -692,14 +771,14 @@
       justify-content: center;
       pointer-events: none;
     }
-    .donut-center b { font-family: 'Orbitron', sans-serif; font-size: 20px; color: #FFF; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); }
+    .donut-center b { font-family: 'Orbitron', sans-serif; font-size: 20px; color: var(--text-main); text-shadow: 0 0 10px var(--accent-glow); }
     .donut-center span { font-size: 9px; color: var(--text-muted); letter-spacing: 1.5px; }
 
     /* Medidor circular de ejecución perfecta */
     .gauge-wrap { display: flex; align-items: center; gap: 14px; }
     .gauge { width: 84px; height: 84px; flex: 0 0 auto; transform: rotate(-90deg); }
     .gauge circle { fill: none; stroke-width: 8; }
-    .gauge .track { stroke: #151C2C; }
+    .gauge .track { stroke: var(--track-bg); }
     .gauge .value {
       stroke: var(--neon-green);
       stroke-linecap: round;
@@ -739,7 +818,7 @@
     .breath-ring.inhale { transform: scale(1.2); }
     .breath-ring.hold { transform: scale(1.2); border-color: var(--neon-orange); color: var(--neon-orange); }
     .breath-ring.exhale { transform: scale(0.85); border-color: var(--neon-green); color: var(--neon-green); transition-duration: 6s, 0.6s, 0.6s; }
-    .breath-ring .count { color: #FFF; }
+    .breath-ring .count { color: var(--text-main); }
 
     /* Escaneo de luz al cambiar la idea de mentoría */
     .mentor-card { position: relative; overflow: hidden; }
@@ -777,6 +856,22 @@
       *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
       .pulse-dot::after, .progress-bar-fill.shimmer::after { display: none; }
     }
+
+    /* ===== v4: ANALÍTICA AVANZADA, IMPORTACIÓN/RESPALDO Y PACIENCIA INSTITUCIONAL ===== */
+    .btn-orange { background: var(--neon-orange); color: var(--on-blue); }
+    .btn-orange:hover:not(:disabled) { background: var(--neon-orange); filter: brightness(1.12); box-shadow: 0 0 15px rgba(255, 145, 0, 0.5); }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .toolbar .btn { padding: 9px 12px; }
+    .modal-wide { max-width: 680px !important; max-height: 92vh; overflow-y: auto; text-align: left; }
+    .modal-wide h2 { text-align: center; }
+    .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .scroll-x table { min-width: 440px; }
+    .qq-table td:first-child, .qq-table th:first-child { text-align: left; }
+    .qq-table tr.group-head td { background: var(--inset-bg); color: var(--neon-blue); font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 1px; text-align: left; }
+    .qq-table tr.best td:first-child { color: var(--neon-green); font-weight: 700; }
+    .bar-cell { position: relative; }
+    .bar-cell i { position: absolute; left: 0; bottom: 2px; height: 3px; border-radius: 2px; background: var(--neon-green); box-shadow: 0 0 6px currentColor; transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    @media (max-width: 480px) { .toolbar, .toolbar .btn { width: 100%; } }
   </style>
 </head>
 <body>
@@ -848,9 +943,23 @@
   <div id="accountFailedModal" class="modal-overlay" style="display: none;">
     <div class="modal-card" style="border-color: var(--neon-red);">
       <h2 style="color: var(--neon-red);">🚨 CUENTA LIQUIDADA / BREACHED</h2>
-      <p style="color: #FFF; font-weight: bold; margin-bottom: 10px;">Límite de Drawdown Superado.</p>
-      <div id="failedDetails" style="background: #080A10; padding: 15px; border-radius: 4px; font-size: 11px; margin-bottom: 20px; text-align: left;"></div>
+      <p style="color: var(--text-main); font-weight: bold; margin-bottom: 10px;">Límite de Drawdown Superado.</p>
+      <div id="failedDetails" style="background: var(--inset-bg); padding: 15px; border-radius: 4px; font-size: 11px; margin-bottom: 20px; text-align: left;"></div>
       <button class="btn btn-red" onclick="resetAccountSystem()">🔄 REINICIAR CUENTA CLOUD</button>
+    </div>
+  </div>
+
+  <!-- MODAL PACIENCIA INSTITUCIONAL -->
+  <div id="patienceModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card modal-wide" style="border-color: var(--neon-orange); box-shadow: 0 0 40px rgba(255,145,0,0.25);">
+      <h2 style="color: var(--neon-orange);">🏛️ PACIENCIA INSTITUCIONAL</h2>
+      <p style="text-align:center; color:var(--text-muted); font-size:11px; margin-bottom:15px;">Protocolo para cuando la operativa va en verde: pausa, re-análisis de estructura y decisión mecánica.</p>
+      <div id="patienceBody"></div>
+      <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap; justify-content:space-between;">
+        <button type="button" class="btn btn-ghost" onclick="closePatience()">✕ CERRAR</button>
+        <button type="button" class="btn btn-ghost" id="btnPatienceRestart" onclick="openPatience()" style="display:none;">↺ EMPEZAR DE NUEVO</button>
+      </div>
+      <p style="font-size:9px; color:var(--text-muted); margin-top:12px; text-align:center;">Este protocolo ordena tu decisión con tus propias reglas; no predice el mercado ni garantiza que el precio continúe.</p>
     </div>
   </div>
 
@@ -859,9 +968,9 @@
     <div class="modal-card" style="border-color: var(--neon-purple); box-shadow: 0 0 40px rgba(213,0,249,0.35);">
       <h2 style="color: var(--neon-purple);">🏆 NUEVO NIVEL DESBLOQUEADO</h2>
       <img id="levelUpImg" src="" alt="Nuevo nivel" class="avatar-img" style="width:170px; height:170px; border-color: var(--neon-purple); margin: 5px auto 15px auto; display:block;">
-      <h3 id="levelUpName" style="font-size: 15px; color:#FFF; margin-bottom: 10px;"></h3>
-      <p id="levelUpText" style="color:#DDD; font-size:11px; line-height:1.6;"></p>
-      <div style="background:#080A10; border:1px solid var(--neon-green); border-radius:4px; padding:10px; font-size:10px; margin-bottom:20px; color:var(--text-muted);">
+      <h3 id="levelUpName" style="font-size: 15px; color:var(--text-main); margin-bottom: 10px;"></h3>
+      <p id="levelUpText" style="color:var(--text-soft); font-size:11px; line-height:1.6;"></p>
+      <div style="background:var(--inset-bg); border:1px solid var(--neon-green); border-radius:4px; padding:10px; font-size:10px; margin-bottom:20px; color:var(--text-muted);">
         <b style="color:var(--neon-green);">🔒 CHECKPOINT ANCLADO:</b> este nivel ya no retrocede. Lo ganaste ejecutando tu plan, y es la prueba de que el siguiente también es posible.
       </div>
       <button class="btn btn-purple" onclick="closeLevelUpModal()">⚔️ CONTINUAR LA MISIÓN</button>
@@ -877,6 +986,7 @@
     </div>
     
     <div class="cloud-controls">
+      <button type="button" class="btn btn-ghost" id="btnTheme" onclick="toggleTheme()" title="Cambiar entre modo Cyberpunk y modo Claro">🎨 TEMA: CYBERPUNK</button>
       <button class="btn btn-red" onclick="logoutCloud()">🚪 CERRAR SESIÓN</button>
     </div>
   </header>
@@ -970,13 +1080,13 @@
       </div>
       
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 15px; margin-top: 10px;">
-        <div style="background:#080A10; padding:12px; border-radius:4px; border:1px solid var(--panel-border);">
+        <div style="background:var(--inset-bg); padding:12px; border-radius:4px; border:1px solid var(--panel-border);">
           <h4 style="color:var(--neon-orange); font-size:11px; margin-bottom:8px;">PSICOLOGÍA</h4>
           <label style="display:block; font-size:11px; margin-bottom:6px; cursor:pointer;"><input type="checkbox" class="chk-box" onchange="updateQualityScore()"> Estado emocional neutro</label>
           <label style="display:block; font-size:11px; margin-bottom:6px; cursor:pointer;"><input type="checkbox" class="chk-box" onchange="updateQualityScore()"> Aceptación total del riesgo monetario</label>
           <label style="display:block; font-size:11px; cursor:pointer;"><input type="checkbox" class="chk-box" onchange="updateQualityScore()"> Cero tolerancia a Revenge Trading / FOMO</label>
         </div>
-        <div style="background:#080A10; padding:12px; border-radius:4px; border:1px solid var(--panel-border);">
+        <div style="background:var(--inset-bg); padding:12px; border-radius:4px; border:1px solid var(--panel-border);">
           <h4 style="color:var(--neon-orange); font-size:11px; margin-bottom:8px;">ANÁLISIS TÉCNICO</h4>
           <label style="display:block; font-size:11px; margin-bottom:6px; cursor:pointer;"><input type="checkbox" class="chk-box" onchange="updateQualityScore()"> Estructura de mercado confirmada</label>
           <label style="display:block; font-size:11px; margin-bottom:6px; cursor:pointer;"><input type="checkbox" class="chk-box" onchange="updateQualityScore()"> Zona POI / Liquidez validada</label>
@@ -1019,7 +1129,12 @@
     <div class="table-container">
       <div class="table-header-bar">
         <div class="card-title">HISTORIAL DE TRADES (SINCRONIZADO)</div>
-        <button type="button" class="btn btn-purple" id="btnExportExcel" onclick="exportTradesToExcel()">📥 EXPORTAR EXCEL</button>
+        <div class="toolbar">
+          <button type="button" class="btn btn-ghost" onclick="exportBackup()" title="Descargar toda la cuenta en un archivo">💾 RESPALDO</button>
+          <button type="button" class="btn btn-ghost" onclick="document.getElementById('fileRestore').click()" title="Restaurar la cuenta desde un respaldo">♻️ RESTAURAR</button>
+          <button type="button" class="btn btn-purple" id="btnExportExcel" onclick="exportTradesToExcel()">📥 EXPORTAR EXCEL</button>
+          <input type="file" id="fileRestore" accept=".json,application/json" style="display:none;" onchange="handleRestoreFile(this)">
+        </div>
       </div>
       <table>
         <thead>
@@ -1045,7 +1160,10 @@
   <div id="tab-analytics" class="tab-content">
     <div class="card-title" style="margin-bottom: 15px;">
       <span>💡 DIAGNÓSTICO CUANTITATIVO, PARES Y EJECUCIÓN</span>
-      <button type="button" class="btn btn-blue" onclick="scrollToGroundPanel()">🧘 PISAR TIERRA</button>
+      <span class="toolbar">
+        <button type="button" class="btn btn-orange" onclick="openPatience()">🏛️ PACIENCIA INSTITUCIONAL</button>
+        <button type="button" class="btn btn-blue" onclick="scrollToGroundPanel()">🧘 PISAR TIERRA</button>
+      </span>
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 15px; margin-bottom: 25px;">
@@ -1101,11 +1219,11 @@
       <div class="card">
         <div class="card-title">IMPACTO DEL CHECKLIST EN PNL</div>
         <div style="display:flex; flex-direction:column; gap:12px; justify-content:center; height:100%;">
-          <div style="background:#080A10; padding:12px; border-radius:4px; border-left:3px solid var(--neon-green);">
+          <div style="background:var(--inset-bg); padding:12px; border-radius:4px; border-left:3px solid var(--neon-green);">
             <span style="font-size:10px; color:var(--text-muted);">PNL TRADES DISCIPLINA ALTA (≥80%)</span>
             <p id="anHighQualityPnL" style="font-size:18px; font-weight:bold; color:var(--neon-green); font-family:'Orbitron';">$0.00</p>
           </div>
-          <div style="background:#080A10; padding:12px; border-radius:4px; border-left:3px solid var(--neon-red);">
+          <div style="background:var(--inset-bg); padding:12px; border-radius:4px; border-left:3px solid var(--neon-red);">
             <span style="font-size:10px; color:var(--text-muted);">PNL TRADES REGLAS ROTAS (&lt;80%)</span>
             <p id="anLowQualityPnL" style="font-size:18px; font-weight:bold; color:var(--neon-red); font-family:'Orbitron';">$0.00</p>
           </div>
@@ -1120,6 +1238,41 @@
       </div>
       <div class="chart-box" style="height: 200px;">
         <canvas id="xpChart"></canvas>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 25px;">
+      <div class="card-title">
+        <span>⚖️ EJECUCIÓN VS DINERO: XP ACUMULADO Y PNL ACUMULADO</span>
+        <span style="font-weight:bold;"><span style="color:var(--neon-purple);">━ XP</span> &nbsp;<span style="color:var(--neon-green);">━ PNL</span></span>
+      </div>
+      <div class="chart-box" style="height: 240px;">
+        <canvas id="xpPnlChart"></canvas>
+      </div>
+      <p id="anXpPnlRead" style="font-size:11px; color:var(--text-muted); margin-top:12px;"></p>
+    </div>
+
+    <div class="char-grid">
+      <div class="card">
+        <div class="card-title">🕒 RENDIMIENTO POR DÍA Y HORARIO</div>
+        <div class="scroll-x">
+          <table class="qq-table">
+            <thead><tr><th>SESIÓN</th><th>TRADES</th><th>WINRATE</th><th>R PROM.</th><th>XP PROM.</th><th>PNL</th></tr></thead>
+            <tbody id="anTimeBody"></tbody>
+          </table>
+        </div>
+        <p id="anTimeRead" style="font-size:10px; color:var(--text-muted); margin-top:10px;"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🧬 RENDIMIENTO POR PAR Y DIRECCIÓN</div>
+        <div class="scroll-x">
+          <table class="qq-table">
+            <thead><tr><th>GRUPO</th><th>TRADES</th><th>WINRATE</th><th>R PROM.</th><th>XP PROM.</th><th>PNL</th></tr></thead>
+            <tbody id="anPairBody"></tbody>
+          </table>
+        </div>
+        <p id="anPairRead" style="font-size:10px; color:var(--text-muted); margin-top:10px;"></p>
       </div>
     </div>
 
@@ -1368,7 +1521,7 @@
           ¡Opera con tu primer aporte de capital, apégate al plan y sobrevive!
         </p>
         
-        <div style="background:#080A10; padding:15px; border-radius:6px; border:1px solid var(--panel-border);">
+        <div style="background:var(--inset-bg); padding:15px; border-radius:6px; border:1px solid var(--panel-border);">
           <div class="stat-row" style="margin-bottom:5px;">
             <span>PROGRESO DE EXP</span>
             <span id="charXpNum" style="color:var(--neon-green); font-weight:bold;">0 / 1000 XP</span>
@@ -1387,6 +1540,7 @@
         </div>
         <div id="charReqList"></div>
         <p id="charReqHint" style="font-size:10px; color:var(--text-muted); margin-top:12px;"></p>
+        <p id="charProjection" style="font-size:11px; color:var(--text-muted); margin-top:10px; border-top:1px solid var(--panel-border); padding-top:10px; line-height:1.6;"></p>
       </div>
 
       <div class="card">
@@ -1451,7 +1605,7 @@
         <span style="font-size: 28px;">⚡</span>
         <div>
           <b style="color: var(--neon-purple); font-family: 'Orbitron', sans-serif; font-size: 13px;">RECORDATORIO DINÁMICO QUANTQUEST</b>
-          <p id="planReminderTxt" style="font-size: 12px; color: #FFF; margin-top: 4px; transition: opacity 0.3s ease;">
+          <p id="planReminderTxt" style="font-size: 12px; color: var(--text-main); margin-top: 4px; transition: opacity 0.3s ease;">
             "La disciplina no se negocia: un trade es 100% apegado a la regla o simplemente no existe en mi plataforma."
           </p>
         </div>
@@ -1465,22 +1619,22 @@
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 15px; margin-top: 15px;">
-        <div class="card" style="background:#090D16;">
+        <div class="card" style="background:var(--inset-bg-2);">
           <div class="card-title">RIESGO BASE (1%)</div>
           <p id="planRisk1Pct" style="font-size: 20px; font-weight: bold; color: var(--neon-green); font-family: 'Orbitron';">$0.00</p>
           <span style="font-size:10px; color:var(--text-muted);">Monto estándar por trade</span>
         </div>
-        <div class="card" style="background:#090D16;">
+        <div class="card" style="background:var(--inset-bg-2);">
           <div class="card-title">RIESGO MÁXIMO (2%)</div>
           <p id="planRisk2Pct" style="font-size: 20px; font-weight: bold; color: var(--neon-orange); font-family: 'Orbitron';">$0.00</p>
           <span style="font-size:10px; color:var(--text-muted);">Límite absoluto inquebrantable</span>
         </div>
-        <div class="card" style="background:#090D16;">
+        <div class="card" style="background:var(--inset-bg-2);">
           <div class="card-title">TARGET MÍNIMO (+2R)</div>
           <p id="planTarget2R" style="font-size: 20px; font-weight: bold; color: var(--neon-blue); font-family: 'Orbitron';">$0.00</p>
           <span style="font-size:10px; color:var(--text-muted);">Take Profit Objetivo (1:2)</span>
         </div>
-        <div class="card" style="background:#090D16;">
+        <div class="card" style="background:var(--inset-bg-2);">
           <div class="card-title">BREAK-EVEN (BE)</div>
           <p style="font-size: 20px; font-weight: bold; color: var(--text-main); font-family: 'Orbitron';">@ +1R</p>
           <span style="font-size:10px; color:var(--text-muted);">Mover SL a riesgo $0.00</span>
@@ -1524,7 +1678,7 @@
             <tr><td><b>4° SL o Superior</b></td><td>Cierre día + Bloqueo Binance 24h</td><td>0.32% (-15% Adicional)</td></tr>
           </tbody>
         </table>
-        <div style="margin-top:15px; background:#080A10; padding:10px; border-radius:4px; font-size:10px; border: 1px solid var(--neon-green);">
+        <div style="margin-top:15px; background:var(--inset-bg); padding:10px; border-radius:4px; font-size:10px; border: 1px solid var(--neon-green);">
           <b style="color:var(--neon-green);">REINICIO DE RACHA:</b> Al obtener 1 TRADE GANADOR (+2R), la racha negativa se rompe y el riesgo se restablece automáticamente al nivel base (1%).
         </div>
       </div>
@@ -1546,7 +1700,7 @@
         <div class="plan-card-header" style="color: var(--neon-purple);">
           <span>📜 MANTRA INSTITUTIONAL QUANTQUEST</span>
         </div>
-        <blockquote style="font-size: 11px; font-style: italic; color: #DDD; line-height: 1.6; border-left: 2px solid var(--neon-purple); padding-left: 10px;">
+        <blockquote style="font-size: 11px; font-style: italic; color: var(--text-soft); line-height: 1.6; border-left: 2px solid var(--neon-purple); padding-left: 10px;">
           "El trading profesional y rentable es aburrido, repetitivo y mecánico. No opero por adrenalina ni por revancha; ejecuto un algoritmo estadístico con frialdad. La disciplina no se negocia: un trade es 100% apegado a la regla o simplemente no existe en mi plataforma."
         </blockquote>
       </div>
@@ -2326,6 +2480,8 @@
       renderGroundPanel();
       updateDisciplineGauge(getStats().game, trades.length, fresh);
       updateXpChart(getStats().game, fresh);
+      updateXpPnlChart(getStats(), fresh);
+      renderBreakdowns(getStats().game);
       if (trades.length === 0) return;
 
       let highQualityCount = 0, midQualityCount = 0, lowQualityCount = 0;
@@ -2848,6 +3004,8 @@
         byId('charReqHint').textContent = 'Completaste el árbol de evolución. Mantén la ejecución: el XP sigue registrando tu disciplina.';
       }
 
+      renderLevelProjection(s, next);
+
       // --- Disciplina y rachas ---
       const perfectPct = s.count ? (g.perfectCount / s.count) * 100 : 0;
       byId('charStreakBadge').textContent = `RACHA: ${g.perfectStreak}`;
@@ -3198,7 +3356,104 @@
     };
 
     // ================= GRÁFICOS (con FX cyberpunk) =================
-    const NEON = { green: '#00E676', red: '#FF1744', orange: '#FF9100', blue: '#00E5FF', muted: '#8B95A5', grid: 'rgba(30, 38, 56, 0.7)' };
+    // Paleta de los gráficos: se lee de las variables CSS del tema activo (el canvas no entiende var(--x))
+    const NEON = { green: '#00E676', red: '#FF1744', orange: '#FF9100', blue: '#00E5FF', purple: '#D500F9', muted: '#8B95A5', grid: 'rgba(30, 38, 56, 0.7)', gridSoft: 'rgba(30, 38, 56, 0.35)', text: '#FFFFFF', tooltipBg: 'rgba(8, 10, 16, 0.96)', glow: true };
+
+    function hexToRgba(hex, alpha) {
+      const m = String(hex).trim().match(/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
+      return m ? `rgba(${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}, ${alpha})` : hex;
+    }
+
+    function readThemePalette() {
+      const css = getComputedStyle(document.documentElement);
+      const v = (name, fallback) => (css.getPropertyValue(name) || '').trim() || fallback;
+      const classic = document.documentElement.getAttribute('data-theme') === 'classic';
+      NEON.green = v('--neon-green', NEON.green);
+      NEON.red = v('--neon-red', NEON.red);
+      NEON.orange = v('--neon-orange', NEON.orange);
+      NEON.blue = v('--neon-blue', NEON.blue);
+      NEON.purple = v('--neon-purple', NEON.purple);
+      NEON.muted = v('--text-muted', NEON.muted);
+      NEON.text = v('--text-main', NEON.text);
+      NEON.grid = classic ? 'rgba(201, 212, 230, 0.9)' : 'rgba(30, 38, 56, 0.7)';
+      NEON.gridSoft = classic ? 'rgba(201, 212, 230, 0.5)' : 'rgba(30, 38, 56, 0.35)';
+      NEON.tooltipBg = classic ? 'rgba(255, 255, 255, 0.98)' : 'rgba(8, 10, 16, 0.96)';
+      NEON.glow = !classic;
+    }
+
+    // Repinta todos los gráficos con la paleta del tema activo
+    function applyChartTheme() {
+      readThemePalette();
+      try { Chart.defaults.color = NEON.muted; } catch (e) { /* sin Chart.js */ }
+
+      const styleTooltip = (chart, accent) => {
+        const tt = chart.options && chart.options.plugins && chart.options.plugins.tooltip;
+        if (!tt) return;
+        tt.backgroundColor = NEON.tooltipBg;
+        tt.borderColor = accent;
+        tt.titleColor = accent;
+        tt.bodyColor = NEON.text;
+      };
+      const styleScales = (chart) => {
+        const sc = chart.options && chart.options.scales;
+        if (!sc) return;
+        if (sc.x) { sc.x.ticks.color = NEON.muted; sc.x.grid.color = NEON.gridSoft; }
+        if (sc.y && !sc.y1) { sc.y.ticks.color = NEON.muted; sc.y.grid.color = NEON.grid; }
+      };
+      const safe = (fn) => { try { fn(); } catch (e) { /* un gráfico sin tema no debe romper el dashboard */ } };
+
+      safe(() => {
+        const c = pnlChartInstance; if (!c) return;
+        c.data.datasets[0].borderColor = NEON.green;
+        c.data.datasets[0].pointHoverBackgroundColor = NEON.text;
+        c.data.datasets[0].pointHoverBorderColor = NEON.blue;
+        styleScales(c); styleTooltip(c, NEON.blue); c.update();
+      });
+      safe(() => {
+        const c = winrateChartInstance; if (!c) return;
+        c.data.datasets[0].backgroundColor = [NEON.green, NEON.red];
+        styleTooltip(c, NEON.green); c.update();
+      });
+      safe(() => {
+        const c = symbolChartInstance; if (!c) return;
+        c.data.datasets[0].backgroundColor = hexToRgba(NEON.orange, 0.75);
+        c.data.datasets[0].borderColor = NEON.orange;
+        styleScales(c); styleTooltip(c, NEON.orange); c.update();
+      });
+      safe(() => {
+        const c = xpChartInstance; if (!c) return;
+        styleScales(c); styleTooltip(c, NEON.green);
+        updateXpChart(getStats().game, false);
+      });
+      safe(() => {
+        const c = xpPnlChartInstance; if (!c) return;
+        c.data.datasets[0].borderColor = NEON.purple;
+        c.data.datasets[0].backgroundColor = hexToRgba(NEON.purple, 0.10);
+        c.data.datasets[1].borderColor = NEON.green;
+        const sc = c.options.scales;
+        sc.x.ticks.color = NEON.muted; sc.x.grid.color = NEON.gridSoft;
+        sc.y.ticks.color = NEON.purple; sc.y.grid.color = NEON.grid; sc.y.title.color = NEON.purple;
+        sc.y1.ticks.color = NEON.green; sc.y1.title.color = NEON.green;
+        styleTooltip(c, NEON.purple); c.update();
+      });
+    }
+
+    function updateThemeButton() {
+      const btn = byId('btnTheme');
+      if (!btn) return;
+      const classic = document.documentElement.getAttribute('data-theme') === 'classic';
+      btn.textContent = classic ? '🎨 TEMA: CLARO' : '🎨 TEMA: CYBERPUNK';
+    }
+
+    window.toggleTheme = function() {
+      const root = document.documentElement;
+      const toClassic = root.getAttribute('data-theme') !== 'classic';
+      if (toClassic) root.setAttribute('data-theme', 'classic'); else root.removeAttribute('data-theme');
+      try { localStorage.setItem('qq-theme', toClassic ? 'classic' : 'cyberpunk'); } catch (e) { /* sin almacenamiento: el tema dura esta sesión */ }
+      updateThemeButton();
+      applyChartTheme();
+    };
+
     let xpChartInstance = null;
     let pnlReveal = 1;          // 0 → 1: porción de la curva ya dibujada
     let pnlRevealRaf = null;
@@ -3238,7 +3493,7 @@
           if (y0 >= area.top && y0 <= area.bottom) {
             ctx.save();
             ctx.setLineDash([4, 4]);
-            ctx.strokeStyle = 'rgba(139, 149, 165, 0.45)';
+            ctx.strokeStyle = hexToRgba(NEON.muted, 0.45);
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(area.left, y0);
@@ -3253,8 +3508,10 @@
         ctx.beginPath();
         ctx.rect(area.left - 8, area.top - 14, (area.right - area.left + 16) * pnlReveal, area.bottom - area.top + 28);
         ctx.clip();
-        ctx.shadowColor = pnlLastValue() >= 0 ? 'rgba(0, 230, 118, 0.6)' : 'rgba(255, 23, 68, 0.6)';
-        ctx.shadowBlur = 12;
+        if (NEON.glow) { // el resplandor neón solo existe en el modo Cyberpunk
+          ctx.shadowColor = hexToRgba(pnlLastValue() >= 0 ? NEON.green : NEON.red, 0.6);
+          ctx.shadowBlur = 12;
+        }
       },
       afterDatasetsDraw(chart) {
         if (chart._qqSaved) { chart.ctx.restore(); chart._qqSaved = false; }
@@ -3266,15 +3523,16 @@
     function pnlFillGradient(context) {
       const chart = context.chart;
       const area = chart.chartArea;
-      if (!area) return 'rgba(0, 230, 118, 0.10)';
+      if (!area) return hexToRgba(NEON.green, 0.10);
       const yScale = chart.scales.y;
       const y0 = yScale ? yScale.getPixelForValue(0) : area.bottom;
       const zero = Math.min(1, Math.max(0, (y0 - area.top) / Math.max(1, area.bottom - area.top)));
       const gradient = chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
-      gradient.addColorStop(0, 'rgba(0, 230, 118, 0.38)');
-      gradient.addColorStop(zero, 'rgba(0, 230, 118, 0.02)');
-      gradient.addColorStop(zero, 'rgba(255, 23, 68, 0.02)');
-      gradient.addColorStop(1, 'rgba(255, 23, 68, 0.38)');
+      const top = NEON.glow ? 0.38 : 0.22;
+      gradient.addColorStop(0, hexToRgba(NEON.green, top));
+      gradient.addColorStop(zero, hexToRgba(NEON.green, 0.02));
+      gradient.addColorStop(zero, hexToRgba(NEON.red, 0.02));
+      gradient.addColorStop(1, hexToRgba(NEON.red, top));
       return gradient;
     }
 
@@ -3299,11 +3557,11 @@
     }
 
     const hudTooltip = (accent) => ({
-      backgroundColor: 'rgba(8, 10, 16, 0.96)',
+      backgroundColor: NEON.tooltipBg,
       borderColor: accent,
       borderWidth: 1,
       titleColor: accent,
-      bodyColor: '#FFFFFF',
+      bodyColor: NEON.text,
       titleFont: { family: 'Orbitron', size: 11, weight: '700' },
       bodyFont: { family: 'Roboto Mono', size: 11 },
       padding: 10,
@@ -3311,11 +3569,13 @@
       displayColors: false
     });
     const hudScales = () => ({
-      x: { ticks: { color: NEON.muted, maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, grid: { color: 'rgba(30, 38, 56, 0.35)' } },
+      x: { ticks: { color: NEON.muted, maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, grid: { color: NEON.gridSoft } },
       y: { ticks: { color: NEON.muted }, grid: { color: NEON.grid } }
     });
 
     function initCharts() {
+      readThemePalette();
+      updateThemeButton();
       try {
         Chart.defaults.color = NEON.muted;
         Chart.defaults.font.family = "'Roboto Mono', monospace";
@@ -3335,7 +3595,7 @@
           segment: { borderColor: (seg) => (seg.p1.parsed.y < 0 ? NEON.red : NEON.green) },
           pointRadius: 0,
           pointHoverRadius: 5,
-          pointHoverBackgroundColor: '#FFFFFF',
+          pointHoverBackgroundColor: NEON.text,
           pointHoverBorderColor: NEON.blue,
           pointHoverBorderWidth: 2
         }] },
@@ -3384,13 +3644,42 @@
 
       symbolChartInstance = new Chart(byId('symbolChart').getContext('2d'), {
         type: 'bar',
-        data: { labels: [], datasets: [{ label: 'Trades', data: [], backgroundColor: 'rgba(255, 145, 0, 0.75)', borderColor: NEON.orange, borderWidth: 1, borderRadius: 3 }] },
+        data: { labels: [], datasets: [{ label: 'Trades', data: [], backgroundColor: hexToRgba(NEON.orange, 0.75), borderColor: NEON.orange, borderWidth: 1, borderRadius: 3 }] },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           animation: REDUCED_MOTION ? false : { duration: 900, easing: 'easeOutCubic' },
           scales: hudScales(),
           plugins: { legend: { display: false }, tooltip: hudTooltip(NEON.orange) }
+        }
+      });
+
+      // Ejecución vs dinero: XP acumulado (eje izquierdo) y PnL acumulado (eje derecho)
+      xpPnlChartInstance = new Chart(byId('xpPnlChart').getContext('2d'), {
+        type: 'line',
+        data: { labels: [], datasets: [
+          { label: 'XP acumulado', data: [], yAxisID: 'y', borderColor: NEON.purple, backgroundColor: hexToRgba(NEON.purple, 0.10), fill: true, borderWidth: 2, tension: 0.25, pointRadius: 0, pointHoverRadius: 4 },
+          { label: 'PnL acumulado', data: [], yAxisID: 'y1', borderColor: NEON.green, borderWidth: 2, tension: 0.25, pointRadius: 0, pointHoverRadius: 4 }
+        ] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: REDUCED_MOTION ? false : { duration: 1200, easing: 'easeOutCubic' },
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            x: { ticks: { color: NEON.muted, maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, grid: { color: NEON.gridSoft } },
+            y: { position: 'left', ticks: { color: NEON.purple }, grid: { color: NEON.grid }, title: { display: true, text: 'XP', color: NEON.purple } },
+            y1: { position: 'right', ticks: { color: NEON.green, callback: (v) => '$' + v }, grid: { drawOnChartArea: false }, title: { display: true, text: 'PNL ($)', color: NEON.green } }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: Object.assign(hudTooltip(NEON.purple), {
+              callbacks: {
+                title: (items) => { const t = items.length ? trades[items[0].dataIndex] : null; return t ? `#${t.id} · ${fmtDateTime(t.openTime)}` : ''; },
+                label: (item) => item.datasetIndex === 0 ? `XP ACUMULADO: ${item.parsed.y}` : `PNL ACUMULADO: ${fmtSigned(item.parsed.y)}`
+              }
+            })
+          }
         }
       });
 
@@ -3458,7 +3747,7 @@
       xpChartInstance._qqOffset = offset;
       xpChartInstance.data.labels = slice.map((_, i) => `#${trades[offset + i].id}`);
       xpChartInstance.data.datasets[0].data = slice.map(p => p.total);
-      xpChartInstance.data.datasets[0].backgroundColor = slice.map(p => p.total < 0 ? 'rgba(255, 23, 68, 0.85)' : (p.violations.length ? 'rgba(255, 145, 0, 0.85)' : 'rgba(0, 230, 118, 0.85)'));
+      xpChartInstance.data.datasets[0].backgroundColor = slice.map(p => hexToRgba(p.total < 0 ? NEON.red : (p.violations.length ? NEON.orange : NEON.green), 0.85));
       if (fresh && !REDUCED_MOTION && typeof xpChartInstance.reset === 'function') xpChartInstance.reset();
       xpChartInstance.update();
     }
@@ -3483,6 +3772,361 @@
       animateNumber(label, pct, v => `${v.toFixed(0)}%`, fresh);
       byId('anPerfectMeta').textContent = `${g.perfectCount} de ${count} trades · racha actual ${g.perfectStreak} · mejor ${g.bestStreak}`;
     }
+
+    // ================= ANALÍTICA AVANZADA: SESIONES, PARES, XP VS PNL, PROYECCIÓN =================
+    const WEEKDAYS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const HOUR_BLOCKS = ['00:00–03:59', '04:00–07:59', '08:00–11:59', '12:00–15:59', '16:00–19:59', '20:00–23:59'];
+    let xpPnlChartInstance = null;
+
+    function newGroup(label) { return { label, n: 0, wins: 0, sumR: 0, nR: 0, sumXp: 0, pnl: 0 }; }
+    function addToGroup(grp, t, info) {
+      const pnl = num(t.pnl);
+      grp.n++;
+      if (pnl >= 0) grp.wins++;
+      if (info.r !== null) { grp.sumR += info.r; grp.nR++; }
+      grp.sumXp += info.total;
+      grp.pnl += pnl;
+    }
+
+    // Una sola pasada para agrupar por día de la semana, bloque horario, par y dirección
+    function computeBreakdowns(g) {
+      const days = WEEKDAYS.map(newGroup);
+      const hours = HOUR_BLOCKS.map(newGroup);
+      const pairs = {};
+      const dirs = { BUY: newGroup('LONG (BUY)'), SELL: newGroup('SHORT (SELL)') };
+
+      trades.forEach((t, i) => {
+        const info = g.perTrade[i];
+        const m = String(t.openTime || '').match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):/);
+        if (m) {
+          addToGroup(days[new Date(+m[1], +m[2] - 1, +m[3]).getDay()], t, info);
+          addToGroup(hours[Math.min(5, Math.floor(+m[4] / 4))], t, info);
+        }
+        const sym = String(t.symbol || 'N/A').toUpperCase();
+        addToGroup(pairs[sym] || (pairs[sym] = newGroup(sym)), t, info);
+        addToGroup(dirs[t.direction === 'BUY' ? 'BUY' : 'SELL'], t, info);
+      });
+
+      // Semana en orden Lunes → Domingo
+      const orderedDays = [1, 2, 3, 4, 5, 6, 0].map(d => days[d]).filter(x => x.n);
+      return {
+        days: orderedDays,
+        hours: hours.filter(x => x.n),
+        pairs: Object.values(pairs).sort((a, b) => b.n - a.n),
+        dirs: [dirs.BUY, dirs.SELL].filter(x => x.n)
+      };
+    }
+
+    function bestGroup(groups, minTrades) {
+      let best = null;
+      for (const grp of groups) {
+        if (grp.n < minTrades) continue;
+        if (!best || grp.sumXp / grp.n > best.sumXp / best.n) best = grp;
+      }
+      return best;
+    }
+
+    function groupRows(title, groups, best) {
+      if (!groups.length) return '';
+      const maxXp = XP_RULES.checklistPerfect + XP_RULES.riskOk + XP_RULES.stopOk + XP_RULES.dayOk + XP_RULES.targetBonus;
+      const head = `<tr class="group-head"><td colspan="6">${title}</td></tr>`;
+      return head + groups.map(grp => {
+        const wr = (grp.wins / grp.n) * 100;
+        const avgXp = grp.sumXp / grp.n;
+        const avgR = grp.nR ? grp.sumR / grp.nR : null;
+        const xpColor = avgXp >= 80 ? 'var(--neon-green)' : (avgXp >= 40 ? 'var(--neon-orange)' : 'var(--neon-red)');
+        const width = Math.max(0, Math.min(100, (avgXp / maxXp) * 100));
+        return `<tr class="${grp === best ? 'best' : ''}">
+          <td>${grp === best ? '★ ' : ''}${escapeHtml(grp.label)}</td>
+          <td>${grp.n}</td>
+          <td style="color:${wr >= 50 ? 'var(--neon-green)' : 'var(--neon-red)'};">${wr.toFixed(0)}%</td>
+          <td class="${avgR === null ? '' : (avgR >= 0 ? 'val-pos' : 'val-neg')}">${avgR === null ? '-' : avgR.toFixed(2) + 'R'}</td>
+          <td class="bar-cell" style="color:${xpColor}; font-weight:700;">${avgXp >= 0 ? '+' : ''}${avgXp.toFixed(0)}<i style="width:${width}%; background:${xpColor};"></i></td>
+          <td class="${grp.pnl >= 0 ? 'val-pos' : 'val-neg'}">${fmtSigned(grp.pnl)}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function renderBreakdowns(g) {
+      const b = computeBreakdowns(g);
+      const empty = `<tr><td colspan="6" style="color:var(--text-muted);">Registra trades para ver este desglose.</td></tr>`;
+
+      const bestDay = bestGroup(b.days, 3);
+      const bestHour = bestGroup(b.hours, 3);
+      byId('anTimeBody').innerHTML = (groupRows('DÍA DE LA SEMANA', b.days, bestDay) + groupRows('HORA DE ENTRADA', b.hours, bestHour)) || empty;
+      byId('anTimeRead').textContent = bestDay || bestHour
+        ? `★ Donde mejor ejecutas (mínimo 3 trades): ${[bestDay && bestDay.label, bestHour && bestHour.label].filter(Boolean).join(' · ')}. Se mide por XP promedio, no por PnL.`
+        : 'Necesitas al menos 3 trades en un mismo día u horario para marcar tu mejor sesión.';
+
+      const bestPair = bestGroup(b.pairs, 3);
+      const bestDir = bestGroup(b.dirs, 3);
+      byId('anPairBody').innerHTML = (groupRows('PAR', b.pairs, bestPair) + groupRows('DIRECCIÓN', b.dirs, bestDir)) || empty;
+      byId('anPairRead').textContent = bestPair || bestDir
+        ? `★ Mejor ejecución (mínimo 3 trades): ${[bestPair && bestPair.label, bestDir && bestDir.label].filter(Boolean).join(' · ')}. Un grupo con buen PnL y XP bajo es suerte, no ventaja.`
+        : 'Necesitas al menos 3 trades en un par o dirección para marcar tu mejor grupo.';
+    }
+
+    function updateXpPnlChart(s, fresh) {
+      if (!xpPnlChartInstance) return;
+      const g = s.game;
+      xpPnlChartInstance.data.labels = s.labels;
+      xpPnlChartInstance.data.datasets[0].data = g.perTrade.map(p => p.xpAfter);
+      xpPnlChartInstance.data.datasets[1].data = s.cumulative;
+      if (fresh && !REDUCED_MOTION && typeof xpPnlChartInstance.reset === 'function') xpPnlChartInstance.reset();
+      xpPnlChartInstance.update();
+
+      // Lectura: ¿paga más ejecutar perfecto?
+      let perfN = 0, perfPnl = 0, offN = 0, offPnl = 0;
+      trades.forEach((t, i) => {
+        if (g.perTrade[i].perfect) { perfN++; perfPnl += num(t.pnl); } else { offN++; offPnl += num(t.pnl); }
+      });
+      const read = byId('anXpPnlRead');
+      if (perfN && offN) {
+        const a = perfPnl / perfN, b = offPnl / offN;
+        read.innerHTML = `PnL promedio por trade — ejecución perfecta: <b class="${a >= 0 ? 'val-pos' : 'val-neg'}">${fmtSigned(a)}</b> (${perfN} trades) · resto: <b class="${b >= 0 ? 'val-pos' : 'val-neg'}">${fmtSigned(b)}</b> (${offN} trades). ${a > b ? 'Tus datos confirman que la ejecución limpia paga más.' : 'Por ahora la muestra no separa ambos grupos: sigue acumulando trades antes de concluir.'}`;
+      } else {
+        read.textContent = 'Cuando tengas trades perfectos y trades con salidas del plan, aquí verás cuál de los dos grupos gana más dinero en promedio.';
+      }
+    }
+
+    // Proyección del siguiente nivel según el ritmo reciente (XP y muestra de trades)
+    function computeLevelProjection(s, next) {
+      if (!next || s.count < 3) return null;
+      const g = s.game;
+      const dayMs = 86400000;
+      const toDate = (key) => { const m = String(key).match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
+      const today = toDate(localTodayKey());
+      const first = toDate(trades[0].openTime);
+      if (!today || !first) return null;
+
+      const spanDays = Math.max(7, Math.round((today - first) / dayMs) + 1);
+      const windowDays = Math.min(42, spanDays);
+      const cutoff = new Date(today.getTime() - (windowDays - 1) * dayMs);
+
+      let firstRecent = trades.findIndex(t => { const d = toDate(t.openTime); return d && d >= cutoff; });
+      if (firstRecent === -1) return { stalled: true, windowWeeks: windowDays / 7 };
+      const xpBefore = firstRecent > 0 ? g.perTrade[firstRecent - 1].xpAfter : 0;
+      const weeks = windowDays / 7;
+      const xpPerWeek = (g.xp - xpBefore) / weeks;
+      const tradesPerWeek = (trades.length - firstRecent) / weeks;
+
+      const xpLeft = Math.max(0, next.minXp - g.xp);
+      const tradesLeft = Math.max(0, next.minTrades - s.count);
+      if ((xpLeft > 0 && xpPerWeek <= 0) || (tradesLeft > 0 && tradesPerWeek <= 0)) return { stalled: true, windowWeeks: weeks, xpPerWeek, tradesPerWeek };
+
+      const weeksNeeded = Math.max(xpLeft > 0 ? xpLeft / xpPerWeek : 0, tradesLeft > 0 ? tradesLeft / tradesPerWeek : 0);
+      const eta = new Date(today.getTime() + Math.ceil(weeksNeeded * 7) * dayMs);
+      return { weeksNeeded, eta, xpPerWeek, tradesPerWeek, windowWeeks: weeks, limiting: (tradesLeft / Math.max(tradesPerWeek, 1e-9)) > (xpLeft / Math.max(xpPerWeek, 1e-9)) ? 'trades' : 'xp' };
+    }
+
+    function renderLevelProjection(s, next) {
+      const el = byId('charProjection');
+      if (!el) return;
+      const p = computeLevelProjection(s, next);
+      if (!next) { el.textContent = ''; return; }
+      if (!p) { el.innerHTML = `<b style="color:var(--neon-blue);">📈 PROYECCIÓN:</b> disponible a partir de 3 trades registrados.`; return; }
+      if (p.stalled) { el.innerHTML = `<b style="color:var(--neon-orange);">📈 PROYECCIÓN:</b> sin avance de XP en las últimas ${p.windowWeeks.toFixed(0)} semanas. El próximo trade limpio reactiva el contador.`; return; }
+      const rate = `${p.xpPerWeek.toFixed(0)} XP/semana · ${p.tradesPerWeek.toFixed(1)} trades/semana`;
+      if (p.weeksNeeded <= 0) {
+        el.innerHTML = `<b style="color:var(--neon-green);">📈 PROYECCIÓN:</b> ya tienes el XP y la muestra de trades para ${next.name}. Solo dependes de los requisitos pendientes de arriba. (Ritmo: ${rate})`;
+        return;
+      }
+      const etaTxt = `${pad2(p.eta.getDate())}/${pad2(p.eta.getMonth() + 1)}/${p.eta.getFullYear()}`;
+      el.innerHTML = `<b style="color:var(--neon-blue);">📈 PROYECCIÓN:</b> a tu ritmo de las últimas ${p.windowWeeks.toFixed(0)} semanas (${rate}) completas el XP y la muestra de ${next.name} en <b style="color:var(--text-main);">~${Math.ceil(p.weeksNeeded)} semanas</b> (≈ ${etaTxt}). Lo que más te frena: ${p.limiting === 'trades' ? 'la cantidad de trades' : 'el XP'}. No incluye capital ni disciplina.`;
+    }
+
+    // ================= PACIENCIA INSTITUCIONAL =================
+    let patienceTimerId = null;
+    let patienceAnswers = [];
+    let patienceCurrentR = 0;
+
+    const PATIENCE_QUESTIONS = [
+      { text: '¿El stop ya está en break-even o mejor (capital protegido)?', key: 'stop' },
+      { text: '¿La estructura sigue a favor en tu temporalidad de ejecución (sin BOS / CHoCH en contra)?', key: 'structure' },
+      { text: '¿Hay una zona de liquidez u objetivo claro más allá del +2R?', key: 'target' },
+      { text: '¿El precio avanza con desplazamiento, sin un rechazo fuerte en la zona actual?', key: 'momentum' },
+      { text: '¿Mis ganas de cerrar vienen del alivio de asegurar, y no de algo que vea en el gráfico?', key: 'relief', reflective: true }
+    ];
+
+    // Referencia para el protocolo: en cuánto R cierran tus ganadores
+    function computePatienceStats(g) {
+      const st = { winners: 0, sumR: 0 };
+      g.perTrade.forEach(info => {
+        if (info.r === null || info.r < BREAKEVEN_R) return;
+        st.winners++;
+        st.sumR += info.r;
+      });
+      return st;
+    }
+
+    function stopPatienceTimer() { clearInterval(patienceTimerId); patienceTimerId = null; }
+
+    window.openPatience = function() {
+      stopPatienceTimer();
+      patienceAnswers = [];
+      const st = computePatienceStats(getStats().game);
+      const avgTxt = st.winners
+        ? `Tus ${st.winners} ganadores cierran en promedio en <b style="color:var(--neon-green);">${(st.sumR / st.winners).toFixed(2)}R</b>.`
+        : 'Aún no hay ganadores registrados para comparar.';
+      byId('btnPatienceRestart').style.display = 'none';
+      byId('patienceBody').innerHTML = `
+        <div class="reflection-box" style="border-color:var(--neon-orange); margin-top:0;"><b style="color:var(--neon-orange);">PASO 1 DE 3 · UBÍCATE:</b> ${avgTxt}</div>
+        <div class="form-field" style="margin-top:14px;">
+          <label>¿En cuántos R va la operativa ahora mismo?</label>
+          <input type="number" step="0.1" id="inpPatienceR" placeholder="Ej: 1.6">
+        </div>
+        <button type="button" class="btn btn-orange" style="margin-top:14px; width:100%;" onclick="patienceStart()">INICIAR PAUSA DE RE-ANÁLISIS ▶</button>`;
+      byId('patienceModal').style.display = 'flex';
+      setTimeout(() => { const inp = byId('inpPatienceR'); if (inp) inp.focus(); }, 50);
+    };
+
+    window.closePatience = function() {
+      stopPatienceTimer();
+      byId('patienceModal').style.display = 'none';
+    };
+
+    function patienceVerdict(color, title, text) {
+      byId('btnPatienceRestart').style.display = 'inline-block';
+      return `<div class="reflection-box" style="border-color:${color};"><b style="color:${color};">${title}</b> ${text}</div>`;
+    }
+
+    window.patienceStart = function() {
+      const r = num(byId('inpPatienceR').value, NaN);
+      if (!Number.isFinite(r)) { byId('inpPatienceR').focus(); return; }
+      patienceCurrentR = r;
+
+      if (r < 1) {
+        byId('patienceBody').innerHTML = patienceVerdict('var(--neon-blue)', '⏳ TODAVÍA NO HAY NADA QUE DECIDIR:',
+          `La operativa va en ${r.toFixed(2)}R. Antes de +1R el plan original manda: stop donde está, objetivo donde está, manos fuera. Vuelve a este protocolo cuando marque +1R y puedas mover el stop a break-even.`);
+        return;
+      }
+
+      const total = Math.max(1, parseInt(byId('patienceModal').dataset.seconds) || 90);
+      let remaining = total;
+      byId('patienceBody').innerHTML = `
+        <div class="reflection-box" style="border-color:var(--neon-orange); margin-top:0;"><b style="color:var(--neon-orange);">PASO 2 DE 3 · PAUSA (${total}s):</b> Vas en +${r.toFixed(2)}R. No toques el botón de cerrar. Mira el gráfico en tu temporalidad de ejecución y en la superior, solo observando.</div>
+        <div class="ground-timer" style="border-color:var(--neon-orange);">
+          <div class="breath-ring" id="patienceRing"><div class="count" id="patienceCount">${total}</div></div>
+          <div class="phase" id="patiencePhase">INHALA</div>
+          <p style="font-size:10px; color:var(--text-muted); margin-top:8px;">El impulso de asegurar pasa en menos de dos minutos. La estructura no cambia por esperar.</p>
+        </div>`;
+
+      const paint = () => {
+        const ring = byId('patienceRing');
+        const phaseEl = byId('patiencePhase');
+        if (!ring || !phaseEl) return;
+        const phase = (total - remaining) % 14;
+        byId('patienceCount').textContent = remaining;
+        let cls;
+        if (phase < 4) { phaseEl.textContent = 'INHALA'; phaseEl.style.color = 'var(--neon-blue)'; cls = 'inhale'; }
+        else if (phase < 8) { phaseEl.textContent = 'SOSTÉN'; phaseEl.style.color = 'var(--neon-orange)'; cls = 'hold'; }
+        else { phaseEl.textContent = 'EXHALA LENTO'; phaseEl.style.color = 'var(--neon-green)'; cls = 'exhale'; }
+        if (!ring.classList.contains(cls)) ring.className = `breath-ring ${cls}`;
+      };
+      requestAnimationFrame(paint);
+
+      stopPatienceTimer();
+      patienceTimerId = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) { stopPatienceTimer(); patienceAnswers = PATIENCE_QUESTIONS.map(() => null); renderPatienceQuestions(); return; }
+        paint();
+      }, 1000);
+    };
+
+    function renderPatienceQuestions() {
+      const list = PATIENCE_QUESTIONS.map((qn, i) => {
+        const ans = patienceAnswers[i];
+        const good = qn.reflective ? ans === 'no' : ans === 'yes';
+        const border = !ans ? 'var(--panel-border)' : (qn.reflective ? 'var(--neon-blue)' : (good ? 'var(--neon-green)' : 'var(--neon-red)'));
+        const cls = (val) => ans === val ? 'btn-orange' : 'btn-ghost';
+        return `<div class="ground-question" style="border-left-color:${border};">
+          <span>${i + 1}. ${escapeHtml(qn.text)}</span>
+          <span class="answers">
+            <button type="button" class="btn ${cls('yes')}" onclick="answerPatience(${i}, 'yes')">SÍ</button>
+            <button type="button" class="btn ${cls('no')}" onclick="answerPatience(${i}, 'no')">NO</button>
+          </span>
+        </div>`;
+      }).join('');
+
+      let verdict = '';
+      if (patienceAnswers.every(a => a)) {
+        const a = {};
+        PATIENCE_QUESTIONS.forEach((qn, i) => { a[qn.key] = patienceAnswers[i]; });
+        const relief = a.relief === 'yes'
+          ? ' Reconociste que las ganas de cerrar vienen del alivio: eso es emoción, no análisis.'
+          : '';
+        if (a.stop === 'no') {
+          verdict = patienceVerdict('var(--neon-red)', '🛡️ PRIMERO PROTEGE:', 'Mueve el stop a break-even antes de cualquier otra decisión. Sin capital protegido no hay paciencia: hay esperanza. Hazlo y vuelve a responder.');
+        } else if (a.structure === 'no') {
+          verdict = patienceVerdict('var(--neon-red)', '✅ CIERRA LA OPERATIVA:', `La estructura ya no acompaña. Tomar +${patienceCurrentR.toFixed(2)}R aquí es ejecución correcta, no impaciencia. Registra el trade y cierra la sesión.`);
+        } else if (a.target === 'no' || a.momentum === 'no') {
+          verdict = patienceVerdict('var(--neon-orange)', '🎯 QUÉDATE CON EL OBJETIVO DEL PLAN (+2R):', 'No hay una razón técnica para pedirle más al mercado en este trade. Deja la orden de Take Profit en +2R y no la toques.' + relief);
+        } else {
+          verdict = patienceVerdict('var(--neon-green)', '🏛️ DEJA CORRER:', `Stop protegido, estructura intacta, objetivo por delante y desplazamiento a favor. Define AHORA dos cosas y escríbelas: (1) tu nuevo objetivo en la siguiente zona de liquidez, (2) tu condición de salida: ruptura de estructura en tu temporalidad o stop arrastrado bajo el último swing. Después aléjate de la pantalla.${relief} Sigue siendo un solo trade por sesión.`);
+        }
+      }
+
+      byId('patienceBody').innerHTML = `
+        <div class="reflection-box" style="border-color:var(--neon-orange); margin-top:0;"><b style="color:var(--neon-orange);">PASO 3 DE 3 · RE-ANÁLISIS DE ESTRUCTURA:</b> Responde solo con lo que ves en el gráfico, operativa en +${patienceCurrentR.toFixed(2)}R.</div>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:12px;">${list}</div>${verdict}`;
+    }
+
+    window.answerPatience = function(i, value) {
+      patienceAnswers[i] = value;
+      renderPatienceQuestions();
+    };
+
+    // ================= RESPALDO Y RESTAURACIÓN DE LA CUENTA COMPLETA =================
+    function downloadFile(name, text, mime) {
+      const url = URL.createObjectURL(new Blob([text], { type: mime }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+
+    window.exportBackup = function() {
+      if (!currentAccount) { alert("No hay una cuenta cargada para respaldar."); return; }
+      const backup = {
+        app: 'quantquest',
+        version: 4,
+        exportedAt: new Date().toISOString(),
+        account: currentAccount,
+        trades: trades,
+        treasuryLog: treasuryLog
+      };
+      downloadFile(`QuantQuest_Respaldo_${currentAccount.accNumber || 'cuenta'}_${localTodayKey()}.json`, JSON.stringify(backup, null, 2), 'application/json');
+    };
+
+    window.handleRestoreFile = async function(input) {
+      const file = input.files && input.files[0];
+      input.value = '';
+      if (!file) return;
+      if (!currentUser) { alert("Inicia sesión antes de restaurar un respaldo."); return; }
+      try {
+        const data = JSON.parse(await file.text());
+        if (!data || data.app !== 'quantquest' || !data.account || !Array.isArray(data.trades)) {
+          alert("Este archivo no es un respaldo válido de QuantQuest.");
+          return;
+        }
+        const when = data.exportedAt ? new Date(data.exportedAt).toLocaleString() : 'fecha desconocida';
+        if (!confirm(`¿Restaurar el respaldo del ${when}?\n\nContiene ${data.trades.length} trades y ${(data.treasuryLog || []).length} movimientos de tesorería.\nEsto REEMPLAZA todo lo que hay ahora en tu cuenta (${trades.length} trades).`)) return;
+
+        currentAccount = data.account;
+        trades = data.trades;
+        treasuryLog = Array.isArray(data.treasuryLog) ? data.treasuryLog : [];
+        sessionAnchor = { acc: null, lvl: 0 };
+        followLatestPage = true;
+        normalizeTrades(trades);
+        await syncToCloud();
+        alert("Respaldo restaurado correctamente.");
+      } catch (err) {
+        alert("No se pudo restaurar el respaldo: " + err.message);
+      }
+    };
 
     // ================= EXPORTAR A EXCEL (.xlsx) =================
     // La librería SheetJS solo se descarga al pulsar el botón, así no afecta la velocidad de carga del dashboard.
